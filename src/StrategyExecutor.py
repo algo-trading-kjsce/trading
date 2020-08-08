@@ -156,9 +156,6 @@ class Executor:
 
         plt.draw()
 
-        if plotResults:
-            plt.show()
-
         if uploadResults:
             files = []
 
@@ -184,6 +181,9 @@ class Executor:
 
             paishe_utils.upload_results(self.m_strategyName, files)
 
+        if plotResults:
+            plt.show()
+            
         pass
 
 

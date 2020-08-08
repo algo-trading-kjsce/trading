@@ -27,7 +27,7 @@ def get_entry_exit(day_data: pd.DataFrame, index: int) -> Tuple[float, float, fl
     exit_price = day_data.open.values[-2]
     exit_time = day_data.datetime.values[-2]
 
-    stop_loss = day_data.high.values[index]
+    stop_loss = day_data.high.values[index+1]
 
     var_sl = entry_price
     #variable Sl to modify original SL
@@ -97,7 +97,7 @@ def mymethod(dates, csv_data) -> CalculatedData.CalculatedData:
 def main():
     executor = StrategyExecutor.Executor(fileNames=["banknifty5min.csv"], is_short=True, caller=__file__, func=mymethod)
 
-    executor.run(plotResults=True, uploadResults=False)
+    executor.run(plotResults=True, uploadResults=True)
     pass
 
 
