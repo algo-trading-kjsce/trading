@@ -20,6 +20,9 @@ temp_directory = os.path.join(tempfile.gettempdir(), 'Paishe')
 
 download_directory = os.path.join(temp_directory, 'Downloads')
 
+if not os.path.exists(download_directory):
+    os.makedirs(download_directory)
+
 token_file = os.path.join(temp_directory, 'token.pickle')
 
 

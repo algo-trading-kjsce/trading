@@ -152,7 +152,7 @@ class Executor:
 
         plt.plot(equity_curve.date, net_pos)
         plt.plot(equity_curve.date, profit)
-        plt.title('Plot Results')
+        plt.title(self.m_strategyName)
 
         plt.draw()
 
@@ -171,6 +171,9 @@ class Executor:
             files.append(imageFileName)
 
             excelFileName = f"{fileName}.xlsx"
+
+            if paishe_utils.is_linux():
+                paishe_utils.create_file(excelFileName)
 
             with pd.ExcelWriter(excelFileName) as writer:
                 self.m_csv_data.to_excel(writer, sheet_name='csvData', index=False)
