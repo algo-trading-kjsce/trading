@@ -25,6 +25,8 @@ if not os.path.exists(download_directory):
 
 token_file = os.path.join(temp_directory, 'token.pickle')
 
+print_messages = True
+
 
 def is_linux() -> bool:
     """
@@ -393,3 +395,18 @@ def get_temp_dir() -> str:
     """
 
     return temp_directory
+
+
+def custom_print(s: str):
+    """
+    Print message to console.
+
+    Parameters:
+    ----------
+    s : str
+        Input string to print
+    """
+
+    if print_messages:
+        print(s)
+

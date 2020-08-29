@@ -1,5 +1,6 @@
 import pandas as pd
 
+import paishe_utils
 import StrategyExecutor
 import CalculatedData
 
@@ -82,7 +83,7 @@ def mymethod(dates, csv_data) -> CalculatedData.CalculatedData:
 
                         if (current_day.close.values[j] < pdh) & flag:
 
-                            for k in range(j, 75):
+                            for k in range(j, len(current_day)):
 
                                 if current_day.low.values[k] < current_day.low.values[j]:
 
@@ -127,9 +128,14 @@ def mymethod(dates, csv_data) -> CalculatedData.CalculatedData:
 
 
 def main():
-    executor = StrategyExecutor.Executor(fileNames=["banknifty5min.csv"], is_short=False, caller=__file__, func=mymethod)
 
-    executor.run(plotResults=True, uploadResults=False)
+    paishe_utils.custom_print(f"\n\n\n\n\n//////////////////////////////// {__file__} ////////////////////////////////\n")
+
+    executor = StrategyExecutor.Executor(fileNames=["ACC.csv", "APOLLOTYRE.csv", "ASIANPAINT.csv"], is_short=False, caller=__file__, func=mymethod)
+
+    executor.run(plotResults=False, uploadResults=False)
+
+    paishe_utils.custom_print("\n\n\n")
     pass
 
 

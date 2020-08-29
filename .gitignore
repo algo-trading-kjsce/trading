@@ -1,2 +1,4 @@
 .vs*
-*.pyc
+__pycache__*
+
+target*

@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 from typing import Tuple
 from typing import List
 
+import math
 import os
 import paishe_utils
 
@@ -34,7 +35,7 @@ def get_hlc(day_data: pd.DataFrame) -> Tuple[float, float, float]:
 
 
 class Executor:
-    def __init__(self, fileNames: List, is_short: bool, caller: str, func):
+    def __init__(self, fileNames: List, is_short: bool, caller: str, func, initial_amount: float = 100000, n_shares: int = 10):
         """Constructor for Executor object.
 
         Parameters:
@@ -59,32 +60,45 @@ class Executor:
             if code == 0:
                 raise FileNotFoundError()
 
+            paishe_utils.custom_print(f"Found file: {file}")
+
             self.m_fileNames.append(fileName)
 
         self.m_isShort = is_short
+        self.m_initialAmount = initial_amount
+        self.m_number_of_shares = n_shares
         self.m_currentFileName = ''
         self.m_strategyName = os.path.splitext(os.path.basename(caller))[0]
         self.m_func = func
         self.m_csv_data = None
-        self.m_plot_data = pd.DataFrame()
+        self.m_calculated_data = pd.DataFrame()
         self.m_unique_dates = None
+
+        paishe_utils.custom_print("")
+        pass
 
     def open_file(self):
         """Opens file for csv data."""
 
+        paishe_utils.custom_print("Opening...")
+
         self.m_csv_data = pd.read_csv(self.m_currentFileName)
-        self.m_csv_data.datetime = pd.to_datetime(self.m_csv_data.datetime)
+        self.m_csv_data.datetime = pd.to_datetime(self.m_csv_data.datetime).dt.tz_localize(None)
         self.m_csv_data["20 DMA"] = self.m_csv_data.close.rolling(50).mean()
 
         self.m_unique_dates = pd.DataFrame({"Date": self.m_csv_data.datetime.dt.date.unique()})
+
+        paishe_utils.custom_print("Opened.\n")
         pass
 
     def run_func(self):
         """Runs the strategy logic and gets the data to plot as final result."""
 
+        paishe_utils.custom_print("Running Strategy...")
+
         calculatedData = self.m_func(self.m_unique_dates, self.m_csv_data)
 
-        self.m_plot_data = pd.DataFrame({"entry_time": calculatedData.m_EntryTimes,
+        self.m_calculated_data = pd.DataFrame({"entry_time": calculatedData.m_EntryTimes,
                                          "entry_price": calculatedData.m_EntryPrices,
                                          "exit_time": calculatedData.m_ExitTimes,
                                          "exit_price": calculatedData.m_ExitPrices,
@@ -101,17 +115,18 @@ class Executor:
                                          "Stop_Loss": calculatedData.m_StopLosses})
 
         if self.m_isShort:
-            self.m_plot_data['profit'] = self.m_plot_data.entry_price < self.m_plot_data.exit_price
-
-            self.m_plot_data['pc_change'] = 1.0 - (self.m_plot_data['entry_price'] / self.m_plot_data['exit_price'])
+            self.m_calculated_data['profit'] = self.m_calculated_data.entry_price > self.m_calculated_data.exit_price
+            self.m_calculated_data['change'] = self.m_calculated_data['entry_price'] - self.m_calculated_data['exit_price']
 
         else:
-            self.m_plot_data['profit'] = self.m_plot_data.entry_price > self.m_plot_data.exit_price
+            self.m_calculated_data['profit'] = self.m_calculated_data.entry_price < self.m_calculated_data.exit_price
+            self.m_calculated_data['change'] = self.m_calculated_data['exit_price'] - self.m_calculated_data['entry_price']
 
-            self.m_plot_data['pc_change'] = 1.0 - (self.m_plot_data['exit_price'] / self.m_plot_data['entry_price'])
 
+        self.m_calculated_data.entry_time = pd.to_datetime(self.m_calculated_data.entry_time)
 
-        self.m_plot_data.entry_time = pd.to_datetime(self.m_plot_data.entry_time)
+        paishe_utils.custom_print("Finished Strategy.\n")
+
         pass
 
 
@@ -127,63 +142,83 @@ class Executor:
             Set to True if you want to upload results to Google Drive
         """
 
-        net_pos = [100000]
-        profit = [0]
+        paishe_utils.custom_print("Starting write...")
 
-        equity_curve = pd.DataFrame({"date": self.m_csv_data.datetime.dt.date.unique()})
+        number_of_entries = len(self.m_calculated_data)
 
-        j = 0
+        dates = [self.m_csv_data.datetime.values[0]] * number_of_entries
 
-        for i in range(len(equity_curve) - 1):
-            if j < len(self.m_plot_data):
-                if equity_curve.date.values[i + 1] == self.m_plot_data.entry_time.dt.date.values[j]:
-                    net_pos.append(net_pos[i] * (1.0 + (4.0 * self.m_plot_data.pc_change[j])))
-                    profit.append(4.0 * self.m_plot_data.pc_change[j] * net_pos[i])
-                    j += 1
-                else:
-                    net_pos.append(net_pos[i])
-                    profit.append(0)
-            else:
-                net_pos.append(net_pos[i])
-                profit.append(0)
+        previous_total = [self.m_initialAmount] * number_of_entries
+        current_total = [self.m_initialAmount] * number_of_entries
 
-        equity_curve['Total_Value'] = net_pos
-        equity_curve['Profit'] = profit
+        profit_per_share = [0] * number_of_entries
+        total_profit = [0] * number_of_entries
 
-        plt.plot(equity_curve.date, net_pos)
-        plt.plot(equity_curve.date, profit)
-        plt.title(self.m_strategyName)
+        number_of_shares = [self.m_number_of_shares] * number_of_entries
+
+        for i in range(number_of_entries):
+            calculatedDataRow = self.m_calculated_data.iloc[i]
+
+            available_shares = int(self.m_csv_data[self.m_csv_data.datetime.values == calculatedDataRow.entry_time].volume)
+
+            entry_price = float(calculatedDataRow.entry_price)
+
+            number_of_shares_that_can_be_bought = math.floor(previous_total[i] / entry_price)
+
+            actual_shares_bought = min(self.m_number_of_shares, min(number_of_shares_that_can_be_bought, available_shares))
+
+            profit_per_share[i] = calculatedDataRow.change
+
+            total_profit[i] = actual_shares_bought * calculatedDataRow.change
+
+            current_total[i] = previous_total[i] + total_profit[i]
+
+            if i != (number_of_entries - 1):
+                previous_total[i + 1] = current_total[i]
+
+            dates[i] = calculatedDataRow.entry_time
+
+        equity_curve = pd.DataFrame({"date": dates})
+
+        self.m_calculated_data['Previous Total'] = previous_total
+        self.m_calculated_data['Profit per share'] = profit_per_share
+        self.m_calculated_data['Number of shares'] = number_of_shares
+        self.m_calculated_data['Total Profit'] = total_profit
+        self.m_calculated_data['Current Total'] = current_total
+
+        stockName = os.path.splitext(os.path.basename(self.m_currentFileName))[0]
+
+        filePath = os.path.join(paishe_utils.get_temp_dir(), f"{stockName}_{self.m_strategyName}")
+
+        plt.plot(equity_curve.date, current_total)
+        plt.plot(equity_curve.date, total_profit)
+        plt.title(f"{self.m_strategyName} strategy on {stockName}\nStart={previous_total[0]}, End={current_total[number_of_entries-1]}")
 
         plt.draw()
 
+        imageFileName = f"{filePath}.png"
+        plt.savefig(fname=imageFileName)
+
+        excelFileName = f"{filePath}.xlsx"
+
+        if paishe_utils.is_linux():
+            paishe_utils.create_file(excelFileName)
+
+        with pd.ExcelWriter(excelFileName) as writer:
+            self.m_csv_data.to_excel(writer, sheet_name='csv_data', index=False)
+            self.m_calculated_data.to_excel(writer, sheet_name='final_data', index=False)
+
+        paishe_utils.custom_print("Finished writing data.\n")
+
         if uploadResults:
-            files = []
-
-            fileName = os.path.join(paishe_utils.get_temp_dir(), os.path.splitext(os.path.basename(self.m_currentFileName))[0])
-
-            imageFileName = f"{fileName}.png"
-
-            plt.savefig(fname=imageFileName)
-            
-            files.append(imageFileName)
-
-            excelFileName = f"{fileName}.xlsx"
-
-            if paishe_utils.is_linux():
-                paishe_utils.create_file(excelFileName)
-
-            with pd.ExcelWriter(excelFileName) as writer:
-                self.m_csv_data.to_excel(writer, sheet_name='csvData', index=False)
-                self.m_plot_data.to_excel(writer, sheet_name='final_data', index=False)
-                equity_curve.to_excel(writer, sheet_name='plot_data', index=False)
-
-            files.append(excelFileName)
-
-            paishe_utils.upload_results(self.m_strategyName, files)
+            paishe_utils.custom_print("Starting upload...")
+            paishe_utils.upload_results(self.m_strategyName, [imageFileName, excelFileName])
+            paishe_utils.custom_print("Finished upload.\n")
 
         if plotResults:
             plt.show()
-            
+
+        plt.close()
         pass
 
 
@@ -203,6 +238,11 @@ class Executor:
 
         for file in self.m_fileNames:
             self.m_currentFileName = file
+
+            paishe_utils.custom_print(f"\n\n----------Start File : {file}----------")
+
             self.open_file()
             self.run_func()
             self.plot_results(plotResults, uploadResults)
+
+            paishe_utils.custom_print(f"----------End File : {file}----------")
