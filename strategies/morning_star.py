@@ -45,15 +45,13 @@ def mymethod(dates, csv_data) -> CalculatedData.CalculatedData:
 
     final_data = CalculatedData.CalculatedData()
 
-    for i in range(len(csv_data.datetime.dt.date.unique()) - 1):
+    for i in range(len(dates) - 1):
 
         current_day = csv_data[csv_data.datetime.dt.date.values == dates.Date[i]].reset_index(drop=True)
 
         j = 4
 
         while j < (len(current_day) - 5):
-
-            found = False
 
             global open_price, open_price_second, open_price_third, close_price, close_price_second, close_price_third
             open_price = current_day.open.values[j]
@@ -71,8 +69,6 @@ def mymethod(dates, csv_data) -> CalculatedData.CalculatedData:
                     condition2 = abs(open_price_third - close_price_third) > abs(open_price_second - close_price_second) 
 
                     if condition1 and condition2:
-
-                        found = True
 
                         j, ent, ext, enp, exp = get_entry_exit(current_day, j)
 
@@ -94,10 +90,9 @@ def mymethod(dates, csv_data) -> CalculatedData.CalculatedData:
                         final_data.m_Condition3.append(0)
 
                     else:
+                        j+=1
                         pass
 
-            if not found:
-                j += 1
 
     return final_data
 
