@@ -9,8 +9,8 @@
  *
  */
 
-#include "ta_handler.hpp"
-#include "timer.hpp"
+#include "../include/ta_handler.hpp"
+#include "../include/timer.hpp"
 #include "utilities.hpp"
 #include "ta_utils.hpp"
 
@@ -18,11 +18,7 @@ int main([[maybe_unused]] int argc, char* argv[])
 {
     auto handler{ ta_handler{} };
 
-#ifdef _WIN32
     auto csv_files{ utilities::find_files(argv[1], argv[2]) };
-#else
-    auto csv_files{ utilities::find_files(argv[0], argv[1]) };
-#endif
 
     auto csv_result{ csv_result_t{} };
 
@@ -42,9 +38,5 @@ int main([[maybe_unused]] int argc, char* argv[])
         utilities::write_csv(csv_data, csv_file);
     }
 
-#ifdef _WIN32
     utilities::write_results(argv[3], csv_result, strategy_str);
-#else
-    utilities::write_results(argv[2], csv_result, strategy_str);
-#endif
 }

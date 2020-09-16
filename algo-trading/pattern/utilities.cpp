@@ -15,11 +15,11 @@
 
 #include <filesystem>
 
-#include "includes.hpp"
+#include "../include/includes.hpp"
 
 #include "utilities.hpp"
 
-#include "timer.hpp"
+#include "../include/timer.hpp"
 
 namespace
 {

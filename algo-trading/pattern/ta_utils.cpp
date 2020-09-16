@@ -14,7 +14,7 @@
 
 #include "ta-lib/ta_func.h"
 
-#include "timer.hpp"
+#include "../include/timer.hpp"
 #include "ta_utils.hpp"
 
 namespace ta_utilities
