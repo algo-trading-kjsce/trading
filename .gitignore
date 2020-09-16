@@ -1,5 +1,10 @@
 .vs*
 __pycache__*
+**/out/*
+**/target*
+**/build/*
+**/[Dd]ebug/*
+**/[Rr]elease/*
 
-target*
-build/*
+
+*.user

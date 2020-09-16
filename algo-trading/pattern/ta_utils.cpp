@@ -9,26 +9,16 @@
  *
  */
 
-#include <ta-lib/ta_func.h>
+#include <algorithm>
+#include <iostream>
+
+#include "ta-lib/ta_func.h"
 
 #include "timer.hpp"
 #include "ta_utils.hpp"
 
-#include <iostream>
 namespace ta_utilities
 {
-
-ta_handler::ta_handler() noexcept
-{
-    [[maybe_unused]] auto retCode{ TA_Initialize() };
-}
-
-
-ta_handler::~ta_handler()
-{
-    TA_Shutdown();
-}
-
 
 std::vector<int> find_patterns([[maybe_unused]] csv_data_s& io_csv_data)
 {
@@ -128,7 +118,7 @@ std::vector<int> find_patterns([[maybe_unused]] csv_data_s& io_csv_data)
             io_csv_data.stock_map.at(date).add_custom_column(std::move(values));
         }
 
-        auto idx{ static_cast<uint64_t>(0) };
+        auto idx{ static_cast<size_t>(0) };
 
         auto HELPER = [&](auto&& func) mutable
         {
@@ -145,12 +135,12 @@ std::vector<int> find_patterns([[maybe_unused]] csv_data_s& io_csv_data)
                 std::addressof(n_elems),
                 patterns.data());
 
-            occurrences.at(idx++) += std::count_if(patterns.begin(), patterns.end(), [](auto&& pattern)
+            occurrences.at(idx++) += static_cast<int>(std::count_if(patterns.begin(), patterns.end(), [](auto&& pattern)
             {
                 return pattern != 0;
-            });
+            }));
 
-            io_csv_data.stock_map.at(date).add_custom_column(std::vector<double>{patterns.begin(), patterns.end()});
+            io_csv_data.stock_map.at(date).add_strategy_column(std::move(patterns));
         };
 
         HELPER(TA_CDL2CROWS);

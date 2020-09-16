@@ -18,27 +18,6 @@ namespace ta_utilities
 {
 
 /**
- * @brief handler for initializing and safely closing TA-Library
- * 
- */
-class ta_handler
-{
-public:
-    /**
-     * @brief Construct a new ta_handler object
-     * 
-     */
-    explicit ta_handler() noexcept;
-
-    /**
-     * @brief Destroy the ta_handler object
-     * 
-     */
-    ~ta_handler();
-};
-
-
-/**
  * @brief find patterns in the stock price ranges using TA-Lib
  * 
  * @param io_csv_data csv data

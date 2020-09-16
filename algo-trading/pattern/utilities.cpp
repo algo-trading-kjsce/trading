@@ -10,6 +10,7 @@
  */
 
 #include <fstream>
+#include <sstream>
 #include <iostream>
 
 #include <filesystem>
@@ -213,7 +214,7 @@ void write_csv(const csv_data_s& i_csv_data, const std::filesystem::path& path)
 
         for (auto&& date : i_csv_data.dates)
         {
-            auto idx{ static_cast<uint64_t>(0) };
+            auto idx{ static_cast<size_t>(0) };
 
             auto date_str{ date.to_str() };
 
@@ -246,7 +247,7 @@ void write_results(const std::filesystem::path& i_path, const csv_result_t& i_cs
 
             file << stock_name << delimiter;
 
-            auto idx{ static_cast<uint64_t>(0) };
+            auto idx{ static_cast<size_t>(0) };
 
             for (auto&& occurrence : strategy_occurrences)
             {

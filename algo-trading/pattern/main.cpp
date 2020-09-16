@@ -1,6 +1,6 @@
 /**
  * @file main.cpp
- * @author your name (you@domain.com)
+ * @author ashwinn76
  * @brief
  * @version 0.1
  * @date 2020-09-12
@@ -9,15 +9,20 @@
  *
  */
 
+#include "../include/ta_handler.hpp"
 #include "timer.hpp"
 #include "utilities.hpp"
 #include "ta_utils.hpp"
 
-int main()
+int main([[maybe_unused]] int argc, [[maybe_unused]] char* argv[])
 {
-    auto handler{ ta_utilities::ta_handler{} };
+    auto handler{ ta_handler{} };
 
-    auto csv_files{ utilities::find_files("/home/ashwinn76/Downloads/CSV/", ".csv") };
+#ifdef _WIN32
+    auto csv_files{ utilities::find_files(argv[1], argv[2]) };
+#else
+    auto csv_files{ utilities::find_files(argv[0], argv[1]) };
+#endif
 
     auto csv_result{ csv_result_t{} };
 
@@ -37,5 +42,9 @@ int main()
         utilities::write_csv(csv_data, csv_file);
     }
 
-    utilities::write_results("/home/ashwinn76/Downloads/result.csv", csv_result, strategy_str);
+#ifdef _WIN32
+    utilities::write_results(argv[3], csv_result, strategy_str);
+#else
+    utilities::write_results(argv[2], csv_result, strategy_str);
+#endif
 }

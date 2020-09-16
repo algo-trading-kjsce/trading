@@ -83,9 +83,9 @@ struct hash<date_s>
     /**
      * @brief Operator overload for finding lesser of two objects
      *
-     * @param i_lhs First date object
-     * @param i_rhs Second date object
-     * @return true if first is less than second
+     * @param i_date Date object to hash
+     * 
+     * @return hash value of date object
      */
     auto operator()(const date_s& i_date) const noexcept
     {

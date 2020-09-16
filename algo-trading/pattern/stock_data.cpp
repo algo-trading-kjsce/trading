@@ -10,6 +10,7 @@
  */
 
 #include <sstream>
+#include <algorithm>
 
 #include "includes.hpp"
 #include "stock_data.hpp"
@@ -82,7 +83,7 @@ raw_stock_input_s stock_data::raw_values() const noexcept
 }
 
 
-std::string stock_data::columns_str(uint64_t i_index) const noexcept
+std::string stock_data::columns_str(size_t i_index) const noexcept
 {
     auto ss{ std::stringstream{} };
 
