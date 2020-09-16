@@ -9,12 +9,12 @@
  *
  */
 
-#include "../include/ta_handler.hpp"
+#include "ta_handler.hpp"
 #include "timer.hpp"
 #include "utilities.hpp"
 #include "ta_utils.hpp"
 
-int main([[maybe_unused]] int argc, [[maybe_unused]] char* argv[])
+int main([[maybe_unused]] int argc, char* argv[])
 {
     auto handler{ ta_handler{} };
 

@@ -168,7 +168,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="csv_data.hpp" />
-    <ClInclude Include="includes.hpp" />
     <ClInclude Include="stock_data.hpp" />
     <ClInclude Include="structs.hpp" />
     <ClInclude Include="ta_utils.hpp" />
