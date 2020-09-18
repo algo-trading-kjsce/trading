@@ -15,11 +15,12 @@
 
 #include <filesystem>
 
-#include "../include/includes.hpp"
+#include "common_utilities.hpp"
+#include "includes.hpp"
 
 #include "utilities.hpp"
 
-#include "../include/timer.hpp"
+#include "timer.hpp"
 
 namespace
 {
@@ -154,7 +155,7 @@ std::list<std::filesystem::path> find_files(const char* i_path, const char* i_ex
 }
 
 
-csv_data_s read_csv(const std::filesystem::path& i_filepath)
+csv_data read_initial_csv(const std::filesystem::path& i_filepath)
 {
     if (!std::filesystem::exists(i_filepath))
     {
@@ -167,11 +168,11 @@ csv_data_s read_csv(const std::filesystem::path& i_filepath)
 
     auto dates{ std::list<date_s>{} };
 
-    auto column_names{ std::string{} };
+    auto column_names_str{ std::string{} };
 
     if (auto file{ std::ifstream{i_filepath} }; file.good())
     {
-        std::getline(file, column_names);
+        std::getline(file, column_names_str);
 
         while (file.good() && !file.eof())
         {
@@ -194,23 +195,34 @@ csv_data_s read_csv(const std::filesystem::path& i_filepath)
         }
     }
 
+    auto column_names{ std::list<std::pair<column_type, std::string>>{} };
+    {
+        auto ss{ std::stringstream{column_names_str} };
+        auto column_name{ std::string{} };
+
+        while (std::getline(ss, column_name, delimiter))
+        {
+            column_names.emplace_back(column_type::basic, column_name);
+        }
+    }
+
     std::cout << "File " << i_filepath.filename().string() << " read in " << tmr.total_time().count() << "ms\n";
 
     auto save_file_path{ get_result_path(i_filepath) };
 
-    return { std::move(dates), std::move(stockInformation), std::move(column_names) };
+    return { std::move(dates), std::move(stockInformation) };
 }
 
 
-void write_csv(const csv_data_s& i_csv_data, const std::filesystem::path& path)
+void write_csv_with_strategies(const csv_data& i_csv_data, const std::filesystem::path& i_path)
 {
     auto tmr{ timer{} };
 
-    auto new_path{ get_result_path(path) };
+    auto new_path{ get_result_path(i_path) };
 
     if (auto file{ std::ofstream{new_path} }; file.good())
     {
-        file << i_csv_data.get_header() << '\n';
+        file << get_column_name<column_type::basic | column_type::strategy>() << '\n';
 
         for (auto&& date : i_csv_data.dates)
         {
@@ -233,7 +245,10 @@ void write_csv(const csv_data_s& i_csv_data, const std::filesystem::path& path)
 }
 
 
-void write_results(const std::filesystem::path& i_path, const csv_result_t& i_csv_result, const std::string& i_strategy_names)
+void write_strategy_occurrences(
+    const std::filesystem::path& i_path,
+    const strategy_occurrence_count_t& i_csv_result,
+    const std::string& i_strategy_names)
 {
     if (auto file{ std::ofstream{i_path} }; file.good())
     {

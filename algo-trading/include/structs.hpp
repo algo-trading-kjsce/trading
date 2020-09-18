@@ -11,29 +11,14 @@
 
 #pragma once
 
-#include <list>
 #include <vector>
 #include <string>
 
- /**
-  * @brief Enumeration for months in a year
-  *
-  */
-enum class month
-{
-    jan = 1,
-    feb = 2,
-    mar = 3,
-    apr = 4,
-    may = 5,
-    jun = 6,
-    jul = 7,
-    aug = 8,
-    sep = 9,
-    oct = 10,
-    nov = 11,
-    dec = 12,
-};
+#include <sstream>
+#include <iomanip>
+
+#include "includes.hpp"
+#include "enums.hpp"
 
 
 /**
@@ -56,7 +41,17 @@ struct date_s
      *
      * @return string form of date
      */
-    std::string to_str() const noexcept;
+    std::string to_str() const noexcept
+    {
+        auto ss{ std::stringstream{} };
+
+        ss <<
+            std::setw(2) << std::setfill('0') << m_year << '-' <<
+            std::setw(2) << std::setfill('0') << static_cast<int>(m_month) << '-' <<
+            std::setw(2) << std::setfill('0') << m_day;
+
+        return ss.str();
+    }
 
     /**
      * @brief Equality operator for date objects
@@ -65,7 +60,12 @@ struct date_s
      * @param i_rhs second date object
      * @return true if dates are equal
      */
-    friend bool operator==(const date_s& i_lhs, const date_s& i_rhs) noexcept;
+    friend bool operator==(const date_s& i_lhs, const date_s& i_rhs) noexcept
+    {
+        return i_lhs.m_year == i_rhs.m_year &&
+            i_lhs.m_month == i_rhs.m_month &&
+            i_lhs.m_day == i_rhs.m_day;
+    }
 };
 
 
@@ -112,7 +112,17 @@ struct time_s
      *
      * @return string form of time
      */
-    std::string to_str() const noexcept;
+    std::string to_str() const noexcept
+    {
+        auto ss{ std::stringstream{} };
+
+        ss <<
+            std::setw(2) << std::setfill('0') << hours << ':' <<
+            std::setw(2) << std::setfill('0') << minutes << ':' <<
+            std::setw(2) << std::setfill('0') << seconds;
+
+        return ss.str();
+    }
 };
 
 
@@ -123,6 +133,7 @@ struct time_s
 struct candle_s
 {
     int index{};    // Index in the csv file
+    int volume{};   // number of shares available
 
     date_s date{};    // date of the candle
     time_s time{};    // time of the candle
@@ -132,8 +143,6 @@ struct candle_s
     double low{};     // low price of candle
     double close{};   // close price of can
 
-    int volume{};    // number of shares available
-};
 
 /**
  * @brief Write candle object to stream
@@ -142,7 +151,17 @@ struct candle_s
  * @param i_candle object to be written out
  * @return std::ostream
  */
-std::ostream& operator<<(std::ostream& io_stream, const candle_s& i_candle);
+friend std::ostream& operator<<(std::ostream& io_stream, const candle_s& i_candle)
+{
+    io_stream
+        << i_candle.index << delimiter << i_candle.date.to_str() << ' ' << i_candle.time.to_str()
+        << delimiter << i_candle.open << delimiter << i_candle.high << delimiter << i_candle.low << delimiter << i_candle.close
+        << delimiter << i_candle.volume;
+
+    return io_stream;
+}
+
+};
 
 
 /**
@@ -156,6 +175,3 @@ struct raw_stock_input_s
     std::vector<double> lows{};     // low prices in array form
     std::vector<double> closes{};   // close prices in array form
 };
-
-
-using csv_result_t = std::list<std::pair<std::string, std::vector<int>>>;

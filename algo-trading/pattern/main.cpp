@@ -9,10 +9,15 @@
  *
  */
 
-#include "../include/ta_handler.hpp"
-#include "../include/timer.hpp"
+#include <iostream>
+
+#include "common_utilities.hpp"
+
+#include "ta_handler.hpp"
+#include "timer.hpp"
 #include "utilities.hpp"
 #include "ta_utils.hpp"
+
 
 int main([[maybe_unused]] int argc, char* argv[])
 {
@@ -20,23 +25,31 @@ int main([[maybe_unused]] int argc, char* argv[])
 
     auto csv_files{ utilities::find_files(argv[1], argv[2]) };
 
-    auto csv_result{ csv_result_t{} };
+    auto csv_result{ strategy_occurrence_count_t{} };
 
     auto strategy_str{ std::string{} };
 
+    auto tmr{ timer{} };
+
+    auto idx{ 1 };
+
     for (auto&& csv_file : csv_files)
     {
-        auto csv_data{ utilities::read_csv(csv_file) };
+        std::cout << "\nFile #" << idx++ << '\n';
+
+        auto csv_data{ utilities::read_initial_csv(csv_file) };
 
         csv_result.emplace_back(csv_file.stem().string(), ta_utilities::find_patterns(csv_data));
 
         if (strategy_str.empty())
         {
-            strategy_str = csv_data.csv_strategy_column_names;
+            strategy_str = utilities::get_column_name<column_type::strategy>();
         }
 
-        utilities::write_csv(csv_data, csv_file);
+        utilities::write_csv_with_strategies(csv_data, csv_file);
     }
 
-    utilities::write_results(argv[3], csv_result, strategy_str);
+    std::cout << "\nTotal time: " << tmr.total_time().count() << "ms\n";
+
+    utilities::write_strategy_occurrences(argv[3], csv_result, strategy_str);
 }

@@ -9,6 +9,8 @@
  * 
  */
 
+#pragma once
+
 #include "ta-lib/ta_func.h"
 
 /**
