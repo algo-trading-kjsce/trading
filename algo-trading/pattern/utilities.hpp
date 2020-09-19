@@ -58,9 +58,6 @@ void write_csv_with_strategies(const csv_data& i_csv_data, const std::filesystem
  * @param i_csv_result results to be written out
  * @param i_strategy_names names of the strategy in csv format
  */
-void write_strategy_occurrences(
-    const std::filesystem::path& i_path,
-    const strategy_occurrence_count_t& i_csv_result,
-    const std::string& i_strategy_names);
+void write_strategy_occurrences(const std::filesystem::path& i_path, const strategy_occurrence_count_t& i_csv_result);
 
 }

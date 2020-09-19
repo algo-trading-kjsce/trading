@@ -159,17 +159,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="csv_data.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="stock_data.cpp" />
-    <ClCompile Include="structs.cpp" />
     <ClCompile Include="ta_utils.cpp" />
     <ClCompile Include="utilities.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="csv_data.hpp" />
-    <ClInclude Include="stock_data.hpp" />
-    <ClInclude Include="structs.hpp" />
     <ClInclude Include="ta_utils.hpp" />
     <ClInclude Include="utilities.hpp" />
   </ItemGroup>

@@ -11,8 +11,6 @@
 
 #include <iostream>
 
-#include "common_utilities.hpp"
-
 #include "ta_handler.hpp"
 #include "timer.hpp"
 #include "utilities.hpp"
@@ -27,8 +25,6 @@ int main([[maybe_unused]] int argc, char* argv[])
 
     auto csv_result{ strategy_occurrence_count_t{} };
 
-    auto strategy_str{ std::string{} };
-
     auto tmr{ timer{} };
 
     auto idx{ 1 };
@@ -41,15 +37,10 @@ int main([[maybe_unused]] int argc, char* argv[])
 
         csv_result.emplace_back(csv_file.stem().string(), ta_utilities::find_patterns(csv_data));
 
-        if (strategy_str.empty())
-        {
-            strategy_str = utilities::get_column_name<column_type::strategy>();
-        }
-
         utilities::write_csv_with_strategies(csv_data, csv_file);
     }
 
     std::cout << "\nTotal time: " << tmr.total_time().count() << "ms\n";
 
-    utilities::write_strategy_occurrences(argv[3], csv_result, strategy_str);
+    utilities::write_strategy_occurrences(argv[3], csv_result);
 }

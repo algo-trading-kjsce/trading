@@ -195,17 +195,6 @@ csv_data read_initial_csv(const std::filesystem::path& i_filepath)
         }
     }
 
-    auto column_names{ std::list<std::pair<column_type, std::string>>{} };
-    {
-        auto ss{ std::stringstream{column_names_str} };
-        auto column_name{ std::string{} };
-
-        while (std::getline(ss, column_name, delimiter))
-        {
-            column_names.emplace_back(column_type::basic, column_name);
-        }
-    }
-
     std::cout << "File " << i_filepath.filename().string() << " read in " << tmr.total_time().count() << "ms\n";
 
     auto save_file_path{ get_result_path(i_filepath) };
@@ -222,7 +211,7 @@ void write_csv_with_strategies(const csv_data& i_csv_data, const std::filesystem
 
     if (auto file{ std::ofstream{new_path} }; file.good())
     {
-        file << get_column_name<column_type::basic | column_type::strategy>() << '\n';
+        file << utilities::all_columns_str << '\n';
 
         for (auto&& date : i_csv_data.dates)
         {
@@ -247,12 +236,11 @@ void write_csv_with_strategies(const csv_data& i_csv_data, const std::filesystem
 
 void write_strategy_occurrences(
     const std::filesystem::path& i_path,
-    const strategy_occurrence_count_t& i_csv_result,
-    const std::string& i_strategy_names)
+    const strategy_occurrence_count_t& i_csv_result)
 {
     if (auto file{ std::ofstream{i_path} }; file.good())
     {
-        file << "Name" << delimiter << i_strategy_names << "Total\n";
+        file << "Name" << delimiter << utilities::strategy_columns_str << "Total\n";
 
         auto total_occurrences_per_strategy{ std::vector<int>(54, 0) };
 
