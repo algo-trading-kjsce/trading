@@ -111,97 +111,78 @@ static_assert(strategy_names.size() == static_cast<std::size_t>(ta_helper::ta_st
 
 
 /**
- * @brief Get the column names
+ * @brief Get the number of characters that needs to be pre-allocated for the column header string
  *
- * @tparam i_column_filter bitwise column filter
- *
- * @return column names in csv format
+ * @tparam __filter Filter of types of columns to use
+ * @return number of characters to pre-allocate
  */
-template <auto filter>
-auto get_column_name() noexcept
-{
-   auto ss{ std::stringstream{} };
-
-   if constexpr ((filter & column_type::basic) > 0)
-   {
-      for (auto&& basic_column : column_names)
-      {
-         ss << basic_column << delimiter;
-      }
-   }
-
-   if constexpr ((filter & column_type::strategy) > 0)
-   {
-      for (auto&& strategy : strategy_names)
-      {
-         ss << strategy << delimiter;
-      }
-   }
-   return ss.str();
-}
-
-
 template <auto __filter>
 constexpr auto char_count()
 {
-   auto count{ 0 };
+    auto count{ 0 };
 
-   if constexpr ((__filter & column_type::basic) > 0)
-   {
-      for (auto&& name : utilities::column_names)
-      {
-         count += (name.size() + 1);
-      }
-   }
+    if constexpr ((__filter & column_type::basic) > 0)
+    {
+        for (auto&& name : utilities::column_names)
+        {
+            count += (name.size() + 1);
+        }
+    }
 
-   if constexpr ((__filter & column_type::strategy) > 0)
-   {
-      for (auto&& name : utilities::strategy_names)
-      {
-         count += (name.size() + 1);
-      }
-   }
+    if constexpr ((__filter & column_type::strategy) > 0)
+    {
+        for (auto&& name : utilities::strategy_names)
+        {
+            count += (name.size() + 1);
+        }
+    }
 
-   return count;
+    return count;
 }
 
 
-template <auto filter>
+/**
+ * @brief Get the column names header in a csv format
+ *
+ * @tparam __filter Filter of what column types are needed
+ * @return column header string in csv format
+ */
+template <auto __filter>
 constexpr auto get_column_names()
 {
-   auto arr{ std::array<char, char_count<filter>()>{} };
+    auto arr{ std::array<char, char_count<__filter>()>{} };
 
-   auto idx{ 0 };
+    auto idx{ 0 };
 
-   if constexpr ((filter & column_type::basic) > 0)
-   {
-      for (auto&& name : utilities::column_names)
-      {
-         for (auto&& ch : name)
-         {
-            arr[idx++] = ch;
-         }
+    if constexpr ((__filter & column_type::basic) > 0)
+    {
+        for (auto&& name : utilities::column_names)
+        {
+            for (auto&& ch : name)
+            {
+                arr[idx++] = ch;
+            }
 
-         arr[idx++] = delimiter;
-      }
-   }
+            arr[idx++] = delimiter;
+        }
+    }
 
-   if constexpr ((filter & column_type::strategy) > 0)
-   {
-      for (auto&& name : utilities::strategy_names)
-      {
-         for (auto&& ch : name)
-         {
-            arr[idx++] = ch;
-         }
+    if constexpr ((__filter & column_type::strategy) > 0)
+    {
+        for (auto&& name : utilities::strategy_names)
+        {
+            for (auto&& ch : name)
+            {
+                arr[idx++] = ch;
+            }
 
-         arr[idx++] = delimiter;
-      }
-   }
+            arr[idx++] = delimiter;
+        }
+    }
 
-   arr.back() = '\0';
+    arr.back() = '\0';
 
-   return arr;
+    return arr;
 }
 
 
