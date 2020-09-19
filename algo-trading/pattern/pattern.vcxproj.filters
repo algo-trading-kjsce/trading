@@ -3,10 +3,8 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ta_utils.cpp" />
-    <ClCompile Include="utilities.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ta_utils.hpp" />
-    <ClInclude Include="utilities.hpp" />
   </ItemGroup>
 </Project>

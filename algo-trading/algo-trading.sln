@@ -5,7 +5,13 @@ VisualStudioVersion = 16.0.30413.136
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pattern", "pattern\pattern.vcxproj", "{93FD3140-8E95-4707-AFEF-0DCA5D4B5046}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "csv_utilities", "csv_utilities\csv_utilities.vcxitems", "{1CE8BBAD-7D19-47DD-8D6D-816D663A8479}"
+EndProject
 Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		csv_utilities\csv_utilities.vcxitems*{1ce8bbad-7d19-47dd-8d6d-816d663a8479}*SharedItemsImports = 9
+		csv_utilities\csv_utilities.vcxitems*{93fd3140-8e95-4707-afef-0dca5d4b5046}*SharedItemsImports = 4
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
 		Debug|x64 = Debug|x64
