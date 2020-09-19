@@ -1,6 +1,6 @@
 /**
  * @file stock_data.hpp
- * @author your name (you@domain.com)
+ * @author ashwinn76
  * @brief
  * @version 0.1
  * @date 2020-09-06
