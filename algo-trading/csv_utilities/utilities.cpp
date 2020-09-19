@@ -17,10 +17,10 @@
 
 #include "common_utilities.hpp"
 #include "includes.hpp"
+#include "timer.hpp"
+
 
 #include "utilities.hpp"
-
-#include "timer.hpp"
 
 namespace
 {
