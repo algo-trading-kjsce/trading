@@ -1,1 +1,13 @@
-*.xlsx filter=lfs diff=lfs merge=lfs -text
+* text=auto
+
+*.cpp text
+*.hpp text
+*.h text
+
+*.sh text eol=lf
+
+*.sln text eol=crlf
+*.vcxproj text eol=crlf
+*.filters text eol=crlf
+
+*.xlsx binary
