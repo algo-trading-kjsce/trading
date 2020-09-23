@@ -35,7 +35,7 @@
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
   <ItemGroup>
-    <ClCompile Include="utilities_tests.cpp" />
+    <ClCompile Include="structs_tests.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

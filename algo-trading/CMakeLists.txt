@@ -11,13 +11,17 @@ endif()
 
 include(gtest.cmake)
 
-include_directories("${PROJECT_SOURCE_DIR}/include/")
+include_directories("${PROJECT_SOURCE_DIR}/src/include/")
 
-set(CMAKE_CXX_FLAGS "-Wall -Wextra")
+set(CMAKE_CXX_FLAGS "-Wall -Wextra -Werror")
 
 find_package(Threads)
 
-add_subdirectory(csv_utilities)
-add_subdirectory(csv_utilities_tests)
+# source projects
+add_subdirectory(src/csv_utilities)
+add_subdirectory(src/resolution)
+add_subdirectory(src/pattern)
 
-add_subdirectory(pattern)
+# tests
+add_subdirectory(tests/csv_utilities_tests)
+add_subdirectory(tests/resolution_tests)

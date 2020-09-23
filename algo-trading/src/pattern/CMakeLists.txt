@@ -6,4 +6,4 @@ set(SOURCES ${SOURCES})
 
 add_executable(${BINARY} ${SOURCES})
 
-target_link_libraries(${BINARY} PUBLIC libta_lib.a csv_utilities)
+target_link_libraries(${BINARY} PUBLIC libta_lib.a csv_utilities resolution)
