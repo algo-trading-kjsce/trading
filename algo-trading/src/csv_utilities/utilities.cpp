@@ -13,6 +13,7 @@
 #include <sstream>
 #include <iostream>
 
+#include <optional>
 #include <filesystem>
 
 #include "type_trait_utils.hpp"
