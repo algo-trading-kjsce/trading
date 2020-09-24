@@ -93,7 +93,7 @@ enum ta_strategy
  * @brief Types of columns in csv files
  * 
  */
-enum column_type : int
+enum column_type : std::int32_t
 {
     basic = 1 << 0,
     strategy = 1 << 1,

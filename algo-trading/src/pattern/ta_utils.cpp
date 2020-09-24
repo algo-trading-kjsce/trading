@@ -20,11 +20,11 @@
 namespace ta_utilities
 {
 
-std::vector<int> find_patterns(csv_data& io_csv_data)
+std::vector<std::int32_t> find_patterns(csv_data& io_csv_data)
 {
     auto tmr{ timer{} };
 
-    auto occurrences{ std::vector<int>(54, 0) };
+    auto occurrences{ std::vector<std::int32_t>(54, 0) };
 
     for (auto&& date : io_csv_data.dates)
     {
@@ -39,11 +39,11 @@ std::vector<int> find_patterns(csv_data& io_csv_data)
 
         auto HELPER = [&](auto&& func) mutable
         {
-            auto patterns{ std::vector<int>(number_of_entries, 0) };
+            auto patterns{ std::vector<std::int32_t>(number_of_entries, 0) };
 
             [[maybe_unused]] auto ret_code = func(
                 0,
-                static_cast<int>(number_of_entries) - 1,
+                static_cast<std::int32_t>(number_of_entries) - 1,
                 raw_values.opens.data(),
                 raw_values.highs.data(),
                 raw_values.lows.data(),
@@ -52,7 +52,7 @@ std::vector<int> find_patterns(csv_data& io_csv_data)
                 std::addressof(n_elems),
                 patterns.data());
 
-            occurrences.at(idx) += static_cast<int>(std::count_if(patterns.begin(), patterns.end(), [](auto&& pattern)
+            occurrences.at(idx) += static_cast<std::int32_t>(std::count_if(patterns.begin(), patterns.end(), [](auto&& pattern)
             {
                 return pattern != 0;
             }));

@@ -18,7 +18,7 @@
 
 #include "csv_data.hpp"
 
-using strategy_occurrence_count_t = std::list<std::pair<std::string, std::vector<int>>>;
+using strategy_occurrence_count_t = std::list<std::pair<std::string, std::vector<std::int32_t>>>;
 
 namespace utilities
 {
@@ -47,8 +47,9 @@ csv_data read_initial_csv(const std::filesystem::path& i_filepath);
  *
  * @param i_csv_data csv data to be written out
  * @param i_path path to written file
+ * @param i_write_strategies flag to specify whether strategy information should be written out
  */
-void write_csv_with_strategies(const csv_data& i_csv_data, const std::filesystem::path& i_path);
+void write_csv(const csv_data& i_csv_data, const std::filesystem::path& i_path, bool i_write_strategies);
 
 
 /**

@@ -24,6 +24,6 @@ namespace ta_utilities
  * 
  * @return number of times each strategy was triggered
  */
-std::vector<int> find_patterns(csv_data& io_csv_data);
+std::vector<std::int32_t> find_patterns(csv_data& io_csv_data);
 
 }

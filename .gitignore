@@ -1,6 +1,6 @@
 .vs*
 __pycache__*
-**/out/*
+**/out*
 **/target*
 **/build/*
 **/[Dd]ebug/*

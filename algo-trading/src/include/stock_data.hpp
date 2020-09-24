@@ -18,6 +18,8 @@
 #include <sstream>
 #include <algorithm>
 
+#include "type_trait_utils.hpp"
+
 #include "structs.hpp"
 
  /**
@@ -27,11 +29,13 @@
 class stock_data
 {
 private:
-    date_s m_date{};
+    date_s m_date{}; // date of the stock data
 
-    std::list<candle_s> m_candles{};
+    std::int32_t m_candle_size{}; // candle size in minutes
 
-    std::unordered_map<ta_helper::ta_strategy, std::vector<int>> m_strategies{};
+    std::list<candle_s> m_candles{}; // List of candles of that particular stock data
+
+    std::unordered_map<ta_helper::ta_strategy, std::vector<std::int32_t>> m_strategies{}; // List of probable strategies identified by TA-Lib
 
 public:
     using stock_iterator = typename decltype(m_candles)::const_iterator;
@@ -39,10 +43,12 @@ public:
     /**
      * @brief Construct a new CStockData object
      *
-     * @param date Date of stock information
+     * @param i_candle_size Size of candle
+     * @param i_date Date of stock information
      */
-    explicit stock_data(date_s date) noexcept
-        : m_date{ std::move(date) }
+    explicit stock_data(std::int32_t i_candle_size, date_s i_date) noexcept
+        : m_date{ std::move(i_date) }
+        , m_candle_size{ i_candle_size }
     {
     }
 
@@ -54,6 +60,32 @@ public:
      */
     void add_candle(candle_s i_candle) noexcept
     {
+        if (!m_candles.empty())
+        {
+            auto new_candle_size{ i_candle.time - m_candles.back().time };
+
+            if (new_candle_size > m_candle_size)
+            {
+                auto number_of_extra_candles{ (new_candle_size / m_candle_size) - 1 };
+
+                auto ref_candle{ m_candles.back() };
+
+                for (auto i{ 1 }; i <= number_of_extra_candles; ++i)
+                {
+                    auto new_time{ ref_candle.time };
+
+                    new_time.add_minutes(m_candle_size * i);
+
+                    m_candles.push_back(candle_s{ -1, 0, ref_candle.date, std::move(new_time), ref_candle.close, ref_candle.close, ref_candle.close, ref_candle.close });
+                }
+            }
+            else if (new_candle_size < m_candle_size)
+            {
+                std::cout << "File with inconsistent candle sizes...";
+                return;
+            }
+        }
+
         m_candles.push_back(std::move(i_candle));
     }
 
@@ -64,7 +96,7 @@ public:
      * @param i_strategy type of strategy
      * @param i_custom_column custom value to add
      */
-    void add_strategy_column(ta_helper::ta_strategy i_strategy, std::vector<int> i_strategy_column) noexcept
+    void add_strategy_column(ta_helper::ta_strategy i_strategy, std::vector<std::int32_t> i_strategy_column) noexcept
     {
         m_strategies.try_emplace(i_strategy, i_strategy_column);
     }
@@ -89,6 +121,28 @@ public:
     stock_iterator end() const noexcept
     {
         return m_candles.end();
+    }
+
+
+    /**
+     * @brief get access to candlesticks
+     *
+     * @return candle sticks of a the day
+     */
+    decltype(auto) candles() const noexcept
+    {
+        return(m_candles);
+    }
+
+
+    /**
+     * @brief the duration of the candles in the stock data
+     * 
+     * @return duration in minutes
+     */
+    auto candle_size() const noexcept
+    {
+        return m_candle_size;
     }
 
 

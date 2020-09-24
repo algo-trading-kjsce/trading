@@ -9,8 +9,19 @@ if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release)
 endif()
 
-include_directories("${PROJECT_SOURCE_DIR}/include/")
+include(gtest.cmake)
 
-set(CMAKE_CXX_FLAGS "-Wall -Wextra")
+include_directories("${PROJECT_SOURCE_DIR}/src/include/")
 
-add_subdirectory(pattern)
+set(CMAKE_CXX_FLAGS "-Wall -Wextra -Werror")
+
+find_package(Threads)
+
+# source projects
+add_subdirectory(src/csv_utilities)
+add_subdirectory(src/resolution)
+add_subdirectory(src/pattern)
+
+# tests
+add_subdirectory(tests/csv_utilities_tests)
+add_subdirectory(tests/resolution_tests)

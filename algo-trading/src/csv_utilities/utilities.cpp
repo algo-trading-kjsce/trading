@@ -13,14 +13,16 @@
 #include <sstream>
 #include <iostream>
 
+#include <optional>
 #include <filesystem>
 
+#include "type_trait_utils.hpp"
 #include "common_utilities.hpp"
 #include "includes.hpp"
+#include "timer.hpp"
+
 
 #include "utilities.hpp"
-
-#include "timer.hpp"
 
 namespace
 {
@@ -58,65 +60,76 @@ auto str_to_time(const std::string& i_str)
  */
 auto get_candle(const std::string& i_line)
 {
-    auto candle{ candle_s{} };
+    auto o_candle{ std::optional<candle_s>{} };
 
-    auto stream{ std::stringstream{i_line} };
-
-    auto parsed{ std::string{} };
-
-    if (std::getline(stream, parsed, delimiter))
+    if (!i_line.empty())
     {
-        candle.index = std::stoi(parsed);
+        o_candle.emplace();
+
+        auto stream{ std::stringstream{i_line} };
+
+        auto parsed{ std::string{} };
+
+        if (std::getline(stream, parsed, delimiter))
+        {
+            o_candle->index = std::stoi(parsed);
+        }
+
+        if (std::getline(stream, parsed, delimiter))
+        {
+            std::tie(o_candle->date, o_candle->time) = str_to_time(parsed);
+        }
+
+        if (std::getline(stream, parsed, delimiter))
+        {
+            o_candle->open = std::stod(parsed);
+        }
+
+        if (std::getline(stream, parsed, delimiter))
+        {
+            o_candle->high = std::stod(parsed);
+        }
+
+        if (std::getline(stream, parsed, delimiter))
+        {
+            o_candle->low = std::stod(parsed);
+        }
+
+        if (std::getline(stream, parsed, delimiter))
+        {
+            o_candle->close = std::stod(parsed);
+        }
+
+        if (std::getline(stream, parsed, delimiter))
+        {
+            o_candle->volume = std::stoi(parsed);
+        }
     }
 
-    if (std::getline(stream, parsed, delimiter))
-    {
-        std::tie(candle.date, candle.time) = str_to_time(parsed);
-    }
-
-    if (std::getline(stream, parsed, delimiter))
-    {
-        candle.open = std::stod(parsed);
-    }
-
-    if (std::getline(stream, parsed, delimiter))
-    {
-        candle.high = std::stod(parsed);
-    }
-
-    if (std::getline(stream, parsed, delimiter))
-    {
-        candle.low = std::stod(parsed);
-    }
-
-    if (std::getline(stream, parsed, delimiter))
-    {
-        candle.close = std::stod(parsed);
-    }
-
-    if (std::getline(stream, parsed, delimiter))
-    {
-        candle.volume = std::stoi(parsed);
-    }
-
-    return candle;
+    return o_candle;
 }
 
 
-/**
- * @brief Get the result path object
- *
- * @param i_filepath path of the old file
- * @return path of the file to be written out
- */
-auto get_result_path(std::filesystem::path i_filepath)
+auto get_candle_size(const std::filesystem::path& i_filepath)
 {
-    auto new_filepath{ i_filepath.parent_path() };
-    new_filepath = new_filepath.parent_path();
+    auto str{ std::string{} };
 
-    new_filepath.append("Results").append(i_filepath.filename().string());
+    if (auto file{ std::ifstream{i_filepath} }; file.good())
+    {
+        std::getline(file, str);
 
-    return new_filepath;
+        std::getline(file, str);
+        if (auto c1{ get_candle(str) }; c1.has_value())
+        {
+            std::getline(file, str);
+            if (auto c2{ get_candle(str) }; c2.has_value())
+            {
+                return c2->time - c1->time;
+            }
+        }
+    }
+
+    return 0;
 }
 
 }
@@ -170,6 +183,8 @@ csv_data read_initial_csv(const std::filesystem::path& i_filepath)
 
     auto column_names_str{ std::string{} };
 
+    auto candle_size{ get_candle_size(i_filepath) };
+
     if (auto file{ std::ifstream{i_filepath} }; file.good())
     {
         std::getline(file, column_names_str);
@@ -180,42 +195,52 @@ csv_data read_initial_csv(const std::filesystem::path& i_filepath)
 
             std::getline(file, line);
 
-            auto candle{ get_candle(line) };
-
-            auto date{ candle.date };
-
-            auto [iter, newly_inserted] = stockInformation.try_emplace(date_s{ date }, stock_data{ date });
-
-            iter->second.add_candle(std::move(candle));
-
-            if (newly_inserted)
+            if (auto o_candle{ get_candle(line) }; o_candle.has_value())
             {
-                dates.push_back(date);
+                auto date{ o_candle->date };
+
+                auto [iter, newly_inserted] = stockInformation.try_emplace(date_s{ date }, stock_data{ candle_size, date });
+
+                iter->second.add_candle(std::move(o_candle.value()));
+
+                if (newly_inserted)
+                {
+                    dates.push_back(date);
+                }
             }
         }
     }
 
     std::cout << "File " << i_filepath.filename().string() << " read in " << tmr.total_time().count() << "ms\n";
 
-    auto save_file_path{ get_result_path(i_filepath) };
-
     return { std::move(dates), std::move(stockInformation) };
 }
 
 
-void write_csv_with_strategies(const csv_data& i_csv_data, const std::filesystem::path& i_path)
+void write_csv(const csv_data& i_csv_data, const std::filesystem::path& i_path, bool i_write_strategies)
 {
     auto tmr{ timer{} };
 
-    auto new_path{ get_result_path(i_path) };
-
-    if (auto file{ std::ofstream{new_path} }; file.good())
+    if (auto result_directory{ i_path.parent_path() }; !std::filesystem::exists(result_directory))
     {
-        file << utilities::all_columns_str << '\n';
+        std::filesystem::create_directories(result_directory);
+    }
+
+    if (auto file{ std::ofstream{i_path} }; file.good())
+    {
+        if (i_write_strategies)
+        {
+            file << utilities::all_columns_str << '\n';
+        }
+        else
+        {
+            file << utilities::basic_columns_str << '\n';
+        }
+
 
         for (auto&& date : i_csv_data.dates)
         {
-            auto idx{ static_cast<size_t>(0) };
+            auto idx{ 0_sz };
 
             auto date_str{ date.to_str() };
 
@@ -223,14 +248,22 @@ void write_csv_with_strategies(const csv_data& i_csv_data, const std::filesystem
 
             for (auto&& candle : day_data)
             {
-                file << candle << delimiter << day_data.columns_str(idx) << '\n';
+                candle.write_csv_text(file);
 
-                ++idx;
+                if (i_write_strategies)
+                {
+                    file << delimiter << day_data.columns_str(idx++) << '\n';
+                }
+                else
+                {
+                    file << '\n';
+                }
+
             }
         }
     }
 
-    std::cout << "File " << new_path.filename().string() << " written in " << tmr.total_time().count() << "ms\n";
+    std::cout << "File " << i_path.filename().string() << " written in " << tmr.total_time().count() << "ms\n";
 }
 
 
@@ -242,7 +275,7 @@ void write_strategy_occurrences(
     {
         file << "Name" << delimiter << utilities::strategy_columns_str << "Total\n";
 
-        auto total_occurrences_per_strategy{ std::vector<int>(54, 0) };
+        auto total_occurrences_per_strategy{ std::vector<std::int32_t>(54, 0) };
 
         for (auto&& [stock_name, strategy_occurrences] : i_csv_result)
         {
@@ -250,7 +283,7 @@ void write_strategy_occurrences(
 
             file << stock_name << delimiter;
 
-            auto idx{ static_cast<size_t>(0) };
+            auto idx{ 0_sz };
 
             for (auto&& occurrence : strategy_occurrences)
             {

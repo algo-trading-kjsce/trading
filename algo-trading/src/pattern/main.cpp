@@ -13,7 +13,9 @@
 
 #include "ta_handler.hpp"
 #include "timer.hpp"
-#include "utilities.hpp"
+
+#include "../csv_utilities/utilities.hpp"
+
 #include "ta_utils.hpp"
 
 
@@ -37,7 +39,7 @@ int main([[maybe_unused]] int argc, char* argv[])
 
         csv_result.emplace_back(csv_file.stem().string(), ta_utilities::find_patterns(csv_data));
 
-        utilities::write_csv_with_strategies(csv_data, csv_file);
+        utilities::write_csv(csv_data, csv_file, true);
     }
 
     std::cout << "\nTotal time: " << tmr.total_time().count() << "ms\n";

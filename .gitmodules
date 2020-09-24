@@ -1,0 +1,3 @@
+[submodule "algo-trading/gtest"]
+	path = algo-trading/gtest
+	url = https://github.com/google/googletest.git
