@@ -20,8 +20,7 @@ jobs:
 
     - name: Download nuget.exe and update nuget packages
       run: |
-           curl https://dist.nuget.org/win-x86-commandline/latest/nuget.exe --output my_nuget.exe
-           my_nuget.exe restore algo-trading\algo-trading.sln
+           nuget restore algo-trading\algo-trading.sln
 
     - name: Compile in Release
       run: MSBuild algo-trading\algo-trading.sln -m -p:Configuration=Release
