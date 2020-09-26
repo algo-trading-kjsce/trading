@@ -13,6 +13,10 @@ include(gtest.cmake)
 
 include_directories("${PROJECT_SOURCE_DIR}/src/include/")
 
+if(UNIX)
+  link_directories("${PROJECT_SOURCE_DIR}/lib/unix/")
+endif()
+
 set(CMAKE_CXX_FLAGS "-Wall -Wextra -Werror")
 
 find_package(Threads)
@@ -20,7 +24,7 @@ find_package(Threads)
 # source projects
 add_subdirectory(src/csv_utilities)
 add_subdirectory(src/resolution)
-add_subdirectory(src/pattern)
+add_subdirectory(src/trading)
 
 # tests
 add_subdirectory(tests/csv_utilities_tests)
