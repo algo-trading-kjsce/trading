@@ -1,4 +1,4 @@
-name: linux_build
+name: windows
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [ master ]
 
 jobs:
-  linux_build:
+  build:
 
     runs-on: windows-latest
 
@@ -17,6 +17,11 @@ jobs:
 
     - name: Add msbuild to PATH
       uses: microsoft/setup-msbuild@v1.0.1
+
+    - name: Download nuget.exe and update nuget packages
+      run: |
+           curl https://dist.nuget.org/win-x86-commandline/latest/nuget.exe my_nuget.exe
+           my_nuget.exe restore algo-trading\algo-trading.sln
 
     - name: Compile in Release
       run: MSBuild algo-trading\algo-trading.sln -m -p:Configuration=Release
