@@ -18,9 +18,8 @@ jobs:
     - name: Add msbuild to PATH
       uses: microsoft/setup-msbuild@v1.0.1
 
-    - name: Download nuget.exe and update nuget packages
-      run: |
-           nuget restore algo-trading\algo-trading.sln
+    - name: Update nuget packages
+      run: nuget restore algo-trading\algo-trading.sln
 
     - name: Compile in Release
       run: MSBuild algo-trading\algo-trading.sln -m -p:Configuration=Release
