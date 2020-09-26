@@ -9,7 +9,7 @@ on:
 jobs:
   linux_build:
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
 
     steps:
     - name: Clone repository
@@ -20,7 +20,6 @@ jobs:
 
     - name: Install dependencies
       run: ./scripts/install_reqs.h
-      shell: bash
 
     - name: Compile and run tests (Release)
       run: ./scripts/build.sh Release
