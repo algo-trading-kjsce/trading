@@ -19,7 +19,7 @@ jobs:
       uses: textbook/git-checkout-submodule-action@2.1.1
 
     - name: Install dependencies
-      run: ./scripts/install_reqs.h
+      run: ./scripts/install_reqs.sh
 
     - name: Compile and run tests (Release)
       run: ./scripts/build.sh Release
