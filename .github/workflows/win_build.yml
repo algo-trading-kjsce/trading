@@ -19,10 +19,10 @@ jobs:
       uses: microsoft/setup-msbuild@v1.0.1
 
     - name: Update nuget packages
-      run: nuget restore algo-trading\algo-trading.sln
+      run: nuget restore cpp\algo-trading.sln
 
     - name: Compile in Release
-      run: MSBuild algo-trading\algo-trading.sln -m -p:Configuration=Release
+      run: MSBuild cpp\algo-trading.sln -m -p:Configuration=Release
       
     - name: Compile in Debug
-      run: MSBuild algo-trading\algo-trading.sln -m
+      run: MSBuild cpp\algo-trading.sln -m
