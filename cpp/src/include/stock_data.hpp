@@ -16,6 +16,7 @@
 #include <unordered_map>
 
 #include <sstream>
+#include <iostream>
 #include <algorithm>
 
 #include "type_trait_utils.hpp"
