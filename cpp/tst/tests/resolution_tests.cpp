@@ -17,8 +17,8 @@
 
 #include "type_trait_utils.hpp"
 
-#include "../../src/csv_utilities/utilities.hpp"
-#include "../../src/resolution/resolution.hpp"
+#include "../../src/processor/utilities.hpp"
+#include "../../src/processor/resolution.hpp"
 
 
 namespace
@@ -26,15 +26,15 @@ namespace
 
 auto change_resolution_test_code(const csv_data& i_csv_data, const std::filesystem::path& i_output_file_path, std::int32_t i_new_resolution)
 {
-    auto new_csv{ csv::resolution::change_resolution(i_csv_data, i_new_resolution) };
+    auto new_csv{ trading::csv::resolution::change_resolution(i_csv_data, i_new_resolution) };
 
-    utilities::write_csv(new_csv, i_output_file_path, false);
+    trading::utilities::write_csv(new_csv, i_output_file_path, false);
 
     EXPECT_TRUE(std::filesystem::exists(i_output_file_path));
 
-    auto test_csv_data{ utilities::read_initial_csv(i_output_file_path) };
+    auto test_csv_data{ trading::utilities::read_initial_csv(i_output_file_path) };
 
-    EXPECT_EQ(csv::resolution::find_candle_size(test_csv_data), i_new_resolution);
+    EXPECT_EQ(trading::csv::resolution::find_candle_size(test_csv_data), i_new_resolution);
 }
 
 }
@@ -42,13 +42,15 @@ auto change_resolution_test_code(const csv_data& i_csv_data, const std::filesyst
 
 TEST(resolution_tests, candle_size_test)
 {
+    auto buffer_{ buffer_manager{} };
+
     auto directory_path{ TEST_DATA_DIRECTORY };
 
     auto csv_5min_file{ directory_path.append("5min_data.csv") };
 
-    auto csv_data{ utilities::read_initial_csv(csv_5min_file) };
+    auto csv_data{ trading::utilities::read_initial_csv(csv_5min_file) };
 
-    auto candle_size{ csv::resolution::find_candle_size(csv_data) };
+    auto candle_size{ trading::csv::resolution::find_candle_size(csv_data) };
 
     EXPECT_EQ(candle_size, 5_i32);
 }
@@ -56,6 +58,8 @@ TEST(resolution_tests, candle_size_test)
 
 TEST(resolution_tests, combine_candles_test)
 {
+    auto buffer_{ buffer_manager{} };
+
     auto date{ date_s{2019, month::apr, 12} };
 
     auto candle1{ candle_s{0, 123, date, time_s{12, 05}, 100.0, 125.0, 95.0, 110.0} };
@@ -66,13 +70,13 @@ TEST(resolution_tests, combine_candles_test)
 
     auto expected_candle{ candle_s{0, 149, date, time_s{12, 05}, 100.0, 125.0, 75.0, 80.0} };
 
-    auto combined_3_candles{ csv::resolution::combine_candles(date, candles.begin(), candles.end(), candles.size()) };
+    auto combined_3_candles{ trading::csv::resolution::combine_candles(date, candles.begin(), candles.end(), candles.size()) };
 
     EXPECT_TRUE(expected_candle == combined_3_candles);
 
     expected_candle = candle_s{ 0, 156, date, time_s{12, 05}, 100.0, 125.0, 75.0, 117.0 };
 
-    auto combined_2_candles{ csv::resolution::combine_candles(date, candles.begin(), std::next(candles.begin(), 2), 2_sz) };
+    auto combined_2_candles{ trading::csv::resolution::combine_candles(date, candles.begin(), std::next(candles.begin(), 2), 2_sz) };
 
     EXPECT_TRUE(expected_candle == combined_2_candles);
 }
@@ -80,11 +84,13 @@ TEST(resolution_tests, combine_candles_test)
 
 TEST(resolution_tests, change_resolution_test_success)
 {
+    auto buffer_{ buffer_manager{} };
+
     auto directory_path{ TEST_DATA_DIRECTORY };
 
     auto csv_5min_file{ directory_path.append("5min_data.csv") };
 
-    auto csv_data{ utilities::read_initial_csv(csv_5min_file) };
+    auto csv_data{ trading::utilities::read_initial_csv(csv_5min_file) };
     
     auto output_file{ TEST_OUTPUT_DIRECTORY.append("5min_data.csv") };
 
@@ -95,11 +101,13 @@ TEST(resolution_tests, change_resolution_test_success)
 
 TEST(resolution_tests, change_resolution_test_failure)
 {
+    auto buffer_{ buffer_manager{} };
+
     auto directory_path{ TEST_DATA_DIRECTORY };
 
     auto csv_5min_file{ directory_path.append("5min_data.csv") };
 
-    auto csv_data{ utilities::read_initial_csv(csv_5min_file) };
+    auto csv_data{ trading::utilities::read_initial_csv(csv_5min_file) };
 
     auto output_file{ TEST_OUTPUT_DIRECTORY.append("5min_data.csv") };
 

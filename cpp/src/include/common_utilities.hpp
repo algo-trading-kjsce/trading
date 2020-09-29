@@ -20,7 +20,7 @@ using namespace std::string_view_literals;
 #include "includes.hpp"
 #include "enums.hpp"
 
-namespace utilities
+namespace common::utilities
 {
 
 /**

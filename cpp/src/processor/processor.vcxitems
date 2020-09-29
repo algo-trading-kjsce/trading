@@ -3,7 +3,7 @@
   <PropertyGroup Label="Globals">
     <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
     <HasSharedItems>true</HasSharedItems>
-    <ItemsProjectGuid>{1ce8bbad-7d19-47dd-8d6d-816d663a8479}</ItemsProjectGuid>
+    <ItemsProjectGuid>{281284e6-0144-11eb-adc1-0242ac120002}</ItemsProjectGuid>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
@@ -14,9 +14,15 @@
     <ProjectCapability Include="SourceItemsFromImports" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)processor.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)resolution.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)ta_utils.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)utilities.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)processor.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)resolution.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)ta_utils.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)utilities.hpp" />
   </ItemGroup>
 </Project>

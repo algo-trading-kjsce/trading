@@ -16,7 +16,7 @@
 
 #include "csv_data.hpp"
 
-namespace csv::resolution
+namespace trading::csv::resolution
 {
 
 /**

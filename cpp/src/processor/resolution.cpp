@@ -12,11 +12,12 @@
 #include <iostream>
 #include <algorithm>
 
+#include "timer.hpp"
 #include "type_trait_utils.hpp"
 
 #include "resolution.hpp"
 
-namespace csv::resolution
+namespace trading::csv::resolution
 {
 
 std::int32_t find_candle_size(const csv_data& i_csv_data) noexcept
@@ -27,6 +28,8 @@ std::int32_t find_candle_size(const csv_data& i_csv_data) noexcept
 
 csv_data change_resolution(const csv_data& i_csv_data, std::int32_t i_new_candle_size)
 {
+    auto tmr{ timer{} };
+
     auto new_csv_data{ csv_data{} };
 
     auto old_candle_size{ find_candle_size(i_csv_data) };
@@ -58,7 +61,7 @@ csv_data change_resolution(const csv_data& i_csv_data, std::int32_t i_new_candle
 
             auto end_iter{ std::next(iter, max_possible_candles) };
 
-            auto new_candle{ combine_candles(date, iter, end_iter, max_possible_candles) };
+            auto new_candle{ trading::csv::resolution::combine_candles(date, iter, end_iter, max_possible_candles) };
 
             new_candle.index = new_index++;
 
@@ -69,6 +72,8 @@ csv_data change_resolution(const csv_data& i_csv_data, std::int32_t i_new_candle
             remaining_candles -= max_possible_candles;
         }
     }
+
+    std::cout << "Resolution changed from " << old_candle_size << " to " << i_new_candle_size << " in " << tmr.total_time().count() << "ms\n";
 
     return new_csv_data;
 }

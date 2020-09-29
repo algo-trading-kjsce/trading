@@ -22,10 +22,8 @@ set(CMAKE_CXX_FLAGS "-Wall -Wextra -Werror")
 find_package(Threads)
 
 # source projects
-add_subdirectory(src/csv_utilities)
-add_subdirectory(src/resolution)
+add_subdirectory(src/processor)
 add_subdirectory(src/trading)
 
 # tests
-add_subdirectory(tests/csv_utilities_tests)
-add_subdirectory(tests/resolution_tests)
+add_subdirectory(tst/tests)

@@ -135,7 +135,7 @@ auto get_candle_size(const std::filesystem::path& i_filepath)
 }
 
 
-namespace utilities
+namespace trading::utilities
 {
 
 std::list<std::filesystem::path> find_files(const char* i_path, const char* i_extension/* = nullptr*/)
@@ -230,11 +230,11 @@ void write_csv(const csv_data& i_csv_data, const std::filesystem::path& i_path, 
     {
         if (i_write_strategies)
         {
-            file << utilities::all_columns_str << '\n';
+            file << common::utilities::all_columns_str << '\n';
         }
         else
         {
-            file << utilities::basic_columns_str << '\n';
+            file << common::utilities::basic_columns_str << '\n';
         }
 
 
@@ -273,7 +273,7 @@ void write_strategy_occurrences(
 {
     if (auto file{ std::ofstream{i_path} }; file.good())
     {
-        file << "Name" << delimiter << utilities::strategy_columns_str << "Total\n";
+        file << "Name" << delimiter << common::utilities::strategy_columns_str << "Total\n";
 
         auto total_occurrences_per_strategy{ std::vector<std::int32_t>(54, 0) };
 
