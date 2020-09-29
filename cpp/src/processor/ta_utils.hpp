@@ -14,7 +14,7 @@
 
 #include "csv_data.hpp"
 
-namespace ta_utilities
+namespace trading::ta_utilities
 {
 
 /**

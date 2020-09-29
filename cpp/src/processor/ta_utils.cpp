@@ -17,7 +17,7 @@
 #include "timer.hpp"
 #include "ta_utils.hpp"
 
-namespace ta_utilities
+namespace trading::ta_utilities
 {
 
 std::vector<std::int32_t> find_patterns(csv_data& io_csv_data)
