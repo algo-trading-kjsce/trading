@@ -52,6 +52,14 @@ void show_help()
 }
 
 
+/**
+ * @brief Generic processor for command line inputs
+ *
+ * @tparam _Func template for lambda functions
+ * @param i_input_path input path for csv files
+ * @param i_output_path output path for csv files
+ * @param i_process_function processor lambda function
+ */
 template <typename _Func>
 void process(std::filesystem::path i_input_path, std::filesystem::path i_output_path, _Func&& i_process_function)
 {
@@ -80,6 +88,68 @@ void process(std::filesystem::path i_input_path, std::filesystem::path i_output_
     }
 }
 
+
+auto change_resolution(int i_argc, const char* i_argv[])
+{
+    if (i_argc != 5)
+    {
+        invalid_arg();
+        return trading::trading_app_result::too_few_arguments;
+    }
+
+    const auto new_resolution{ std::stoi(i_argv[2]) };
+
+    auto process_resolution = [&new_resolution](const auto& i_input_path, const auto& i_output_path)
+    {
+        auto old_csv_data{ trading::utilities::read_initial_csv(i_input_path) };
+
+        auto new_csv_data{ trading::csv::resolution::change_resolution(old_csv_data, new_resolution) };
+
+        trading::utilities::write_csv(new_csv_data, i_output_path, false);
+    };
+
+    process(i_argv[3], i_argv[4], process_resolution);
+
+    return trading::trading_app_result::success;
+}
+
+
+auto identify_patterns(int i_argc, const char* i_argv[])
+{
+    if (i_argc != 5)
+    {
+        invalid_arg();
+        return trading::trading_app_result::too_few_arguments;
+    }
+
+    auto handler{ ta_handler{} };
+
+    auto idx{ 1 };
+
+    auto csv_result{ strategy_occurrence_count_t{} };
+
+    auto run_patterns = [&idx, &csv_result](const auto& i_input_path, const auto& i_output_path) mutable
+    {
+        std::cout << "\nFile #" << idx++ << std::endl;
+
+        auto csv_data{ trading::utilities::read_initial_csv(i_input_path) };
+
+        csv_result.emplace_back(i_input_path.stem().string(), trading::ta_utilities::find_patterns(csv_data));
+
+        trading::utilities::write_csv(csv_data, i_output_path, true);
+    };
+
+    auto tmr{ timer{} };
+
+    process(i_argv[2], i_argv[3], run_patterns);
+
+    trading::utilities::write_strategy_occurrences(i_argv[4], csv_result);
+
+    std::cout << std::endl << "Total time: " << tmr.total_time().count() << "ms" << std::endl;
+
+    return trading::trading_app_result::success;
+}
+
 }
 
 
@@ -92,6 +162,7 @@ trading_app_result handle_arguments(std::int32_t argc, const char* argv[])
 
     switch (argc)
     {
+
     case 0:
     case 1:
     {
@@ -100,6 +171,7 @@ trading_app_result handle_arguments(std::int32_t argc, const char* argv[])
         result = trading_app_result::too_few_arguments;
     }
     break;
+
     case 2:
     {
         if (strcmp(argv[1], "--help") == 0)
@@ -117,45 +189,11 @@ trading_app_result handle_arguments(std::int32_t argc, const char* argv[])
     {
         if (strcmp(argv[1], "-r") == 0)
         {
-            const auto new_resolution{ std::stoi(argv[2]) };
-
-            auto process_resolution = [&new_resolution](const auto& i_input_path, const auto& i_output_path)
-            {
-                auto old_csv_data{ trading::utilities::read_initial_csv(i_input_path) };
-
-                auto new_csv_data{ trading::csv::resolution::change_resolution(old_csv_data, new_resolution) };
-
-                trading::utilities::write_csv(new_csv_data, i_output_path, false);
-            };
-
-            process(argv[3], argv[4], process_resolution);
+            result = change_resolution(argc, argv);
         }
         else if (strcmp(argv[1], "-p") == 0)
         {
-            auto handler{ ta_handler{} };
-
-            auto idx{ 1 };
-
-            auto csv_result{ strategy_occurrence_count_t{} };
-
-            auto run_patterns = [&idx, &csv_result](const auto& i_input_path, const auto& i_output_path) mutable
-            {
-                std::cout << "\nFile #" << idx++ << std::endl;
-
-                auto csv_data{ trading::utilities::read_initial_csv(i_input_path) };
-
-                csv_result.emplace_back(i_input_path.stem().string(), trading::ta_utilities::find_patterns(csv_data));
-
-                trading::utilities::write_csv(csv_data, i_output_path, true);
-            };
-
-            auto tmr{ timer{} };
-
-            process(argv[2], argv[3], run_patterns);
-
-            trading::utilities::write_strategy_occurrences(argv[4], csv_result);
-
-            std::cout << std::endl << "Total time: " << tmr.total_time().count() << "ms" << std::endl;
+            result = identify_patterns(argc, argv);
         }
         else
         {
