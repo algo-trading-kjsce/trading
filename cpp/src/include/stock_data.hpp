@@ -39,7 +39,8 @@ private:
     std::unordered_map<ta_helper::ta_strategy, std::vector<std::int32_t>> m_strategies{}; // List of probable strategies identified by TA-Lib
 
 public:
-    using stock_iterator = typename decltype(m_candles)::const_iterator;
+    using iterator = typename decltype(m_candles)::iterator;
+    using const_iterator = typename decltype(m_candles)::const_iterator;
 
     /**
      * @brief Construct a new CStockData object
@@ -106,9 +107,9 @@ public:
     /**
      * @brief begin iterator
      *
-     * @return begin iterator for CStockData object
+     * @return begin iterator for stock_data object
      */
-    stock_iterator begin() const noexcept
+    iterator begin() noexcept
     {
         return m_candles.begin();
     }
@@ -117,9 +118,31 @@ public:
     /**
      * @brief end iterator
      *
-     * @return beyond-the-end iterator for CStockData object
+     * @return beyond-the-end iterator for stock_data object
      */
-    stock_iterator end() const noexcept
+    iterator end() noexcept
+    {
+        return m_candles.end();
+    }
+
+
+    /**
+     * @brief const begin iterator
+     *
+     * @return begin iterator for stock_data object
+     */
+    const_iterator begin() const noexcept
+    {
+        return m_candles.begin();
+    }
+
+
+    /**
+     * @brief const end iterator
+     *
+     * @return beyond-the-end iterator for stock_data object
+     */
+    const_iterator end() const noexcept
     {
         return m_candles.end();
     }
@@ -138,7 +161,7 @@ public:
 
     /**
      * @brief the duration of the candles in the stock data
-     * 
+     *
      * @return duration in minutes
      */
     auto candle_size() const noexcept
