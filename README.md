@@ -1,29 +1,19 @@
-# README #
+# Trading App #
 
-This README would normally document whatever steps are necessary to get your application up and running.
+C++ application to run pattern recognition on historical and live stock market prices to determine 
 
-### What is this repository for? ###
+## How to build ##
 
-* Quick summary
-* Version
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
+### Windows ###
 
-### How do I get set up? ###
+* Windows configuration has a sln file that can be opened in Visual Studio to build and run.
 
-* Summary of set up
-* Configuration
-* Dependencies
-* Database configuration
-* How to run tests
-* Deployment instructions
+### Linux ###
 
-### Contribution guidelines ###
+* Run ``scripts/install_reqs.sh``
+* Run ``scripts/build.sh``
 
-* Writing tests
-* Code review
-* Other guidelines
 
-### Who do I talk to? ###
+## How to run ##
 
-* Repo owner or admin
-* Other community or team contact
+* Run ``trading --help`` to see the different options available
