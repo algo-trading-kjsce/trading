@@ -17,7 +17,7 @@
 class timer
 {
 private:
-    std::list<std::chrono::system_clock::time_point> m_points{};
+    std::list<std::chrono::steady_clock::time_point> m_points{};
 
 public:
     /**
@@ -26,7 +26,7 @@ public:
      */
     explicit timer() noexcept
     {
-        m_points.push_back(std::chrono::system_clock::now());
+        m_points.push_back(std::chrono::steady_clock::now());
     }
 
 
@@ -37,11 +37,11 @@ public:
      */
     std::chrono::milliseconds total_time() noexcept
     {
-        auto time{ std::chrono::system_clock::now() };
+        auto time{ std::chrono::steady_clock::now() };
 
         auto duration{ std::chrono::duration_cast<std::chrono::milliseconds>(time - m_points.front()) };
 
-        m_points.push_back(time);
+        m_points.push_back(std::move(time));
 
         return duration;
     }
@@ -54,11 +54,11 @@ public:
      */
     std::chrono::milliseconds lap_time() noexcept
     {
-        auto time{ std::chrono::system_clock::now() };
+        auto time{ std::chrono::steady_clock::now() };
 
         auto duration{ std::chrono::duration_cast<std::chrono::milliseconds>(time - m_points.back()) };
 
-        m_points.push_back(time);
+        m_points.push_back(std::move(time));
 
         return duration;
     }

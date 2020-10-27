@@ -19,7 +19,7 @@ endif()
 
 set(CMAKE_CXX_FLAGS "-Wall -Wextra -Werror")
 
-find_package(Threads)
+find_package(Threads REQUIRED)
 
 # source projects
 add_subdirectory(src/processor)

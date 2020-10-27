@@ -6,4 +6,4 @@ set(SOURCES ${SOURCES})
 
 add_library(${BINARY} STATIC ${SOURCES})
 
-target_link_libraries(${BINARY} PUBLIC libta_lib.a)
+target_link_libraries(${BINARY} PUBLIC libta_lib.a PRIVATE Threads::Threads)
