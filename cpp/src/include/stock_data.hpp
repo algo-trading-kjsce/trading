@@ -83,7 +83,7 @@ public:
             }
             else if (new_candle_size < m_candle_size)
             {
-                std::cout << "File with inconsistent candle sizes...";
+                std::cout << "File with inconsistent candle sizes..." << std::endl;
                 return;
             }
         }

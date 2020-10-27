@@ -12,6 +12,9 @@
 #include <iostream>
 #include <string.h>
 
+#include <mutex>
+#include <future>
+
 #include "ta_handler.hpp"
 #include "timer.hpp"
 
@@ -21,7 +24,7 @@
 #include "ta_utils.hpp"
 #include "processor.hpp"
 
-
+static std::mutex csv_result_mutex{};
 
 namespace
 {
@@ -70,11 +73,13 @@ void process(std::filesystem::path i_input_path, std::filesystem::path i_output_
             i_output_path = i_output_path.parent_path();
         }
 
+        auto async_processes{ std::vector<std::future<void>>{} };
+
         for (auto&& file : trading::utilities::find_files(i_input_path.string().c_str(), ".csv"))
         {
             auto out_file{ i_output_path / file.filename() };
 
-            i_process_function(file, out_file);
+            async_processes.push_back(std::async(std::launch::async, i_process_function, file, out_file));
         }
     }
     else if (std::filesystem::is_regular_file(i_input_path))
@@ -124,7 +129,7 @@ auto identify_patterns(int i_argc, const char* i_argv[])
 
     auto handler{ ta_handler{} };
 
-    auto idx{ 1 };
+    auto idx{ std::atomic_int32_t{1} };
 
     auto csv_result{ strategy_occurrence_count_t{} };
 
@@ -134,7 +139,12 @@ auto identify_patterns(int i_argc, const char* i_argv[])
 
         auto csv_data{ trading::utilities::read_initial_csv(i_input_path) };
 
-        csv_result.emplace_back(i_input_path.stem().string(), trading::ta_utilities::find_patterns(csv_data));
+        auto num_strategy_occurrences{ trading::ta_utilities::find_patterns(csv_data) };
+
+        {
+            auto lk{ std::lock_guard{csv_result_mutex} };
+            csv_result.emplace_back(i_input_path.stem().string(), std::move(num_strategy_occurrences));
+        }
 
         trading::utilities::write_csv(csv_data, i_output_path, true);
     };

@@ -211,9 +211,9 @@ csv_data read_initial_csv(const std::filesystem::path& i_filepath)
         }
     }
 
-    std::cout << "File " << i_filepath.filename().string() << " read in " << tmr.total_time().count() << "ms\n";
+    std::cout << "File " << i_filepath.filename().string() << " read in " << tmr.total_time().count() << "ms" << std::endl;
 
-    return { std::move(dates), std::move(stockInformation) };
+    return { i_filepath, std::move(dates), std::move(stockInformation) };
 }
 
 
@@ -263,7 +263,7 @@ void write_csv(const csv_data& i_csv_data, const std::filesystem::path& i_path, 
         }
     }
 
-    std::cout << "File " << i_path.filename().string() << " written in " << tmr.total_time().count() << "ms\n";
+    std::cout << "File " << i_path.filename().string() << " written in " << tmr.total_time().count() << "ms" << std::endl;
 }
 
 

@@ -125,7 +125,7 @@ std::vector<std::int32_t> find_patterns(csv_data& io_csv_data)
         // HELPER(TA_CDLMORNINGSTAR);
     }
 
-    std::cout << "Patterns found in " << tmr.total_time().count() << "ms\n";
+    std::cout << "File " << io_csv_data.m_filepath.filename().string() << " : Patterns found in " << tmr.total_time().count() << "ms" << std::endl;
 
     return occurrences;
 }

@@ -11,6 +11,7 @@
 
 #pragma once
 
+#include <filesystem>
 #include <list>
 #include <unordered_map>
 
@@ -21,6 +22,8 @@
 class csv_data
 {
 public:
+    std::filesystem::path m_filepath{};    // Name of file from which csv data has been loaded
+
     std::list<date_s> dates{};    // List of unique dates
 
     std::unordered_map<date_s, stock_data> stock_map{};  // Map of date to stock data
