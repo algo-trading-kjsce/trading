@@ -179,29 +179,22 @@ public:
     {
         auto raw_input{ raw_stock_input_s{} };
 
-        raw_input.opens.reserve(m_candles.size());
-        std::transform(m_candles.cbegin(), m_candles.cend(), std::back_inserter(raw_input.opens), [](auto&& candle)
+        auto transform = [&](std::vector<double>&coll, auto&& func)
         {
-            return candle.open;
-        });
+            std::transform(m_candles.cbegin(), m_candles.cend(), std::back_inserter(coll), func);
+        };
+
+        raw_input.opens.reserve(m_candles.size());
+        transform(raw_input.opens, [](auto&& candle) { return candle.open; });
 
         raw_input.highs.reserve(m_candles.size());
-        std::transform(m_candles.cbegin(), m_candles.cend(), std::back_inserter(raw_input.highs), [](auto&& candle)
-        {
-            return candle.high;
-        });
+        transform(raw_input.highs, [](auto&& candle) { return candle.high; });
 
         raw_input.lows.reserve(m_candles.size());
-        std::transform(m_candles.cbegin(), m_candles.cend(), std::back_inserter(raw_input.lows), [](auto&& candle)
-        {
-            return candle.low;
-        });
+        transform(raw_input.lows, [](auto&& candle) { return candle.low; });
 
         raw_input.closes.reserve(m_candles.size());
-        std::transform(m_candles.cbegin(), m_candles.cend(), std::back_inserter(raw_input.closes), [](auto&& candle)
-        {
-            return candle.close;
-        });
+        transform(raw_input.closes, [](auto&& candle) { return candle.close; });
 
         return raw_input;
     }

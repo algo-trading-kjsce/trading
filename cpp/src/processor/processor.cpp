@@ -135,7 +135,7 @@ auto identify_patterns(int i_argc, const char* i_argv[])
 
     auto run_patterns = [&idx, &csv_result](const auto& i_input_path, const auto& i_output_path) mutable
     {
-        std::cout << "\nFile #" << idx++ << std::endl;
+        std::cout << std::endl << "File #" << idx++ << std::endl;
 
         auto csv_data{ trading::utilities::read_initial_csv(i_input_path) };
 
