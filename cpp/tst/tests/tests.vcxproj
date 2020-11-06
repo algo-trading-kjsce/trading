@@ -37,6 +37,7 @@
     <LibraryPath>$(SolutionDir)lib\win32;$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86)</LibraryPath>
   </PropertyGroup>
   <ItemGroup>
+    <ClCompile Include="args_handler_tests.cpp" />
     <ClCompile Include="resolution_tests.cpp" />
     <ClCompile Include="structs_tests.cpp" />
   </ItemGroup>

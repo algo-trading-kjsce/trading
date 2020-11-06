@@ -23,16 +23,11 @@
 class buffer_manager
 {
 public:
-    std::streambuf* m_pStream{};
+    std::streambuf* m_pStream{ nullptr };
 
     buffer_manager(std::streambuf* pBuffer = nullptr)
         : m_pStream{ std::cout.rdbuf(pBuffer) }
     {
-    }
-
-    auto is_valid() const noexcept
-    {
-        return m_pStream != nullptr;
     }
 
     ~buffer_manager()

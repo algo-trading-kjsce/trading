@@ -17,6 +17,8 @@
 #include <sstream>
 #include <iomanip>
 
+#include <optional>
+
 #include "includes.hpp"
 #include "enums.hpp"
 
@@ -65,6 +67,56 @@ struct date_s
         return i_lhs.m_year == i_rhs.m_year &&
             i_lhs.m_month == i_rhs.m_month &&
             i_lhs.m_day == i_rhs.m_day;
+    }
+
+
+    /**
+     * @brief Create date object if possible
+     *
+     * @param i_string Input string for parsing
+     * @return optional date object
+     */
+    static auto try_create_date(const std::string& i_string)
+    {
+        auto o_date{ std::optional<date_s>{} };
+
+        if (!i_string.empty())
+        {
+            o_date.emplace();
+
+            auto ss{ std::stringstream{i_string} };
+
+            auto parsed{ std::string{} };
+
+            if (std::getline(ss, parsed, '-'))
+            {
+                o_date->m_year = std::stoi(parsed);
+            }
+            else
+            {
+                o_date.reset();
+            }
+
+            if (std::getline(ss, parsed, '-') && o_date.has_value())
+            {
+                o_date->m_month = static_cast<month>(std::stoi(parsed));
+            }
+            else
+            {
+                o_date.reset();
+            }
+
+            if (std::getline(ss, parsed, '-') && o_date.has_value())
+            {
+                o_date->m_day = std::stoi(parsed);
+            }
+            else
+            {
+                o_date.reset();
+            }
+        }
+
+        return o_date;
     }
 };
 
@@ -167,6 +219,47 @@ struct time_s
 
         return (convert_to_seconds(i_lhs) - convert_to_seconds(i_rhs)) / 60;
     }
+
+    /**
+     * @brief create date and time from string
+     *
+     * @param i_string input string to be parsed
+     * @return date and time
+     */
+    static auto try_create_time(const std::string& i_string)
+    {
+        auto o_time{ std::optional<time_s>{} };
+
+        if (!i_string.empty())
+        {
+            o_time.emplace();
+
+            auto ss{ std::stringstream{i_string} };
+
+            auto parsed{ std::string{} };
+
+            if (std::getline(ss, parsed, ':'))
+            {
+                o_time->hours = std::stoi(parsed);
+            }
+            else
+            {
+                o_time.reset();
+            }
+
+            if (std::getline(ss, parsed, ':') && o_time.has_value())
+            {
+                o_time->minutes = std::stoi(parsed);
+            }
+
+            if (std::getline(ss, parsed, ':') && o_time.has_value())
+            {
+                o_time->seconds = std::stoi(parsed);
+            }
+        }
+
+        return o_time;
+    }
 };
 
 
@@ -223,6 +316,124 @@ struct candle_s
         auto sameClose{ i_lhs.close == i_rhs.close };
 
         return sameIndex && sameVolume && sameDate && sameTime && sameOpen && sameHigh && sameLow && sameClose;
+    }
+
+
+    /**
+     * @brief Get the candle object from the line
+     *
+     * @param i_line string to be parsed
+     * @return candle parsed from string
+     */
+    static auto try_create_candle(const std::string& i_line)
+    {
+        auto o_candle{ std::optional<candle_s>{} };
+
+        if (!i_line.empty())
+        {
+            o_candle.emplace();
+
+            auto stream{ std::stringstream{i_line} };
+
+            auto parsed{ std::string{} };
+
+            if (std::getline(stream, parsed, delimiter) && o_candle.has_value())
+            {
+                o_candle->index = std::stoi(parsed);
+            }
+            else
+            {
+                o_candle.reset();
+            }
+
+            if (std::getline(stream, parsed, delimiter) && o_candle.has_value())
+            {
+                auto ss{ std::stringstream{parsed} };
+
+                if (std::getline(ss, parsed, ' '))
+                {
+                    if (auto o_date{ date_s::try_create_date(parsed) }; o_date.has_value())
+                    {
+                        o_candle->date = std::move(o_date.value());
+                    }
+                    else
+                    {
+                        o_candle.reset();
+                    }
+                }
+                else
+                {
+                    o_candle.reset();
+                }
+
+                if (std::getline(ss, parsed, ' ') && o_candle.has_value())
+                {
+                    if (auto o_time{ time_s::try_create_time(parsed) }; o_time.has_value())
+                    {
+                        o_candle->time = std::move(o_time.value());
+                    }
+                    else
+                    {
+                        o_candle.reset();
+                    }
+                }
+                else
+                {
+                    o_candle.reset();
+                }
+            }
+            else
+            {
+                o_candle.reset();
+            }
+
+            if (std::getline(stream, parsed, delimiter) && o_candle.has_value())
+            {
+                o_candle->open = std::stod(parsed);
+            }
+            else
+            {
+                o_candle.reset();
+            }
+
+            if (std::getline(stream, parsed, delimiter) && o_candle.has_value())
+            {
+                o_candle->high = std::stod(parsed);
+            }
+            else
+            {
+                o_candle.reset();
+            }
+
+            if (std::getline(stream, parsed, delimiter) && o_candle.has_value())
+            {
+                o_candle->low = std::stod(parsed);
+            }
+            else
+            {
+                o_candle.reset();
+            }
+
+            if (std::getline(stream, parsed, delimiter) && o_candle.has_value())
+            {
+                o_candle->close = std::stod(parsed);
+            }
+            else
+            {
+                o_candle.reset();
+            }
+
+            if (std::getline(stream, parsed, delimiter) && o_candle.has_value())
+            {
+                o_candle->volume = std::stoi(parsed);
+            }
+            else
+            {
+                o_candle.reset();
+            }
+        }
+
+        return o_candle;
     }
 };
 

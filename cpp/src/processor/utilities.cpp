@@ -27,89 +27,6 @@
 namespace
 {
 
-/**
- * @brief create date and time from string
- *
- * @param i_str input string to be parsed
- * @return date and time
- */
-auto str_to_time(const std::string& i_str)
-{
-    auto date{ date_s{} };
-    auto time{ time_s{} };
-
-    auto p{ static_cast<char*>(nullptr) };
-
-    date.m_year = std::strtol(i_str.data(), std::addressof(p), 10);
-    date.m_month = static_cast<month>(std::strtol(p + 1, std::addressof(p), 10));
-    date.m_day = std::strtol(p + 1, std::addressof(p), 10);
-
-    time.hours = std::strtol(p + 1, std::addressof(p), 10);
-    time.minutes = std::strtol(p + 1, std::addressof(p), 10);
-    time.seconds = std::strtol(p + 1, std::addressof(p), 10);
-
-    return std::make_pair(date, time);
-}
-
-
-/**
- * @brief Get the candle object from the line
- *
- * @param i_line string to be parsed
- * @return candle parsed from string
- */
-auto get_candle(const std::string& i_line)
-{
-    auto o_candle{ std::optional<candle_s>{} };
-
-    if (!i_line.empty())
-    {
-        o_candle.emplace();
-
-        auto stream{ std::stringstream{i_line} };
-
-        auto parsed{ std::string{} };
-
-        if (std::getline(stream, parsed, delimiter))
-        {
-            o_candle->index = std::stoi(parsed);
-        }
-
-        if (std::getline(stream, parsed, delimiter))
-        {
-            std::tie(o_candle->date, o_candle->time) = str_to_time(parsed);
-        }
-
-        if (std::getline(stream, parsed, delimiter))
-        {
-            o_candle->open = std::stod(parsed);
-        }
-
-        if (std::getline(stream, parsed, delimiter))
-        {
-            o_candle->high = std::stod(parsed);
-        }
-
-        if (std::getline(stream, parsed, delimiter))
-        {
-            o_candle->low = std::stod(parsed);
-        }
-
-        if (std::getline(stream, parsed, delimiter))
-        {
-            o_candle->close = std::stod(parsed);
-        }
-
-        if (std::getline(stream, parsed, delimiter))
-        {
-            o_candle->volume = std::stoi(parsed);
-        }
-    }
-
-    return o_candle;
-}
-
-
 auto get_candle_size(const std::filesystem::path& i_filepath)
 {
     auto str{ std::string{} };
@@ -119,10 +36,10 @@ auto get_candle_size(const std::filesystem::path& i_filepath)
         std::getline(file, str);
 
         std::getline(file, str);
-        if (auto c1{ get_candle(str) }; c1.has_value())
+        if (auto c1{ candle_s::try_create_candle(str) }; c1.has_value())
         {
             std::getline(file, str);
-            if (auto c2{ get_candle(str) }; c2.has_value())
+            if (auto c2{ candle_s::try_create_candle(str) }; c2.has_value())
             {
                 return c2->time - c1->time;
             }
@@ -195,7 +112,7 @@ csv_data read_initial_csv(const std::filesystem::path& i_filepath)
 
             std::getline(file, line);
 
-            if (auto o_candle{ get_candle(line) }; o_candle.has_value())
+            if (auto o_candle{ candle_s::try_create_candle(line) }; o_candle.has_value())
             {
                 auto date{ o_candle->date };
 
@@ -230,11 +147,11 @@ void write_csv(const csv_data& i_csv_data, const std::filesystem::path& i_path, 
     {
         if (i_write_strategies)
         {
-            file << common::utilities::all_columns_str << '\n';
+            file << common::utilities::all_columns_str << std::endl;
         }
         else
         {
-            file << common::utilities::basic_columns_str << '\n';
+            file << common::utilities::basic_columns_str << std::endl;
         }
 
 
@@ -252,11 +169,11 @@ void write_csv(const csv_data& i_csv_data, const std::filesystem::path& i_path, 
 
                 if (i_write_strategies)
                 {
-                    file << delimiter << day_data.columns_str(idx++) << '\n';
+                    file << delimiter << day_data.columns_str(idx++) << std::endl;
                 }
                 else
                 {
-                    file << '\n';
+                    file << std::endl;
                 }
 
             }
@@ -273,7 +190,7 @@ void write_strategy_occurrences(
 {
     if (auto file{ std::ofstream{i_path} }; file.good())
     {
-        file << "Name" << delimiter << common::utilities::strategy_columns_str << "Total\n";
+        file << "Name" << delimiter << common::utilities::strategy_columns_str << "Total" << std::endl;
 
         auto total_occurrences_per_strategy{ std::vector<std::int32_t>(54, 0) };
 
@@ -294,7 +211,7 @@ void write_strategy_occurrences(
                 file << occurrence << delimiter;
             }
 
-            file << total_occurrences_for_stock << '\n';
+            file << total_occurrences_for_stock << std::endl;
         }
 
         file << "Total" << delimiter;
