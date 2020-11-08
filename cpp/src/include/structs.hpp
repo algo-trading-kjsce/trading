@@ -48,8 +48,8 @@ struct date_s
         auto ss{ std::stringstream{} };
 
         ss <<
-            std::setw(2) << std::setfill('0') << m_year << '-' <<
-            std::setw(2) << std::setfill('0') << static_cast<std::int32_t>(m_month) << '-' <<
+            std::setw(2) << std::setfill('0') << m_year << date_delimiter <<
+            std::setw(2) << std::setfill('0') << static_cast<std::int32_t>(m_month) << date_delimiter <<
             std::setw(2) << std::setfill('0') << m_day;
 
         return ss.str();
@@ -88,7 +88,7 @@ struct date_s
 
             auto parsed{ std::string{} };
 
-            if (std::getline(ss, parsed, '-'))
+            if (std::getline(ss, parsed, date_delimiter))
             {
                 o_date->m_year = std::stoi(parsed);
             }
@@ -97,7 +97,7 @@ struct date_s
                 o_date.reset();
             }
 
-            if (std::getline(ss, parsed, '-') && o_date.has_value())
+            if (std::getline(ss, parsed, date_delimiter) && o_date.has_value())
             {
                 o_date->m_month = static_cast<month>(std::stoi(parsed));
             }
@@ -106,7 +106,7 @@ struct date_s
                 o_date.reset();
             }
 
-            if (std::getline(ss, parsed, '-') && o_date.has_value())
+            if (std::getline(ss, parsed, date_delimiter) && o_date.has_value())
             {
                 o_date->m_day = std::stoi(parsed);
             }
@@ -168,8 +168,8 @@ struct time_s
         auto ss{ std::stringstream{} };
 
         ss <<
-            std::setw(2) << std::setfill('0') << hours << ':' <<
-            std::setw(2) << std::setfill('0') << minutes << ':' <<
+            std::setw(2) << std::setfill('0') << hours << time_delimiter <<
+            std::setw(2) << std::setfill('0') << minutes << time_delimiter <<
             std::setw(2) << std::setfill('0') << seconds;
 
         return ss.str();
@@ -238,7 +238,7 @@ struct time_s
 
             auto parsed{ std::string{} };
 
-            if (std::getline(ss, parsed, ':'))
+            if (std::getline(ss, parsed, time_delimiter))
             {
                 o_time->hours = std::stoi(parsed);
             }
@@ -247,12 +247,12 @@ struct time_s
                 o_time.reset();
             }
 
-            if (std::getline(ss, parsed, ':') && o_time.has_value())
+            if (std::getline(ss, parsed, time_delimiter) && o_time.has_value())
             {
                 o_time->minutes = std::stoi(parsed);
             }
 
-            if (std::getline(ss, parsed, ':') && o_time.has_value())
+            if (std::getline(ss, parsed, time_delimiter) && o_time.has_value())
             {
                 o_time->seconds = std::stoi(parsed);
             }

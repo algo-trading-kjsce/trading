@@ -17,6 +17,8 @@
 
 #include "resolution.hpp"
 
+#include "utilities.hpp"
+
 namespace trading::csv::resolution
 {
 
@@ -73,7 +75,10 @@ csv_data change_resolution(const csv_data& i_csv_data, std::int32_t i_new_candle
         }
     }
 
-    std::cout << "Resolution changed from " << old_candle_size << " to " << i_new_candle_size << " in " << tmr.total_time().count() << "ms" << std::endl;
+    {
+        auto m{ trading::utilities::io_lock{} };
+        std::cout << "Resolution changed from " << old_candle_size << " to " << i_new_candle_size << " in " << tmr.total_time().count() << "ms" << std::endl;
+    }
 
     return new_csv_data;
 }

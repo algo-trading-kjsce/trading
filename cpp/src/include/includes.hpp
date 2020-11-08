@@ -13,3 +13,7 @@
 
 
 constexpr auto delimiter{ ',' };
+
+constexpr auto time_delimiter{ ':' };
+
+constexpr auto date_delimiter{ '-' };
