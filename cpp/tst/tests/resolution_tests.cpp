@@ -91,7 +91,7 @@ TEST(resolution_tests, change_resolution_test_success)
     auto csv_5min_file{ directory_path.append("5min_data.csv") };
 
     auto csv_data{ trading::utilities::read_initial_csv(csv_5min_file) };
-    
+
     auto output_file{ TEST_OUTPUT_DIRECTORY.append("5min_data.csv") };
 
     EXPECT_NO_THROW(change_resolution_test_code(csv_data, output_file, 15_i32));

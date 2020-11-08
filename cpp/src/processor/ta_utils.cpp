@@ -17,6 +17,8 @@
 #include "timer.hpp"
 #include "ta_utils.hpp"
 
+#include "utilities.hpp"
+
 namespace trading::ta_utilities
 {
 
@@ -125,7 +127,10 @@ std::vector<std::int32_t> find_patterns(csv_data& io_csv_data)
         // HELPER(TA_CDLMORNINGSTAR);
     }
 
-    std::cout << "File " << io_csv_data.m_filepath.filename().string() << " : Patterns found in " << tmr.total_time().count() << "ms" << std::endl;
+    {
+        auto m{ trading::utilities::io_lock{} };
+        std::cout << "File " << io_csv_data.m_filepath.filename().string() << " : Patterns found in " << tmr.total_time().count() << "ms" << std::endl;
+    }
 
     return occurrences;
 }

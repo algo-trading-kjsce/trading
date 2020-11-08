@@ -15,6 +15,7 @@
 #include <string>
 #include <vector>
 #include <filesystem>
+#include <mutex>
 
 #include "csv_data.hpp"
 
@@ -22,6 +23,21 @@ using strategy_occurrence_count_t = std::list<std::pair<std::string, std::vector
 
 namespace trading::utilities
 {
+
+/**
+ * @brief class to synchronously manage writing to std::cout
+ * 
+ */
+class io_lock
+{
+public:
+    io_lock();
+    ~io_lock() = default;
+
+private:
+    std::lock_guard<std::mutex> m_lock;
+};
+
 
 /**
  * @brief finds all files in the directory, filters if extension supplied
@@ -54,7 +70,7 @@ void write_csv(const csv_data& i_csv_data, const std::filesystem::path& i_path, 
 
 /**
  * @brief write results of strategy occurrence in stock information
- * 
+ *
  * @param i_path path of file
  * @param i_csv_result results to be written out
  */

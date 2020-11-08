@@ -179,22 +179,18 @@ public:
     {
         auto raw_input{ raw_stock_input_s{} };
 
-        auto transform = [&](std::vector<double>&coll, auto&& func)
-        {
-            std::transform(m_candles.cbegin(), m_candles.cend(), std::back_inserter(coll), func);
-        };
-
         raw_input.opens.reserve(m_candles.size());
-        transform(raw_input.opens, [](auto&& candle) { return candle.open; });
-
         raw_input.highs.reserve(m_candles.size());
-        transform(raw_input.highs, [](auto&& candle) { return candle.high; });
-
         raw_input.lows.reserve(m_candles.size());
-        transform(raw_input.lows, [](auto&& candle) { return candle.low; });
-
         raw_input.closes.reserve(m_candles.size());
-        transform(raw_input.closes, [](auto&& candle) { return candle.close; });
+
+        for (auto&& candle : m_candles)
+        {
+            raw_input.opens.push_back(candle.open);
+            raw_input.highs.push_back(candle.high);
+            raw_input.lows.push_back(candle.low);
+            raw_input.closes.push_back(candle.close);
+        }
 
         return raw_input;
     }

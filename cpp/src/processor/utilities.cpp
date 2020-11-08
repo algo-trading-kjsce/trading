@@ -24,6 +24,9 @@
 
 #include "utilities.hpp"
 
+
+static std::mutex cout_mutex{};
+
 namespace
 {
 
@@ -54,6 +57,10 @@ auto get_candle_size(const std::filesystem::path& i_filepath)
 
 namespace trading::utilities
 {
+
+io_lock::io_lock() : m_lock{ cout_mutex }
+{}
+
 
 std::list<std::filesystem::path> find_files(const char* i_path, const char* i_extension/* = nullptr*/)
 {
@@ -128,7 +135,10 @@ csv_data read_initial_csv(const std::filesystem::path& i_filepath)
         }
     }
 
-    std::cout << "File " << i_filepath.filename().string() << " read in " << tmr.total_time().count() << "ms" << std::endl;
+    {
+        auto m{ trading::utilities::io_lock{} };
+        std::cout << "File " << i_filepath.filename().string() << " read in " << tmr.total_time().count() << "ms" << std::endl;
+    }
 
     return { i_filepath, std::move(dates), std::move(stockInformation) };
 }
@@ -154,7 +164,6 @@ void write_csv(const csv_data& i_csv_data, const std::filesystem::path& i_path, 
             file << common::utilities::basic_columns_str << std::endl;
         }
 
-
         for (auto&& date : i_csv_data.dates)
         {
             auto idx{ 0_sz };
@@ -175,12 +184,14 @@ void write_csv(const csv_data& i_csv_data, const std::filesystem::path& i_path, 
                 {
                     file << std::endl;
                 }
-
             }
         }
     }
 
-    std::cout << "File " << i_path.filename().string() << " written in " << tmr.total_time().count() << "ms" << std::endl;
+    {
+        auto m{ trading::utilities::io_lock{} };
+        std::cout << "File " << i_path.filename().string() << " written in " << tmr.total_time().count() << "ms" << std::endl;
+    }
 }
 
 
