@@ -59,7 +59,7 @@ TEST(general_tests, stock_data_raw_values_single_thread)
 
 TEST(general_tests, stock_data_raw_values_multi_thread)
 {
-    //    auto buffer{ buffer_manager{} };
+    auto buffer{ buffer_manager{} };
 
     auto directory_path{ TEST_DATA_DIRECTORY };
 
