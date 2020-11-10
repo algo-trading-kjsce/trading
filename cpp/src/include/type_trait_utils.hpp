@@ -11,15 +11,14 @@
 
 #pragma once
 
-#include <stdint.h>
+#include <cstdint>
 #include <type_traits>
 
 #define REQUIRES(...) typename = std::enable_if_t<__VA_ARGS__>
 
-#define UNSIGNED_CONVERTER(x) constexpr auto operator""_ui##x(unsigned long long int __n) noexcept { return static_cast<uint##x##_t>(__n); }
-#define SIGNED_CONVERTER(x) constexpr auto operator""_i##x(unsigned long long int __n) noexcept { return static_cast<int##x##_t>(__n); }
+#define CONVERT_(x, ...) constexpr auto operator""_##__VA_ARGS__##i##x(unsigned long long int __n) noexcept { return static_cast<##__VA_ARGS__##int##x##_t>(__n); }
 
-#define CONVERTER(x) UNSIGNED_CONVERTER(x) SIGNED_CONVERTER(x)
+#define CONVERTER(x) CONVERT_(x, u) CONVERT_(x)
 
 CONVERTER(8);
 CONVERTER(16);
