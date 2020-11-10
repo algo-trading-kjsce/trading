@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include <stdint.h>
+#include <cstdint>
 #include <type_traits>
 
 #define REQUIRES(...) typename = std::enable_if_t<__VA_ARGS__>
