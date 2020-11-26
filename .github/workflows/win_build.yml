@@ -30,9 +30,8 @@ jobs:
 
     - name: Upload Artifacts
       uses: actions/upload-artifact@v2
-      if: "github.ref == 'refs/head/master'"
       with:
-        name: Binaries
+        name: trading_binaries
         path: |
           cpp\Release\trading.exe
           cpp\Release\trading.pdb
