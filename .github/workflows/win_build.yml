@@ -22,8 +22,17 @@ jobs:
     - name: Update nuget packages
       run: nuget restore cpp\algo-trading.sln
 
-    - name: Compile in Release
-      run: MSBuild cpp\algo-trading.sln -m -p:Configuration=Release
-      
     - name: Compile in Debug
       run: MSBuild cpp\algo-trading.sln -m
+
+    - name: Compile in Release
+      run: MSBuild cpp\algo-trading.sln -m -p:Configuration=Release
+
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v2
+      if: github.ref == 'refs/head/master'
+      with:
+        name: Binaries
+        path: |
+          cpp\Release\trading.exe
+          cpp\Release\trading.pdb
