@@ -18,7 +18,7 @@
 
 TEST(structs_tests, date_equality_test)
 {
-    auto date1{ date_s{2015, month::aug, 12} };
+    auto date1{ date_s{2015, month::aug, day{12}} };
 
     auto date2{ date1 };
 
@@ -32,7 +32,7 @@ TEST(structs_tests, date_equality_test)
 
 TEST(structs_tests, date_str_test)
 {
-    auto date{ date_s{2012, month::feb, 10} };
+    auto date{ date_s{2012, month::feb, day{10}} };
 
     EXPECT_EQ(date.to_str(), "2012-02-10");
 }
@@ -100,7 +100,7 @@ TEST(structs_tests, create_date_test_success)
 
     EXPECT_TRUE(o_date1.has_value());
 
-    EXPECT_TRUE(o_date1.value() == (date_s{ 2039_i32, month::dec, 22 }));
+    EXPECT_TRUE(o_date1.value() == (date_s{ 2039_i32, month::dec, day{22} }));
 }
 
 
@@ -154,7 +154,7 @@ TEST(structs_tests, create_candle_test_success)
 
     EXPECT_EQ(o_candle1->volume, 50200_ui32);
 
-    EXPECT_DOUBLE_EQ(o_candle1->low, 47.9);
+    EXPECT_TRUE(fabs(o_candle1->low - 47.9) < 1e-5);
 
     auto o_candle2{ candle_s::try_create_candle("1001,2019-08-29 09:15:00,42.5,46.5,47.9,41.0,50200") };
 

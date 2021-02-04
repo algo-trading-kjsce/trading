@@ -17,11 +17,14 @@
 #include <sstream>
 #include <iomanip>
 
+#include <math.h>
+
 #include <optional>
 
 #include "includes.hpp"
 #include "enums.hpp"
 
+#include "type_trait_utils.hpp"
 
  /**
   * @brief Struct to hold date information
@@ -30,13 +33,13 @@
 struct date_s
 {
     // year
-    std::int32_t m_year{};
+    std::uint16_t m_year{};
 
     // month in the year
     month m_month{};
 
     // day of the month
-    std::int32_t m_day{};
+    day m_day{};
 
     /**
      * @brief Convert to string format
@@ -49,8 +52,8 @@ struct date_s
 
         ss <<
             std::setw(2) << std::setfill('0') << m_year << date_delimiter <<
-            std::setw(2) << std::setfill('0') << static_cast<std::int32_t>(m_month) << date_delimiter <<
-            std::setw(2) << std::setfill('0') << m_day;
+            std::setw(2) << std::setfill('0') << +static_cast<std::uint8_t>(m_month) << date_delimiter <<
+            std::setw(2) << std::setfill('0') << +static_cast<std::uint8_t>(m_day);
 
         return ss.str();
     }
@@ -90,7 +93,7 @@ struct date_s
 
             if (std::getline(ss, parsed, date_delimiter))
             {
-                o_date->m_year = std::stoi(parsed);
+                o_date->m_year = str_to<std::uint16_t>(parsed);
             }
             else
             {
@@ -99,7 +102,7 @@ struct date_s
 
             if (std::getline(ss, parsed, date_delimiter) && o_date.has_value())
             {
-                o_date->m_month = static_cast<month>(std::stoi(parsed));
+                o_date->m_month = str_to<month>(parsed);
             }
             else
             {
@@ -108,7 +111,7 @@ struct date_s
 
             if (std::getline(ss, parsed, date_delimiter) && o_date.has_value())
             {
-                o_date->m_day = std::stoi(parsed);
+                o_date->m_day = static_cast<day>(str_to<std::uint8_t>(parsed));
             }
             else
             {
@@ -141,7 +144,10 @@ struct hash<date_s>
      */
     auto operator()(const date_s& i_date) const noexcept
     {
-        return ((i_date.m_year * 10000) + (static_cast<std::int32_t>(i_date.m_month) * 100) + i_date.m_day);
+        return
+            (i_date.m_year * 10000) +
+            (static_cast<std::int32_t>(i_date.m_month) * 100) +
+            static_cast<std::int32_t>(i_date.m_day);
     }
 };
 
@@ -154,9 +160,9 @@ struct hash<date_s>
  */
 struct time_s
 {
-    std::int32_t hours{};      // hours
-    std::int32_t minutes{};    // minutes
-    std::int32_t seconds{};    // seconds
+    std::uint8_t hours{};      // hours
+    std::uint8_t minutes{};    // minutes
+    std::uint8_t seconds{};    // seconds
 
     /**
      * @brief Convert to string format
@@ -168,22 +174,24 @@ struct time_s
         auto ss{ std::stringstream{} };
 
         ss <<
-            std::setw(2) << std::setfill('0') << hours << time_delimiter <<
-            std::setw(2) << std::setfill('0') << minutes << time_delimiter <<
-            std::setw(2) << std::setfill('0') << seconds;
+            std::setw(2) << std::setfill('0') << +hours << time_delimiter <<
+            std::setw(2) << std::setfill('0') << +minutes << time_delimiter <<
+            std::setw(2) << std::setfill('0') << +seconds;
 
         return ss.str();
     }
 
 
-    void add_minutes(std::int32_t i_minutes) noexcept
+    void add_minutes(std::uint8_t i_minutes) noexcept
     {
+        constexpr auto mins_in_hour{ 60_ui8 };
+
         minutes += i_minutes;
 
-        if (minutes >= 60)
+        if (minutes >= mins_in_hour)
         {
-            hours += minutes / 60;
-            minutes %= 60;
+            hours += minutes / mins_in_hour;
+            minutes %= mins_in_hour;
         }
     }
 
@@ -240,7 +248,7 @@ struct time_s
 
             if (std::getline(ss, parsed, time_delimiter))
             {
-                o_time->hours = std::stoi(parsed);
+                o_time->hours = str_to<std::uint8_t>(parsed);
             }
             else
             {
@@ -249,12 +257,12 @@ struct time_s
 
             if (std::getline(ss, parsed, time_delimiter) && o_time.has_value())
             {
-                o_time->minutes = std::stoi(parsed);
+                o_time->minutes = str_to<std::uint8_t>(parsed);
             }
 
             if (std::getline(ss, parsed, time_delimiter) && o_time.has_value())
             {
-                o_time->seconds = std::stoi(parsed);
+                o_time->seconds = str_to<std::uint8_t>(parsed);
             }
         }
 
@@ -275,10 +283,12 @@ struct candle_s
     date_s date{};    // date of the candle
     time_s time{};    // time of the candle
 
-    double open{};    // open price of candle
-    double high{};    // high price of candle
-    double low{};     // low price of candle
-    double close{};   // close price of candle
+    bool newly_added{ false };    // whether the candle was added for correction
+
+    float open{};    // open price of candle
+    float high{};    // high price of candle
+    float low{};     // low price of candle
+    float close{};   // close price of candle
 
 
     /**
@@ -310,12 +320,14 @@ struct candle_s
         auto sameDate{ i_lhs.date == i_rhs.date };
         auto sameTime{ i_lhs.time == i_rhs.time };
 
+        auto sameTempFlag{ i_lhs.newly_added == i_rhs.newly_added };
+        
         auto sameOpen{ i_lhs.open == i_rhs.open };
         auto sameHigh{ i_lhs.high == i_rhs.high };
         auto sameLow{ i_lhs.low == i_rhs.low };
         auto sameClose{ i_lhs.close == i_rhs.close };
 
-        return sameIndex && sameVolume && sameDate && sameTime && sameOpen && sameHigh && sameLow && sameClose;
+        return sameIndex && sameVolume && sameDate && sameTime && sameTempFlag && sameOpen && sameHigh && sameLow && sameClose;
     }
 
 
@@ -389,7 +401,7 @@ struct candle_s
 
             if (std::getline(stream, parsed, delimiter) && o_candle.has_value())
             {
-                o_candle->open = std::stod(parsed);
+                o_candle->open = floorf(std::stof(parsed) * 100.0f) / 100.0f;
             }
             else
             {
@@ -398,7 +410,7 @@ struct candle_s
 
             if (std::getline(stream, parsed, delimiter) && o_candle.has_value())
             {
-                o_candle->high = std::stod(parsed);
+                o_candle->high = floorf(std::stof(parsed) * 100.0f) / 100.0f;
             }
             else
             {
@@ -407,7 +419,7 @@ struct candle_s
 
             if (std::getline(stream, parsed, delimiter) && o_candle.has_value())
             {
-                o_candle->low = std::stod(parsed);
+                o_candle->low = floorf(std::stof(parsed) * 100.0f) / 100.0f;
             }
             else
             {
@@ -416,7 +428,7 @@ struct candle_s
 
             if (std::getline(stream, parsed, delimiter) && o_candle.has_value())
             {
-                o_candle->close = std::stod(parsed);
+                o_candle->close = floorf(std::stof(parsed) * 100.0f) / 100.0f;
             }
             else
             {
@@ -449,3 +461,20 @@ struct raw_stock_input_s
     std::vector<double> lows{};     // low prices in array form
     std::vector<double> closes{};   // close prices in array form
 };
+
+
+/**
+ * @brief Structure to hold information of a stock transaction
+ * 
+ */
+struct transaction_data_s
+{
+    bool is_sale{}; // Whether the transaction was a buy or a sell
+
+    time_s sale_time{}; // Time of sell/buy
+
+    std::uint32_t n_shares{}; // Number of shares sold/bought
+
+    double price{}; // Price at which shares were sold/bought
+};
+

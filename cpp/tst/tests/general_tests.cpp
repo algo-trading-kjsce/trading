@@ -17,6 +17,16 @@
 
 #include "../../src/processor/utilities.hpp"
 
+auto test_floating_point_container_equality(const std::vector<double>& c1, const std::vector<double>& c2, int ln)
+{
+    EXPECT_EQ(c1.size(), c2.size());
+
+    for (auto i{ 0_sz }; i < c1.size(); ++i)
+    {
+        EXPECT_TRUE(abs(c1[i] - c2[i]) < 1e-4) << i + 1 << "th element did not match on line " << ln << " c1: " << c1[i] << ", c2: " << c2[i];
+    }
+}
+
 TEST(general_tests, stock_data_raw_values_single_thread)
 {
     auto buffer_{ buffer_manager{} };
@@ -27,7 +37,7 @@ TEST(general_tests, stock_data_raw_values_single_thread)
 
     auto csv_data{ trading::utilities::read_initial_csv(csv_5min_file) };
 
-    auto raw_values{ csv_data.stock_map.at(date_s{2015, month::feb, 4}).raw_values() };
+    auto raw_values{ csv_data.stock_map.at(date_s{2015, month::feb, day{4}}).raw_values() };
 
     auto expected_opens{ std::vector<double>{475.05, 472.95, 473.4, 474.95, 476, 476.65, 475.5, 475.65, 473.65,
                                              474.3, 474.05, 474.5, 474.15, 474.2, 474, 473.8, 473.45, 473.75,
@@ -39,9 +49,9 @@ TEST(general_tests, stock_data_raw_values_single_thread)
                                              474.8, 474.95, 474.95, 474.75, 474.85, 474.6, 474.95, 475, 475, 475,
                                              474.95, 475.5} };
 
-    EXPECT_TRUE(raw_values.opens == expected_opens);
+    test_floating_point_container_equality(raw_values.opens, expected_opens, __LINE__);
 
-    raw_values = csv_data.stock_map.at(date_s{ 2015, month::feb, 6 }).raw_values();
+    raw_values = csv_data.stock_map.at(date_s{ 2015, month::feb, day{6} }).raw_values();
 
     auto expected_highs{ std::vector<double>{499, 499, 496.25, 496.8, 495.6, 496.15, 495.5, 494.85, 493.75,
                                              493.75, 495, 494.85, 495.5, 495.25, 494.95, 494.9, 494.25, 490.6,
@@ -53,7 +63,7 @@ TEST(general_tests, stock_data_raw_values_single_thread)
                                              490.95, 490, 489.95, 489.5, 490.5, 490.65, 490, 489.1, 489.6, 488.5,
                                              489.2, 490, 490.5} };
 
-    EXPECT_TRUE(raw_values.highs == expected_highs);
+    test_floating_point_container_equality(raw_values.highs, expected_highs, __LINE__);
 }
 
 
@@ -99,16 +109,16 @@ TEST(general_tests, stock_data_raw_values_multi_thread)
                                         492.55, 492.9, 493.0, 493.35, 494.6, 494.3, 493.15, 493.7, 492.9,
                                         493.45, 493.45, 493.55} };
 
-    auto raw_values{ first_csv.stock_map.at({2015, month::feb, 5}).raw_values() };
+    auto raw_values{ first_csv.stock_map.at({2015, month::feb, day{5}}).raw_values() };
 
-    EXPECT_TRUE(raw_values.opens == first_csv_doubles);
+    test_floating_point_container_equality(raw_values.opens, first_csv_doubles, __LINE__);
 
-    auto raw_values_1{ third_csv.stock_map.at({2018, month::aug, 20}).raw_values() };
-    auto same_raw_values{ same_as_third_csv.stock_map.at({2018, month::aug, 20}).raw_values() };
+    auto raw_values_1{ third_csv.stock_map.at({2018, month::aug, day{20}}).raw_values() };
+    auto same_raw_values{ same_as_third_csv.stock_map.at({2018, month::aug, day{20}}).raw_values() };
 
-    EXPECT_TRUE(raw_values_1.opens == same_raw_values.opens);
-    EXPECT_TRUE(raw_values_1.highs == same_raw_values.highs);
-    EXPECT_TRUE(raw_values_1.lows == same_raw_values.lows);
-    EXPECT_TRUE(raw_values_1.closes == same_raw_values.closes);
+    test_floating_point_container_equality(raw_values_1.opens, same_raw_values.opens, __LINE__);
+    test_floating_point_container_equality(raw_values_1.highs, same_raw_values.highs, __LINE__);
+    test_floating_point_container_equality(raw_values_1.lows, same_raw_values.lows, __LINE__);
+    test_floating_point_container_equality(raw_values_1.closes, same_raw_values.closes, __LINE__);
 }
 

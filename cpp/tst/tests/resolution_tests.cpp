@@ -60,21 +60,21 @@ TEST(resolution_tests, combine_candles_test)
 {
     auto buffer_{ buffer_manager{} };
 
-    auto date{ date_s{2019, month::apr, 12} };
+    auto date{ date_s{2019, month::apr, day{12}} };
 
-    auto candle1{ candle_s{0, 123, date, time_s{12, 05}, 100.0, 125.0, 95.0, 110.0} };
-    auto candle2{ candle_s{1, 190, date, time_s{12, 10}, 120.0, 120.0, 75.0, 117.0} };
-    auto candle3{ candle_s{2, 134, date, time_s{12, 15}, 100.0, 125.0, 90.0, 80.0} };
+    auto candle1{ candle_s{0, 123, date, time_s{12, 05}, false, 100.0, 125.0, 95.0, 110.0} };
+    auto candle2{ candle_s{1, 190, date, time_s{12, 10}, false, 120.0, 120.0, 75.0, 117.0} };
+    auto candle3{ candle_s{2, 134, date, time_s{12, 15}, false, 100.0, 125.0, 90.0, 80.0} };
 
     auto candles{ std::list{candle1, candle2, candle3} };
 
-    auto expected_candle{ candle_s{0, 149, date, time_s{12, 05}, 100.0, 125.0, 75.0, 80.0} };
+    auto expected_candle{ candle_s{0, 149, date, time_s{12, 05}, false, 100.0, 125.0, 75.0, 80.0} };
 
     auto combined_3_candles{ trading::csv::resolution::combine_candles(date, candles.begin(), candles.end(), candles.size()) };
 
     EXPECT_TRUE(expected_candle == combined_3_candles);
 
-    expected_candle = candle_s{ 0, 156, date, time_s{12, 05}, 100.0, 125.0, 75.0, 117.0 };
+    expected_candle = candle_s{ 0, 156, date, time_s{12, 05}, false, 100.0, 125.0, 75.0, 117.0 };
 
     auto combined_2_candles{ trading::csv::resolution::combine_candles(date, candles.begin(), std::next(candles.begin(), 2), 2_sz) };
 

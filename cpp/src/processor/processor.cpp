@@ -47,10 +47,28 @@ void show_help()
 {
     std::cout << std::endl;
 
-    std::cout << R"(                                                          --- Trading App ---
+    std::cout << R"(
+                                                                  --- Trading App ---
 
-    trading -r <new_res> <input_file> <output_path>              = Change resolution of csv files. Input can be one csv file or a directory
-    trading -p <input_file> <output_path> <pattern_report_path>  = For running pattern recognition from TA-Lib. Input can be one csv file or a directory
+    An application that can be integrated into your day trading code to perform heavy computations. Sample usage:
+
+    1. Change resolution of csv files:
+        trading -r <new_res> <input_file> <output_path>
+
+        Arguments:
+            * new_res: New resolution desired for csv files
+            * input_file: CSV file that needs to have a resolution change. Can be one file or a directory of CSV files
+            * output_path: Location where new CSV file should be saved out.
+
+    2. TA-Lib pattern recognition
+        trading -p <input_file> <output_path> <pattern_report_path>
+
+        Arguments:
+            * input_file: CSV file to run pattern recognition on. Can be one file or a directory of CSV files
+            * output_path: Location where new CSV files need to be saved out.
+            * pattern_report_path: Location where the report of number of strategy occurrences needs to be saved out.
+
+    Use an 'm' with the option to switch to multithreaded mode. For eg: instead of -p for pattern recognition, use -mp
 )";
 }
 

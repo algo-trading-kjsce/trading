@@ -11,6 +11,8 @@
 
 #pragma once
 
+#include "type_trait_utils.hpp"
+
 namespace ta_helper
 {
 
@@ -91,7 +93,7 @@ enum ta_strategy
 
 /**
  * @brief Types of columns in csv files
- * 
+ *
  */
 enum column_type : std::int32_t
 {
@@ -104,7 +106,7 @@ enum column_type : std::int32_t
  * @brief Enumeration for months in a year
  *
  */
-enum class month
+enum class month : std::uint8_t
 {
     jan = 1,
     feb = 2,
@@ -119,3 +121,42 @@ enum class month
     nov = 11,
     dec = 12,
 };
+
+
+enum class day : std::uint8_t {};
+
+namespace std
+{
+
+template<>
+class numeric_limits<day>
+{
+public:
+    static constexpr day min() noexcept
+    {
+        return day{ 1_ui8 };
+    }
+
+    static constexpr day max() noexcept
+    {
+        return day{ 31_ui8 };
+    }
+};
+
+
+template<>
+class numeric_limits<month>
+{
+public:
+    static constexpr month min() noexcept
+    {
+        return month::jan;
+    }
+
+    static constexpr month max() noexcept
+    {
+        return month::dec;
+    }
+};
+
+}

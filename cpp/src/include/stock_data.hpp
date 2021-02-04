@@ -78,7 +78,7 @@ public:
 
                     new_time.add_minutes(m_candle_size * i);
 
-                    m_candles.push_back(candle_s{ -1, 0, ref_candle.date, std::move(new_time), ref_candle.close, ref_candle.close, ref_candle.close, ref_candle.close });
+                    m_candles.push_back(candle_s{ -1, 0, ref_candle.date, std::move(new_time), true, ref_candle.close, ref_candle.close, ref_candle.close, ref_candle.close });
                 }
             }
             else if (new_candle_size < m_candle_size)
@@ -100,7 +100,7 @@ public:
      */
     void add_strategy_column(ta_helper::ta_strategy i_strategy, std::vector<std::int32_t> i_strategy_column) noexcept
     {
-        m_strategies.try_emplace(i_strategy, i_strategy_column);
+        m_strategies.try_emplace(i_strategy, std::move(i_strategy_column));
     }
 
 
