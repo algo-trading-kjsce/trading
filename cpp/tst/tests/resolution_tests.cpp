@@ -72,13 +72,13 @@ TEST(resolution_tests, combine_candles_test)
 
     auto combined_3_candles{ trading::csv::resolution::combine_candles(date, candles.begin(), candles.end(), candles.size()) };
 
-    EXPECT_TRUE(expected_candle == combined_3_candles);
+    EXPECT_EQ(expected_candle, combined_3_candles);
 
     expected_candle = candle_s{ 0, 156, date, time_s{12, 05}, 100.0, 125.0, 75.0, 117.0 };
 
     auto combined_2_candles{ trading::csv::resolution::combine_candles(date, candles.begin(), std::next(candles.begin(), 2), 2_sz) };
 
-    EXPECT_TRUE(expected_candle == combined_2_candles);
+    EXPECT_EQ(expected_candle, combined_2_candles);
 }
 
 

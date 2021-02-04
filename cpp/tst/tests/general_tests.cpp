@@ -39,7 +39,7 @@ TEST(general_tests, stock_data_raw_values_single_thread)
                                              474.8, 474.95, 474.95, 474.75, 474.85, 474.6, 474.95, 475, 475, 475,
                                              474.95, 475.5} };
 
-    EXPECT_TRUE(raw_values.opens == expected_opens);
+    EXPECT_EQ(raw_values.opens, expected_opens);
 
     raw_values = csv_data.stock_map.at(date_s{ 2015, month::feb, 6 }).raw_values();
 
@@ -53,7 +53,7 @@ TEST(general_tests, stock_data_raw_values_single_thread)
                                              490.95, 490, 489.95, 489.5, 490.5, 490.65, 490, 489.1, 489.6, 488.5,
                                              489.2, 490, 490.5} };
 
-    EXPECT_TRUE(raw_values.highs == expected_highs);
+    EXPECT_EQ(raw_values.highs, expected_highs);
 }
 
 
@@ -101,14 +101,14 @@ TEST(general_tests, stock_data_raw_values_multi_thread)
 
     auto raw_values{ first_csv.stock_map.at({2015, month::feb, 5}).raw_values() };
 
-    EXPECT_TRUE(raw_values.opens == first_csv_doubles);
+    EXPECT_EQ(raw_values.opens, first_csv_doubles);
 
     auto raw_values_1{ third_csv.stock_map.at({2018, month::aug, 20}).raw_values() };
     auto same_raw_values{ same_as_third_csv.stock_map.at({2018, month::aug, 20}).raw_values() };
 
-    EXPECT_TRUE(raw_values_1.opens == same_raw_values.opens);
-    EXPECT_TRUE(raw_values_1.highs == same_raw_values.highs);
-    EXPECT_TRUE(raw_values_1.lows == same_raw_values.lows);
-    EXPECT_TRUE(raw_values_1.closes == same_raw_values.closes);
+    EXPECT_EQ(raw_values_1.opens, same_raw_values.opens);
+    EXPECT_EQ(raw_values_1.highs, same_raw_values.highs);
+    EXPECT_EQ(raw_values_1.lows, same_raw_values.lows);
+    EXPECT_EQ(raw_values_1.closes, same_raw_values.closes);
 }
 

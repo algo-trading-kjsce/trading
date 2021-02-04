@@ -22,11 +22,11 @@ TEST(structs_tests, date_equality_test)
 
     auto date2{ date1 };
 
-    EXPECT_TRUE(date1 == date2);
+    EXPECT_EQ(date1, date2);
 
     date2.m_month = month::apr;
 
-    EXPECT_FALSE(date1 == date2);
+    EXPECT_NE(date1, date2);
 }
 
 
@@ -44,11 +44,11 @@ TEST(structs_tests, time_equality_test)
 
     auto time2{ time1 };
 
-    EXPECT_TRUE(time1 == time2);
+    EXPECT_EQ(time1, time2);
 
     time2.minutes = 23;
 
-    EXPECT_FALSE(time1 == time2);
+    EXPECT_NE(time1, time2);
 }
 
 
@@ -66,13 +66,12 @@ TEST(structs_tests, time_difference_test)
 
     auto time2{ time1 };
 
-    EXPECT_TRUE((time1 - time2) == 0);
+    EXPECT_EQ(time1 - time2, 0);
 
     auto time3{ time_s{17, 23, 56} };
 
-    EXPECT_TRUE((time1 - time3) == 22);
-    
-    EXPECT_TRUE((time3 - time1) == -22);
+    EXPECT_EQ(time1 - time3, 22);
+    EXPECT_EQ(time3 - time1, -22);
 }
 
 
@@ -82,15 +81,15 @@ TEST(structs_tests, time_add_test)
     
     auto time1{ time };
     time1.add_minutes(23);
-    EXPECT_TRUE(time1 == (time_s{ 17, 46 }));
+    EXPECT_EQ(time1, (time_s{ 17, 46 }));
 
     auto time2{ time };
     time2.add_minutes(43);
-    EXPECT_TRUE(time2 == (time_s{ 18, 6 }));
+    EXPECT_EQ(time2, (time_s{ 18, 6 }));
 
     auto time3{ time };
     time3.add_minutes(103);
-    EXPECT_TRUE(time3 == (time_s{ 19, 6 }));
+    EXPECT_EQ(time3, (time_s{ 19, 6 }));
 }
 
 
@@ -100,7 +99,7 @@ TEST(structs_tests, create_date_test_success)
 
     EXPECT_TRUE(o_date1.has_value());
 
-    EXPECT_TRUE(o_date1.value() == (date_s{ 2039_i32, month::dec, 22 }));
+    EXPECT_EQ(o_date1.value(), (date_s{ 2039_i32, month::dec, 22 }));
 }
 
 
@@ -122,19 +121,19 @@ TEST(structs_tests, create_time_test_success)
 
     EXPECT_TRUE(o_time1.has_value());
 
-    EXPECT_TRUE(o_time1.value() == (time_s{ 12, 23, 12 }));
+    EXPECT_EQ(o_time1.value(), (time_s{ 12, 23, 12 }));
 
     o_time1 = time_s::try_create_time("12:23:12+00:00");
 
     EXPECT_TRUE(o_time1.has_value());
 
-    EXPECT_TRUE(o_time1.value() == (time_s{ 12, 23, 12 }));
+    EXPECT_EQ(o_time1.value(), (time_s{ 12, 23, 12 }));
 
     o_time1 = time_s::try_create_time("12:23");
 
     EXPECT_TRUE(o_time1.has_value());
 
-    EXPECT_TRUE(o_time1.value() == (time_s{ 12, 23 }));
+    EXPECT_EQ(o_time1.value(), (time_s{ 12, 23 }));
 }
 
 
@@ -158,7 +157,7 @@ TEST(structs_tests, create_candle_test_success)
 
     auto o_candle2{ candle_s::try_create_candle("1001,2019-08-29 09:15:00,42.5,46.5,47.9,41.0,50200") };
 
-    EXPECT_TRUE(o_candle1 == o_candle2);
+    EXPECT_EQ(o_candle1, o_candle2);
 }
 
 
