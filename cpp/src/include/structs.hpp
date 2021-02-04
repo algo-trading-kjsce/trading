@@ -71,6 +71,19 @@ struct date_s
 
 
     /**
+     * @brief Inequality operator for date objects
+     *
+     * @param i_lhs first date object
+     * @param i_rhs second date object
+     * @return true if objects are not equal
+     */
+    friend auto operator!=(const date_s& i_lhs, const date_s& i_rhs) noexcept
+    {
+        return !(i_lhs == i_rhs);
+    }
+
+
+    /**
      * @brief Create date object if possible
      *
      * @param i_string Input string for parsing
@@ -200,6 +213,19 @@ struct time_s
         return i_lhs.hours == i_rhs.hours &&
             i_lhs.minutes == i_rhs.minutes &&
             i_lhs.seconds == i_rhs.seconds;
+    }
+
+
+    /**
+     * @brief Inequality operator for time objects
+     *
+     * @param i_lhs first time object
+     * @param i_rhs second time object
+     * @return true if objects are not equal
+     */
+    friend auto operator!=(const time_s& i_lhs, const time_s& i_rhs) noexcept
+    {
+        return !(i_lhs == i_rhs);
     }
 
 
