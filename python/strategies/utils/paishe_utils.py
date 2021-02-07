@@ -1,9 +1,6 @@
-from typing import Tuple
-from typing import List
 import os.path
-import io
 import tempfile
-
+import io
 from sys import platform
 
 temp_directory = os.path.join(tempfile.gettempdir(), 'Paishe')
@@ -12,6 +9,7 @@ download_directory = os.path.join(temp_directory, 'Downloads')
 
 if not os.path.exists(download_directory):
     os.makedirs(download_directory)
+
 
 def is_linux() -> bool:
     """

@@ -1,10 +1,10 @@
 import pandas as pd
-import numpy as np
 
 from utils import StrategyExecutor
 from utils import CalculatedData
 
 from typing import Tuple
+
 
 def get_entry_exit(day_data: pd.DataFrame, index: int) -> Tuple[float, float, float, float]:
     """Calculate entry and exit prices, stop losses and target price
@@ -22,20 +22,20 @@ def get_entry_exit(day_data: pd.DataFrame, index: int) -> Tuple[float, float, fl
     Tuple[float, float, float, float]
         entry time, exit time, entry price, exit price
     """
-    #stoploss is high of first candle
-       
-    entry_price = day_data.open.values[index+3]
-    entry_time = day_data.datetime.values[index+3]
+    # stoploss is high of first candle
+
+    entry_price = day_data.open.values[index + 3]
+    entry_time = day_data.datetime.values[index + 3]
     exit_price = day_data.open.values[-2]
     exit_time = day_data.datetime.values[-2]
 
-    stop_loss = day_data.high.values[index+1]
+    stop_loss = day_data.high.values[index + 1]
 
     var_sl = entry_price
-    #variable Sl to modify original SL
+    # variable Sl to modify original SL
 
-    for i in range (index+3, len(day_data)):
-        
+    for i in range(index + 3, len(day_data)):
+
         if day_data.high.values[i] >= stop_loss:
             exit_price = stop_loss
             exit_time = day_data.datetime.values[i]
@@ -43,11 +43,11 @@ def get_entry_exit(day_data: pd.DataFrame, index: int) -> Tuple[float, float, fl
 
         elif day_data.low.values[i] < var_sl:
             var_sl = day_data.low.values[i]
-            stop_loss = day_data.high.values[index] - (entry_price - day_data.low.values[i])
+            stop_loss = day_data.high.values[index] - \
+                (entry_price - day_data.low.values[i])
 
         else:
             pass
-
 
     return entry_time, exit_time, entry_price, exit_price
 
@@ -56,18 +56,21 @@ def mymethod(dates, csv_data) -> CalculatedData.CalculatedData:
 
     final_data = CalculatedData.CalculatedData()
 
-    for i in range (len(csv_data.datetime.dt.date.unique())-1):
+    for i in range(len(csv_data.datetime.dt.date.unique()) - 1):
 
-        current_day = csv_data[csv_data.datetime.dt.date.values == dates.Date[i]].reset_index(drop = True)
+        current_day = \
+            csv_data[csv_data.datetime.dt.date.values == dates.Date[i]].reset_index(True)
 
-        for j in range(4,64): #data only from 9:35 till 2:30 pm
+        for j in range(4, 64):  # data only from 9:35 till 2:30 pm
 
             first_candle_size = current_day.open.values[j] - current_day.close.values[j]
-            second_candle_size = current_day.open.values[j+1] - current_day.close.values[j+1]
-            third_candle_size = current_day.open.values[j+2] - current_day.close.values[j+2]
+            second_candle_size = current_day.open.values[j + 1] - current_day.close.values[j + 1]
+            third_candle_size = current_day.open.values[j + 2] - current_day.close.values[j + 2]
 
-            if (first_candle_size > 0) & (first_candle_size < second_candle_size) & (second_candle_size < third_candle_size):
-                
+            if (first_candle_size > 0) & \
+               (first_candle_size < second_candle_size) & \
+               (second_candle_size < third_candle_size):
+
                 ent, ext, enp, exp = get_entry_exit(current_day, j)
 
                 final_data.m_EntryTimes.append(ent)
@@ -93,11 +96,9 @@ def mymethod(dates, csv_data) -> CalculatedData.CalculatedData:
     return final_data
 
 
-
-
-
 def main():
-    executor = StrategyExecutor.Executor(fileNames=["banknifty5min.csv"], is_short=True, caller=__file__, func=mymethod)
+    executor = StrategyExecutor.Executor(
+        fileNames=["banknifty5min.csv"], is_short=True, caller=__file__, func=mymethod)
 
     executor.run(plotResults=True, uploadResults=True)
     pass

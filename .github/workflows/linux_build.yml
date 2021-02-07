@@ -15,6 +15,9 @@ jobs:
     steps:
     - name: Clone repository
       uses: actions/checkout@v2
+      uses: actions/setup-python@v2
+        with:
+          python-version: "3.8"
 
     - name: Checkout submodules
       uses: textbook/git-checkout-submodule-action@2.1.1
@@ -22,10 +25,13 @@ jobs:
     - name: Install dependencies
       run: ./scripts/install_reqs.sh
 
-    - name: Compile and run tests (Release)
+    - name: Compile and run C++ tests (Release)
       run: ./scripts/rebuild.sh Release
-      
-    - name: Compile and run tests (Debug)
+
+    - name: Compile and run C++ tests (Debug)
       run: |
            ./scripts/rebuild.sh
            ./scripts/run_tests.sh
+
+    - name: Check Python lint
+      run: pytest --flak8 python/
