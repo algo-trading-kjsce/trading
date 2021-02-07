@@ -1,18 +1,15 @@
 #! /usr/bin/env python
-### used for older python versions
+# used for older python versions
 from __future__ import print_function
 from __future__ import absolute_import
 
-###author defination
+# author defination
 __author__ = "Amar Chheda: chheda.am@outlook.com"
 
-###import statements go here
-import requests
+# import statements go here
 import pandas as pd
-import json
-import os
 
-from utils import  StrategyExecutor
+from utils import StrategyExecutor
 from utils import CalculatedData
 
 from typing import Tuple
@@ -32,7 +29,7 @@ def get_entry_exit(day_data: pd.DataFrame, index: int) -> Tuple[int, float, floa
 
         if (day_data.open.values[i] > stop_loss):
 
-                stop_loss = day_data.close.values[i-1]
+            stop_loss = day_data.close.values[i - 1]
 
         else:
             if (stop_loss >= day_data.open.values[i]):
@@ -42,13 +39,14 @@ def get_entry_exit(day_data: pd.DataFrame, index: int) -> Tuple[int, float, floa
 
     return i, entry_time, exit_time, entry_price, exit_price
 
+
 def mymethod(dates, csv_data) -> CalculatedData.CalculatedData:
 
     final_data = CalculatedData.CalculatedData()
 
     for i in range(len(dates) - 1):
 
-        current_day = csv_data[csv_data.datetime.dt.date.values == dates.Date[i]].reset_index(drop=True)
+        current_day = csv_data[csv_data.datetime.dt.date.values == dates.Date[i]].reset_index(True)
 
         j = 4
 
@@ -63,10 +61,12 @@ def mymethod(dates, csv_data) -> CalculatedData.CalculatedData:
 
             if (open_price > close_price):
 
-                if abs(open_price_second - close_price_second) <= 0.3 * abs(open_price - close_price):
+                if abs(open_price_second - close_price_second) <= 0.3 * \
+                   abs(open_price - close_price):
 
                     condition1 = open_price_third < close_price_third
-                    condition2 = abs(open_price_third - close_price_third) > abs(open_price_second - close_price_second) 
+                    condition2 = abs(open_price_third - close_price_third) > \
+                        abs(open_price_second - close_price_second)
 
                     if condition1 and condition2:
 
@@ -90,18 +90,15 @@ def mymethod(dates, csv_data) -> CalculatedData.CalculatedData:
                         final_data.m_Condition3.append(0)
 
                     else:
-                        j+=1
+                        j += 1
                         pass
-
 
     return final_data
 
 
-
-
-
 def main():
-    executor = StrategyExecutor.Executor(fileNames=["./ACC.csv"], is_short=False, caller=__file__, func=mymethod)
+    executor = StrategyExecutor.Executor(
+        fileNames=["./ACC.csv"], is_short=False, caller=__file__, func=mymethod)
 
     executor.run(plotResults=False, uploadResults=False)
 

@@ -1,8 +1,6 @@
-from utils import CalculatedData
 from utils import paishe_utils
-import numpy as np
+
 import pandas as pd
-from datetime import timedelta
 import matplotlib.pyplot as plt
 
 from typing import Tuple
@@ -35,7 +33,13 @@ def get_hlc(day_data: pd.DataFrame) -> Tuple[float, float, float]:
 
 
 class Executor:
-    def __init__(self, fileNames: List, is_short: bool, caller: str, func, initial_amount: float = 100000.0, n_shares: int = 10):
+    def __init__(self,
+                 fileNames: List,
+                 is_short: bool,
+                 caller: str,
+                 func,
+                 initial_amount: float = 100000.0,
+                 n_shares: int = 10):
         """Constructor for Executor object.
 
         Parameters:
@@ -78,7 +82,7 @@ class Executor:
     def open_file(self):
         """Opens file for csv data."""
 
-        """self.m_csv_data = pd.read_csv("ACC.csv", dtype={"datetime": pd.datetime, 
+        """self.m_csv_data = pd.read_csv("ACC.csv", dtype={"datetime": pd.datetime,
                                                         "open": float,
                                                         "high": float,
                                                         "low": float,
@@ -117,12 +121,16 @@ class Executor:
                                                "Stop_Loss": calculatedData.m_StopLosses})
 
         if self.m_isShort:
-            self.m_calculated_data['profit'] = self.m_calculated_data.entry_price > self.m_calculated_data.exit_price
+            self.m_calculated_data['profit'] = self.m_calculated_data.entry_price > \
+                self.m_calculated_data.exit_price
+
             self.m_calculated_data['change'] = self.m_calculated_data['entry_price'] - \
                 self.m_calculated_data['exit_price']
 
         else:
-            self.m_calculated_data['profit'] = self.m_calculated_data.entry_price < self.m_calculated_data.exit_price
+            self.m_calculated_data['profit'] = self.m_calculated_data.entry_price < \
+                self.m_calculated_data.exit_price
+
             self.m_calculated_data['change'] = self.m_calculated_data['exit_price'] - \
                 self.m_calculated_data['entry_price']
 
@@ -157,11 +165,11 @@ class Executor:
             calculatedDataRow = self.m_calculated_data.iloc[i]
 
             print(calculatedDataRow)
-            print(calculatedDataRow.entry_time)
-            print(type(calculatedDataRow.entry_time))
+            et = calculatedDataRow.entry_time
+            print(et)
+            print(type(et))
             print(self.m_csv_data.dtypes)
-            available_shares = self.m_csv_data[self.m_csv_data.datetime == calculatedDataRow.entry_time].volume.tolist()[
-                0]
+            available_shares = self.m_csv_data[self.m_csv_data.datetime == et].volume.tolist()[0]
 
             entry_price = float(calculatedDataRow.entry_price)
 
@@ -199,7 +207,8 @@ class Executor:
         plt.plot(equity_curve.date, current_total)
         plt.plot(equity_curve.date, total_profit)
         plt.title(
-            f"{self.m_strategyName} strategy on {stockName}\nStart={previous_total[0]}, End={current_total[number_of_entries-1]}")
+            f"""{self.m_strategyName} strategy on {stockName}"""
+            f"""Start={previous_total[0]}, End={current_total[number_of_entries-1]}""")
 
         plt.draw()
 

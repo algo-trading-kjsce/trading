@@ -1,8 +1,5 @@
 import os
-import typing
 import json
-
-import getpass
 
 import robin_stocks as rs
 
@@ -14,7 +11,8 @@ class rh_login:
     Attributes
     ----------
     token : Union[Any, Response, None, dict]
-        a token from Robinhood login API call to hold on to and refresh if login has expired
+        a token from Robinhood login API call to hold on to and
+        refresh if login has expired
 
     update_credentials : bool
         Whether manager saves login credentials on exit
@@ -38,7 +36,7 @@ class rh_login:
         password : str
             Password for logging in
         use_credential : bool
-            Override for using credential file saved on disk instead of parameters
+            Override for using credential file saved on disk
         update_cred : bool
             Whether to save the incoming credentials on the computer
         """
@@ -49,12 +47,11 @@ class rh_login:
         else:
             self.creds = {"username": None, "password": None}
 
-
     def __enter__(self):
-        token = rs.login(username=self.creds["username"], password=self.creds["password"])
+        token = rs.login(
+            username=self.creds["username"], password=self.creds["password"])
 
         return self
-
 
     def __exit__(self, exc_type, exc_value, exc_traceback):
         rs.logout()

@@ -5,6 +5,7 @@ from utils import CalculatedData
 
 from typing import Tuple
 
+
 def get_entry_exit(day_data: pd.DataFrame, index: int) -> Tuple[int, float, float, float, float]:
 
     entry_price = day_data.open.values[index + 2]
@@ -32,15 +33,14 @@ def get_entry_exit(day_data: pd.DataFrame, index: int) -> Tuple[int, float, floa
     return i, entry_time, exit_time, entry_price, exit_price
 
 
-
-
 def mymethod(dates, csv_data) -> CalculatedData.CalculatedData:
 
     final_data = CalculatedData.CalculatedData()
 
     for i in range(len(csv_data.datetime.dt.date.unique()) - 1):
 
-        current_day = csv_data[csv_data.datetime.dt.date.values == dates.Date[i]].reset_index(drop=True)
+        current_day = \
+            csv_data[csv_data.datetime.dt.date.values == dates.Date[i]].reset_index(True)
 
         j = 4
 
@@ -84,11 +84,9 @@ def mymethod(dates, csv_data) -> CalculatedData.CalculatedData:
     return final_data
 
 
-
-
-
 def main():
-    executor = StrategyExecutor.Executor(fileNames=["./ACC.csv"], is_short=False, caller=__file__, func=mymethod)
+    executor = StrategyExecutor.Executor(
+        fileNames=["./ACC.csv"], is_short=False, caller=__file__, func=mymethod)
 
     executor.run(plotResults=False, uploadResults=False)
 

@@ -5,6 +5,8 @@ sudo apt install gcc-10 g++-10
 
 sudo apt install python3.8
 
+pip install pytest-flake8
+
 pip install -r requirements.txt
 
 # # install TA-Lib

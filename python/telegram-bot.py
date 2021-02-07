@@ -1,7 +1,6 @@
 import os
 import json
 
-from telegram.ext import Updater, CommandHandler, MessageHandler
 import telegram
 
 
@@ -28,7 +27,7 @@ class telegram_bot:
 
         self.bot = telegram.Bot(self.creds["bot_key"])
 
-    def sendMessage(self, user_id: Union[int, str] = None, text: str = None):
+    def sendMessage(self, user_id=None, text: str = None):
         if user_id is None:
             user_id = self.creds["user_id"]
 
@@ -36,6 +35,7 @@ class telegram_bot:
 
     def checkForUpdates(self):
         self.bot.getUpdates()
+
 
 if __name__ == "__main__":
     t = telegram_bot()
