@@ -1,6 +1,6 @@
 import os.path
 import tempfile
-import io
+
 from sys import platform
 
 temp_directory = os.path.join(tempfile.gettempdir(), 'Paishe')
