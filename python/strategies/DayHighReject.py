@@ -1,8 +1,7 @@
 import pandas as pd
 
-import paishe_utils
-import StrategyExecutor
-import CalculatedData
+from utils import StrategyExecutor
+from utils import CalculatedData
 
 from typing import Tuple
 
@@ -128,15 +127,9 @@ def mymethod(dates, csv_data) -> CalculatedData.CalculatedData:
 
 
 def main():
-
-    paishe_utils.custom_print(f"\n\n\n\n\n//////////////////////////////// {__file__} ////////////////////////////////\n")
-
     executor = StrategyExecutor.Executor(fileNames=["ACC.csv", "APOLLOTYRE.csv", "ASIANPAINT.csv"], is_short=False, caller=__file__, func=mymethod)
 
     executor.run(plotResults=False, uploadResults=False)
-
-    paishe_utils.custom_print("\n\n\n")
-    pass
 
 
 if __name__ == '__main__':

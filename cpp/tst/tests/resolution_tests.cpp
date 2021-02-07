@@ -17,8 +17,8 @@
 
 #include "type_trait_utils.hpp"
 
-#include "../../src/processor/utilities.hpp"
-#include "../../src/processor/resolution.hpp"
+#include "processor/utilities.hpp"
+#include "processor/resolution.hpp"
 
 
 namespace

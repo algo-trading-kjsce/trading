@@ -11,7 +11,7 @@
 
 #include "gtest/gtest.h"
 
-#include "../../src/include/type_trait_utils.hpp"
+#include "type_trait_utils.hpp"
 
 
 TEST(type_traits_tests, int_conversion_test)

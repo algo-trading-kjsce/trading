@@ -1,3 +1,5 @@
+from utils import CalculatedData
+from utils import paishe_utils
 import numpy as np
 import pandas as pd
 from datetime import timedelta
@@ -8,11 +10,9 @@ from typing import List
 
 import math
 import os
-from utils import paishe_utils
 
 pd.set_option("max_row", None)
 
-import utils.CalculatedData
 
 def get_hlc(day_data: pd.DataFrame) -> Tuple[float, float, float]:
     """Get the high, low, close values for the specific day.
@@ -73,14 +73,10 @@ class Executor:
         self.m_csv_data = None
         self.m_calculated_data = pd.DataFrame()
         self.m_unique_dates = None
-
-        paishe_utils.custom_print("")
         pass
 
     def open_file(self):
         """Opens file for csv data."""
-
-        paishe_utils.custom_print("Opening...")
 
         """self.m_csv_data = pd.read_csv("ACC.csv", dtype={"datetime": pd.datetime, 
                                                         "open": float,
@@ -89,58 +85,53 @@ class Executor:
                                                         "close": float,
                                                         "volume": int})
         """
-        self.m_csv_data = pd.read_csv("/Users/amarchheda/Desktop/pet_projects/trading/trading/data/ACC.csv")
-        self.m_csv_data.datetime = self.m_csv_data.datetime.apply(lambda x: x.split("+")[0])
+        self.m_csv_data = pd.read_csv(
+            "/Users/amarchheda/Desktop/pet_projects/trading/trading/data/ACC.csv")
+        self.m_csv_data.datetime = self.m_csv_data.datetime.apply(
+            lambda x: x.split("+")[0])
         self.m_csv_data.datetime = pd.to_datetime(self.m_csv_data.datetime)
         self.m_csv_data["20 DMA"] = self.m_csv_data.close.rolling(50).mean()
 
-        self.m_unique_dates = pd.DataFrame({"Date": self.m_csv_data.datetime.dt.date.unique()})
-
-        paishe_utils.custom_print("Opened.\n")
-        pass
+        self.m_unique_dates = pd.DataFrame(
+            {"Date": self.m_csv_data.datetime.dt.date.unique()})
 
     def run_func(self):
         """Runs the strategy logic and gets the data to plot as final result."""
 
-        paishe_utils.custom_print("Running Strategy...")
-
         calculatedData = self.m_func(self.m_unique_dates, self.m_csv_data)
 
         self.m_calculated_data = pd.DataFrame({"entry_time": calculatedData.m_EntryTimes,
-                                         "entry_price": calculatedData.m_EntryPrices,
-                                         "exit_time": calculatedData.m_ExitTimes,
-                                         "exit_price": calculatedData.m_ExitPrices,
-                                         "prevdayhigh": calculatedData.m_PreviousDayHighs,
-                                         "prevdaylow": calculatedData.m_PreviousDayLows,
-                                         "fc_open": calculatedData.m_CurrentDayOpen,
-                                         "fc_high": calculatedData.m_CurrentDayHigh,
-                                         "ec_low": calculatedData.m_CurrentDayLow,
-                                         "ec_close": calculatedData.m_CurrentDayClose,
-                                         "Condition1": calculatedData.m_Condition1,
-                                         "Condition2": calculatedData.m_Condition2,
-                                         "Condition3": calculatedData.m_Condition3,
-                                         "Lowest_Close": calculatedData.m_LowestClose,
-                                         "Stop_Loss": calculatedData.m_StopLosses})
+                                               "entry_price": calculatedData.m_EntryPrices,
+                                               "exit_time": calculatedData.m_ExitTimes,
+                                               "exit_price": calculatedData.m_ExitPrices,
+                                               "prevdayhigh": calculatedData.m_PreviousDayHighs,
+                                               "prevdaylow": calculatedData.m_PreviousDayLows,
+                                               "fc_open": calculatedData.m_CurrentDayOpen,
+                                               "fc_high": calculatedData.m_CurrentDayHigh,
+                                               "ec_low": calculatedData.m_CurrentDayLow,
+                                               "ec_close": calculatedData.m_CurrentDayClose,
+                                               "Condition1": calculatedData.m_Condition1,
+                                               "Condition2": calculatedData.m_Condition2,
+                                               "Condition3": calculatedData.m_Condition3,
+                                               "Lowest_Close": calculatedData.m_LowestClose,
+                                               "Stop_Loss": calculatedData.m_StopLosses})
 
         if self.m_isShort:
             self.m_calculated_data['profit'] = self.m_calculated_data.entry_price > self.m_calculated_data.exit_price
-            self.m_calculated_data['change'] = self.m_calculated_data['entry_price'] - self.m_calculated_data['exit_price']
+            self.m_calculated_data['change'] = self.m_calculated_data['entry_price'] - \
+                self.m_calculated_data['exit_price']
 
         else:
             self.m_calculated_data['profit'] = self.m_calculated_data.entry_price < self.m_calculated_data.exit_price
-            self.m_calculated_data['change'] = self.m_calculated_data['exit_price'] - self.m_calculated_data['entry_price']
+            self.m_calculated_data['change'] = self.m_calculated_data['exit_price'] - \
+                self.m_calculated_data['entry_price']
 
-
-        self.m_calculated_data.entry_time = pd.to_datetime(self.m_calculated_data.entry_time)
-
-        paishe_utils.custom_print("Finished Strategy.\n")
-
-        pass
-
+        self.m_calculated_data.entry_time = pd.to_datetime(
+            self.m_calculated_data.entry_time)
 
     def plot_results(self, plotResults: bool, uploadResults: bool):
         """Actual plotting function.
-        
+
         Parameters:
         ----------
         plotResults
@@ -149,8 +140,6 @@ class Executor:
         uploadResults
             Set to True if you want to upload results to Google Drive
         """
-
-        paishe_utils.custom_print("Starting write...")
 
         number_of_entries = len(self.m_calculated_data)
 
@@ -171,13 +160,16 @@ class Executor:
             print(calculatedDataRow.entry_time)
             print(type(calculatedDataRow.entry_time))
             print(self.m_csv_data.dtypes)
-            available_shares = self.m_csv_data[self.m_csv_data.datetime == calculatedDataRow.entry_time].volume.tolist()[0]
+            available_shares = self.m_csv_data[self.m_csv_data.datetime == calculatedDataRow.entry_time].volume.tolist()[
+                0]
 
             entry_price = float(calculatedDataRow.entry_price)
 
-            number_of_shares_that_can_be_bought = math.floor(previous_total[i] / entry_price)
+            number_of_shares_that_can_be_bought = math.floor(
+                previous_total[i] / entry_price)
 
-            actual_shares_bought = min(self.m_number_of_shares, min(number_of_shares_that_can_be_bought, available_shares))
+            actual_shares_bought = min(self.m_number_of_shares, min(
+                number_of_shares_that_can_be_bought, available_shares))
 
             profit_per_share[i] = calculatedDataRow.change
 
@@ -198,13 +190,16 @@ class Executor:
         self.m_calculated_data['Total Profit'] = total_profit
         self.m_calculated_data['Current Total'] = current_total
 
-        stockName = os.path.splitext(os.path.basename(self.m_currentFileName))[0]
+        stockName = os.path.splitext(
+            os.path.basename(self.m_currentFileName))[0]
 
-        filePath = os.path.join(paishe_utils.get_temp_dir(), f"{stockName}_{self.m_strategyName}")
+        filePath = os.path.join(
+            paishe_utils.get_temp_dir(), f"{stockName}_{self.m_strategyName}")
 
         plt.plot(equity_curve.date, current_total)
         plt.plot(equity_curve.date, total_profit)
-        plt.title(f"{self.m_strategyName} strategy on {stockName}\nStart={previous_total[0]}, End={current_total[number_of_entries-1]}")
+        plt.title(
+            f"{self.m_strategyName} strategy on {stockName}\nStart={previous_total[0]}, End={current_total[number_of_entries-1]}")
 
         plt.draw()
 
@@ -217,14 +212,17 @@ class Executor:
             paishe_utils.create_file(excelFileName)
 
         with pd.ExcelWriter(excelFileName) as writer:
-            self.m_csv_data.to_excel(writer, sheet_name='csv_data', index=False)
-            self.m_calculated_data.to_excel(writer, sheet_name='final_data', index=False)
+            self.m_csv_data.to_excel(
+                writer, sheet_name='csv_data', index=False)
+            self.m_calculated_data.to_excel(
+                writer, sheet_name='final_data', index=False)
 
         paishe_utils.custom_print("Finished writing data.\n")
 
         if uploadResults:
             paishe_utils.custom_print("Starting upload...")
-            paishe_utils.upload_results(self.m_strategyName, [imageFileName, excelFileName])
+            paishe_utils.upload_results(
+                self.m_strategyName, [imageFileName, excelFileName])
             paishe_utils.custom_print("Finished upload.\n")
 
         if plotResults:
@@ -232,7 +230,6 @@ class Executor:
 
         plt.close()
         pass
-
 
     def run(self, plotResults: bool, uploadResults: bool):
         """
@@ -251,7 +248,8 @@ class Executor:
         for file in self.m_fileNames:
             self.m_currentFileName = file
 
-            paishe_utils.custom_print(f"\n\n----------Start File : {file}----------")
+            paishe_utils.custom_print(
+                f"\n\n----------Start File : {file}----------")
 
             self.open_file()
             self.run_func()

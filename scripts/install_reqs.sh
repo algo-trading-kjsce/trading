@@ -3,6 +3,9 @@ sudo apt-get update
 
 sudo apt install gcc-10 g++-10
 
+sudo apt install python3.8
+
+pip install requirements.txt
 
 # # install TA-Lib
 # sudo apt install build-essential wget -y

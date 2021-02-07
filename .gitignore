@@ -1,11 +1,14 @@
 .vs*
-__pycache__*
-**/out*
-**/target*
-**/build*
-**/[Dd]ebug/*
-**/[Rr]elease/*
 
-**/packages/*
+__pycache__*
+.pytest_cache*
+
+out*
+target*
+build*
+[Dd]ebug*
+[Rr]elease*
+
+packages*
 
 *.user

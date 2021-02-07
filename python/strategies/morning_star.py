@@ -11,9 +11,10 @@ import requests
 import pandas as pd
 import json
 import os
+
 from utils import  StrategyExecutor
-from utils import  paishe_utils
 from utils import CalculatedData
+
 from typing import Tuple
 
 
@@ -53,7 +54,6 @@ def mymethod(dates, csv_data) -> CalculatedData.CalculatedData:
 
         while j < (len(current_day) - 5):
 
-            global open_price, open_price_second, open_price_third, close_price, close_price_second, close_price_third
             open_price = current_day.open.values[j]
             close_price = current_day.close.values[j]
             open_price_second = current_day.open.values[j + 1]
@@ -101,14 +101,9 @@ def mymethod(dates, csv_data) -> CalculatedData.CalculatedData:
 
 
 def main():
-
-    paishe_utils.custom_print(f"\n\n\n\n\n//////////////////////////////// {__file__} ////////////////////////////////\n")
-
     executor = StrategyExecutor.Executor(fileNames=["./ACC.csv"], is_short=False, caller=__file__, func=mymethod)
 
     executor.run(plotResults=False, uploadResults=False)
-
-    paishe_utils.custom_print("\n\n\n")
 
 
 if __name__ == '__main__':
