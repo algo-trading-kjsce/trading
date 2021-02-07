@@ -36,4 +36,4 @@ jobs:
            ./scripts/run_tests.sh
 
     - name: Check Python lint
-      run: pytest --flak8 python/
+      run: pytest --flake8 python/
