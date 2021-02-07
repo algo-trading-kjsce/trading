@@ -1,5 +1,7 @@
 set(BINARY processor)
 
+include_directories("${PROJECT_SOURCE_DIR}/include/processor/")
+
 file(GLOB_RECURSE SOURCES LIST_DIRECTORIES false *.hpp *.cpp)
 
 set(SOURCES ${SOURCES})

@@ -12,7 +12,7 @@
 #pragma once
 #include <vector>
 
-#include "csv_data.hpp"
+#include "../common/csv_data.hpp"
 
 namespace trading::ta_utilities
 {

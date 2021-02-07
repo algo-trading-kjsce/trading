@@ -1,7 +1,9 @@
 import pandas as pd
 import numpy as np
-import StrategyExecutor
-import CalculatedData
+
+from utils import StrategyExecutor
+from utils import CalculatedData
+
 from typing import Tuple
 
 def get_entry_exit(day_data: pd.DataFrame, index: int) -> Tuple[float, float, float, float]:

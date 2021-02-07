@@ -15,7 +15,7 @@
 
 #include "../test_macros.hpp"
 
-#include "../../src/processor/processor.hpp"
+#include "processor/processor.hpp"
 
 
 TEST(args_handler_tests, invalid_call_test)

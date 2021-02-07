@@ -15,7 +15,7 @@
 
 #include "../test_macros.hpp"
 
-#include "../../src/processor/utilities.hpp"
+#include "processor/utilities.hpp"
 
 TEST(general_tests, stock_data_raw_values_single_thread)
 {

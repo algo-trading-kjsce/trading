@@ -6,4 +6,4 @@ set(SOURCES ${SOURCES})
 
 add_executable(${BINARY} ${SOURCES})
 
-target_link_libraries(${BINARY} PUBLIC processor)
+target_link_libraries(${BINARY} PUBLIC processor pylib)

@@ -17,7 +17,7 @@
 #include <filesystem>
 #include <mutex>
 
-#include "csv_data.hpp"
+#include "../common/csv_data.hpp"
 
 using strategy_occurrence_count_t = std::list<std::pair<std::string, std::vector<std::int32_t>>>;
 

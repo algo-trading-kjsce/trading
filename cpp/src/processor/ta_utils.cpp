@@ -15,8 +15,8 @@
 #include "ta-lib/ta_func.h"
 
 #include "timer.hpp"
-#include "ta_utils.hpp"
 
+#include "ta_utils.hpp"
 #include "utilities.hpp"
 
 namespace trading::ta_utilities
