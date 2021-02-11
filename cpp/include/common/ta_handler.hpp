@@ -1,12 +1,12 @@
 /**
  * @file ta_handler.hpp
  * @author ashwinn76
- * @brief 
+ * @brief
  * @version 0.1
  * @date 2020-09-14
- * 
+ *
  * @copyright Copyright (c) 2020
- * 
+ *
  */
 
 #pragma once
@@ -15,14 +15,14 @@
 
 /**
  * @brief handler for initializing and safely closing TA-Library
- * 
+ *
  */
 class ta_handler
 {
 public:
     /**
      * @brief Construct a new ta_handler object
-     * 
+     *
      */
     explicit ta_handler() noexcept
     {
@@ -31,7 +31,7 @@ public:
 
     /**
      * @brief Destroy the ta_handler object
-     * 
+     *
      */
     ~ta_handler()
     {

@@ -1,3 +1,9 @@
+printf "* Running cppcheck...\n\n\n"
+
+cppcheck --platform=unix64 --quiet -icpp/gtest cpp
+
+printf "\n* Finished with cppcheck.\n\n\n"
+
 if [ ! -d "build" ] 
 then
     mkdir build

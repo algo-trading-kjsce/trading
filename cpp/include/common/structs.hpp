@@ -23,10 +23,10 @@
 #include "enums.hpp"
 
 
- /**
-  * @brief Struct to hold date information
-  *
-  */
+/**
+ * @brief Struct to hold date information
+ *
+ */
 struct date_s
 {
     // year
@@ -47,10 +47,8 @@ struct date_s
     {
         auto ss{ std::stringstream{} };
 
-        ss <<
-            std::setw(2) << std::setfill('0') << m_year << date_delimiter <<
-            std::setw(2) << std::setfill('0') << static_cast<std::int32_t>(m_month) << date_delimiter <<
-            std::setw(2) << std::setfill('0') << m_day;
+        ss << std::setw( 2 ) << std::setfill( '0' ) << m_year << date_delimiter << std::setw( 2 ) << std::setfill( '0' )
+           << static_cast<std::int32_t>( m_month ) << date_delimiter << std::setw( 2 ) << std::setfill( '0' ) << m_day;
 
         return ss.str();
     }
@@ -62,11 +60,9 @@ struct date_s
      * @param i_rhs second date object
      * @return true if dates are equal
      */
-    friend auto operator==(const date_s& i_lhs, const date_s& i_rhs) noexcept
+    friend auto operator==( const date_s& i_lhs, const date_s& i_rhs ) noexcept
     {
-        return i_lhs.m_year == i_rhs.m_year &&
-            i_lhs.m_month == i_rhs.m_month &&
-            i_lhs.m_day == i_rhs.m_day;
+        return i_lhs.m_year == i_rhs.m_year && i_lhs.m_month == i_rhs.m_month && i_lhs.m_day == i_rhs.m_day;
     }
 
 
@@ -77,9 +73,9 @@ struct date_s
      * @param i_rhs second date object
      * @return true if objects are not equal
      */
-    friend auto operator!=(const date_s& i_lhs, const date_s& i_rhs) noexcept
+    friend auto operator!=( const date_s& i_lhs, const date_s& i_rhs ) noexcept
     {
-        return !(i_lhs == i_rhs);
+        return !( i_lhs == i_rhs );
     }
 
 
@@ -89,39 +85,39 @@ struct date_s
      * @param i_string Input string for parsing
      * @return optional date object
      */
-    static auto try_create_date(const std::string& i_string)
+    static auto try_create_date( const std::string& i_string )
     {
         auto o_date{ std::optional<date_s>{} };
 
-        if (!i_string.empty())
+        if( !i_string.empty() )
         {
             o_date.emplace();
 
-            auto ss{ std::stringstream{i_string} };
+            auto ss{ std::stringstream{ i_string } };
 
             auto parsed{ std::string{} };
 
-            if (std::getline(ss, parsed, date_delimiter))
+            if( std::getline( ss, parsed, date_delimiter ) )
             {
-                o_date->m_year = std::stoi(parsed);
+                o_date->m_year = std::stoi( parsed );
             }
             else
             {
                 o_date.reset();
             }
 
-            if (std::getline(ss, parsed, date_delimiter) && o_date.has_value())
+            if( std::getline( ss, parsed, date_delimiter ) && o_date.has_value() )
             {
-                o_date->m_month = static_cast<month>(std::stoi(parsed));
+                o_date->m_month = static_cast<month>( std::stoi( parsed ) );
             }
             else
             {
                 o_date.reset();
             }
 
-            if (std::getline(ss, parsed, date_delimiter) && o_date.has_value())
+            if( std::getline( ss, parsed, date_delimiter ) && o_date.has_value() )
             {
-                o_date->m_day = std::stoi(parsed);
+                o_date->m_day = std::stoi( parsed );
             }
             else
             {
@@ -136,13 +132,12 @@ struct date_s
 
 namespace std
 {
-
 /**
  * @brief Template specialization for date_s
  *
  * @tparam date_s template specialization
  */
-template <>
+template<>
 struct hash<date_s>
 {
     /**
@@ -152,9 +147,9 @@ struct hash<date_s>
      *
      * @return hash value of date object
      */
-    auto operator()(const date_s& i_date) const noexcept
+    auto operator()( const date_s& i_date ) const noexcept
     {
-        return ((i_date.m_year * 10000) + (static_cast<std::int32_t>(i_date.m_month) * 100) + i_date.m_day);
+        return ( ( i_date.m_year * 10000 ) + ( static_cast<std::int32_t>( i_date.m_month ) * 100 ) + i_date.m_day );
     }
 };
 
@@ -167,9 +162,9 @@ struct hash<date_s>
  */
 struct time_s
 {
-    std::int32_t hours{};      // hours
-    std::int32_t minutes{};    // minutes
-    std::int32_t seconds{};    // seconds
+    std::int32_t hours{};  // hours
+    std::int32_t minutes{};  // minutes
+    std::int32_t seconds{};  // seconds
 
     /**
      * @brief Convert to string format
@@ -180,20 +175,18 @@ struct time_s
     {
         auto ss{ std::stringstream{} };
 
-        ss <<
-            std::setw(2) << std::setfill('0') << hours << time_delimiter <<
-            std::setw(2) << std::setfill('0') << minutes << time_delimiter <<
-            std::setw(2) << std::setfill('0') << seconds;
+        ss << std::setw( 2 ) << std::setfill( '0' ) << hours << time_delimiter << std::setw( 2 ) << std::setfill( '0' )
+           << minutes << time_delimiter << std::setw( 2 ) << std::setfill( '0' ) << seconds;
 
         return ss.str();
     }
 
 
-    void add_minutes(std::int32_t i_minutes) noexcept
+    void add_minutes( std::int32_t i_minutes ) noexcept
     {
         minutes += i_minutes;
 
-        if (minutes >= 60)
+        if( minutes >= 60 )
         {
             hours += minutes / 60;
             minutes %= 60;
@@ -208,11 +201,9 @@ struct time_s
      * @param i_rhs second time object
      * @return true if times are equal
      */
-    friend auto operator==(const time_s& i_lhs, const time_s& i_rhs) noexcept
+    friend auto operator==( const time_s& i_lhs, const time_s& i_rhs ) noexcept
     {
-        return i_lhs.hours == i_rhs.hours &&
-            i_lhs.minutes == i_rhs.minutes &&
-            i_lhs.seconds == i_rhs.seconds;
+        return i_lhs.hours == i_rhs.hours && i_lhs.minutes == i_rhs.minutes && i_lhs.seconds == i_rhs.seconds;
     }
 
 
@@ -223,9 +214,9 @@ struct time_s
      * @param i_rhs second time object
      * @return true if objects are not equal
      */
-    friend auto operator!=(const time_s& i_lhs, const time_s& i_rhs) noexcept
+    friend auto operator!=( const time_s& i_lhs, const time_s& i_rhs ) noexcept
     {
-        return !(i_lhs == i_rhs);
+        return !( i_lhs == i_rhs );
     }
 
 
@@ -236,14 +227,13 @@ struct time_s
      * @param i_rhs second time object
      * @return difference in minutes
      */
-    friend auto operator-(const time_s& i_lhs, const time_s& i_rhs) noexcept
+    friend auto operator-( const time_s& i_lhs, const time_s& i_rhs ) noexcept
     {
-        auto convert_to_seconds = [](auto&& i_time)
-        {
-            return ((i_time.hours * 3600) + (i_time.minutes * 60) + i_time.seconds);
+        auto convert_to_seconds = []( auto&& i_time ) {
+            return ( ( i_time.hours * 3600 ) + ( i_time.minutes * 60 ) + i_time.seconds );
         };
 
-        return (convert_to_seconds(i_lhs) - convert_to_seconds(i_rhs)) / 60;
+        return ( convert_to_seconds( i_lhs ) - convert_to_seconds( i_rhs ) ) / 60;
     }
 
     /**
@@ -252,35 +242,35 @@ struct time_s
      * @param i_string input string to be parsed
      * @return date and time
      */
-    static auto try_create_time(const std::string& i_string)
+    static auto try_create_time( const std::string& i_string )
     {
         auto o_time{ std::optional<time_s>{} };
 
-        if (!i_string.empty())
+        if( !i_string.empty() )
         {
             o_time.emplace();
 
-            auto ss{ std::stringstream{i_string} };
+            auto ss{ std::stringstream{ i_string } };
 
             auto parsed{ std::string{} };
 
-            if (std::getline(ss, parsed, time_delimiter))
+            if( std::getline( ss, parsed, time_delimiter ) )
             {
-                o_time->hours = std::stoi(parsed);
+                o_time->hours = std::stoi( parsed );
             }
             else
             {
                 o_time.reset();
             }
 
-            if (std::getline(ss, parsed, time_delimiter) && o_time.has_value())
+            if( std::getline( ss, parsed, time_delimiter ) && o_time.has_value() )
             {
-                o_time->minutes = std::stoi(parsed);
+                o_time->minutes = std::stoi( parsed );
             }
 
-            if (std::getline(ss, parsed, time_delimiter) && o_time.has_value())
+            if( std::getline( ss, parsed, time_delimiter ) && o_time.has_value() )
             {
-                o_time->seconds = std::stoi(parsed);
+                o_time->seconds = std::stoi( parsed );
             }
         }
 
@@ -295,16 +285,16 @@ struct time_s
  */
 struct candle_s
 {
-    std::int32_t index{};    // Index in the csv file
-    std::int32_t volume{};   // number of shares available
+    std::int32_t index{};  // Index in the csv file
+    std::int32_t volume{};  // number of shares available
 
-    date_s date{};    // date of the candle
-    time_s time{};    // time of the candle
+    date_s date{};  // date of the candle
+    time_s time{};  // time of the candle
 
-    double open{};    // open price of candle
-    double high{};    // high price of candle
-    double low{};     // low price of candle
-    double close{};   // close price of candle
+    double open{};  // open price of candle
+    double high{};  // high price of candle
+    double low{};  // low price of candle
+    double close{};  // close price of candle
 
 
     /**
@@ -312,12 +302,10 @@ struct candle_s
      *
      * @param io_stream stream to write to
      */
-    void write_csv_text(std::ostream& io_stream) const
+    void write_csv_text( std::ostream& io_stream ) const
     {
-        io_stream
-            << index << delimiter << date.to_str() << ' ' << time.to_str()
-            << delimiter << open << delimiter << high << delimiter << low << delimiter << close
-            << delimiter << volume;
+        io_stream << index << csv_delimiter << date.to_str() << ' ' << time.to_str() << csv_delimiter << open
+                  << csv_delimiter << high << csv_delimiter << low << csv_delimiter << close << csv_delimiter << volume;
     }
 
 
@@ -328,7 +316,7 @@ struct candle_s
      * @param i_rhs Second candle object
      * @return true if candles are equal
      */
-    friend auto operator==(const candle_s& i_lhs, const candle_s& i_rhs) noexcept
+    friend auto operator==( const candle_s& i_lhs, const candle_s& i_rhs ) noexcept
     {
         auto sameIndex{ i_lhs.index == i_rhs.index };
         auto sameVolume{ i_lhs.volume == i_rhs.volume };
@@ -351,36 +339,36 @@ struct candle_s
      * @param i_line string to be parsed
      * @return candle parsed from string
      */
-    static auto try_create_candle(const std::string& i_line)
+    static auto try_create_candle( const std::string& i_line )
     {
         auto o_candle{ std::optional<candle_s>{} };
 
-        if (!i_line.empty())
+        if( !i_line.empty() )
         {
             o_candle.emplace();
 
-            auto stream{ std::stringstream{i_line} };
+            auto stream{ std::stringstream{ i_line } };
 
             auto parsed{ std::string{} };
 
-            if (std::getline(stream, parsed, delimiter) && o_candle.has_value())
+            if( std::getline( stream, parsed, csv_delimiter ) && o_candle.has_value() )
             {
-                o_candle->index = std::stoi(parsed);
+                o_candle->index = std::stoi( parsed );
             }
             else
             {
                 o_candle.reset();
             }
 
-            if (std::getline(stream, parsed, delimiter) && o_candle.has_value())
+            if( std::getline( stream, parsed, csv_delimiter ) && o_candle.has_value() )
             {
-                auto ss{ std::stringstream{parsed} };
+                auto ss{ std::stringstream{ parsed } };
 
-                if (std::getline(ss, parsed, ' '))
+                if( std::getline( ss, parsed, ' ' ) )
                 {
-                    if (auto o_date{ date_s::try_create_date(parsed) }; o_date.has_value())
+                    if( auto o_date{ date_s::try_create_date( parsed ) }; o_date.has_value() )
                     {
-                        o_candle->date = std::move(o_date.value());
+                        o_candle->date = std::move( o_date.value() );
                     }
                     else
                     {
@@ -392,11 +380,11 @@ struct candle_s
                     o_candle.reset();
                 }
 
-                if (std::getline(ss, parsed, ' ') && o_candle.has_value())
+                if( std::getline( ss, parsed, ' ' ) && o_candle.has_value() )
                 {
-                    if (auto o_time{ time_s::try_create_time(parsed) }; o_time.has_value())
+                    if( auto o_time{ time_s::try_create_time( parsed ) }; o_time.has_value() )
                     {
-                        o_candle->time = std::move(o_time.value());
+                        o_candle->time = std::move( o_time.value() );
                     }
                     else
                     {
@@ -413,45 +401,45 @@ struct candle_s
                 o_candle.reset();
             }
 
-            if (std::getline(stream, parsed, delimiter) && o_candle.has_value())
+            if( std::getline( stream, parsed, csv_delimiter ) && o_candle.has_value() )
             {
-                o_candle->open = std::stod(parsed);
+                o_candle->open = std::stod( parsed );
             }
             else
             {
                 o_candle.reset();
             }
 
-            if (std::getline(stream, parsed, delimiter) && o_candle.has_value())
+            if( std::getline( stream, parsed, csv_delimiter ) && o_candle.has_value() )
             {
-                o_candle->high = std::stod(parsed);
+                o_candle->high = std::stod( parsed );
             }
             else
             {
                 o_candle.reset();
             }
 
-            if (std::getline(stream, parsed, delimiter) && o_candle.has_value())
+            if( std::getline( stream, parsed, csv_delimiter ) && o_candle.has_value() )
             {
-                o_candle->low = std::stod(parsed);
+                o_candle->low = std::stod( parsed );
             }
             else
             {
                 o_candle.reset();
             }
 
-            if (std::getline(stream, parsed, delimiter) && o_candle.has_value())
+            if( std::getline( stream, parsed, csv_delimiter ) && o_candle.has_value() )
             {
-                o_candle->close = std::stod(parsed);
+                o_candle->close = std::stod( parsed );
             }
             else
             {
                 o_candle.reset();
             }
 
-            if (std::getline(stream, parsed, delimiter) && o_candle.has_value())
+            if( std::getline( stream, parsed, csv_delimiter ) && o_candle.has_value() )
             {
-                o_candle->volume = std::stoi(parsed);
+                o_candle->volume = std::stoi( parsed );
             }
             else
             {
@@ -470,8 +458,8 @@ struct candle_s
  */
 struct raw_stock_input_s
 {
-    std::vector<double> opens{};    // open prices in array form
-    std::vector<double> highs{};    // high prices in array form
-    std::vector<double> lows{};     // low prices in array form
-    std::vector<double> closes{};   // close prices in array form
+    std::vector<double> opens{};  // open prices in array form
+    std::vector<double> highs{};  // high prices in array form
+    std::vector<double> lows{};  // low prices in array form
+    std::vector<double> closes{};  // close prices in array form
 };

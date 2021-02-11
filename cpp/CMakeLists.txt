@@ -10,6 +10,7 @@ endif()
 
 find_package(Threads REQUIRED)
 find_package(PythonLibs REQUIRED)
+find_package(PythonInterp REQUIRED)
 
 include(gtest.cmake)
 
@@ -25,10 +26,17 @@ set(CMAKE_CXX_FLAGS "-Wall -Wextra -Werror")
 set(CMAKE_CXX_FLAGS_DEBUG "-g")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
+set(CMAKE_FINAL_OUTPUT "${PROJECT_SOURCE_DIR}/../build/package/")
+set(CMAKE_FILE_TRANSFER_SCRIPT "${PROJECT_SOURCE_DIR}/transfer_output.py")
+
 # source projects
 add_subdirectory(src/pylib)
 add_subdirectory(src/processor)
+add_subdirectory(src/manager)
 add_subdirectory(src/trading)
 
 # tests
 add_subdirectory(tst/tests)
+
+# Post Build commands
+execute_process(COMMAND "${PYTHON_EXECUTABLE}" "${CMAKE_FILE_TRANSFER_SCRIPT}" "copy" "${PROJECT_SOURCE_DIR}/../python/" "${CMAKE_FINAL_OUTPUT}" ".py")

@@ -29,20 +29,19 @@ static std::mutex cout_mutex{};
 
 namespace
 {
-
-auto get_candle_size(const std::filesystem::path& i_filepath)
+auto get_candle_size( const std::filesystem::path& i_filepath )
 {
     auto str{ std::string{} };
 
-    if (auto file{ std::ifstream{i_filepath} }; file.good())
+    if( auto file{ std::ifstream{ i_filepath } }; file.good() )
     {
-        std::getline(file, str);
+        std::getline( file, str );
 
-        std::getline(file, str);
-        if (auto c1{ candle_s::try_create_candle(str) }; c1.has_value())
+        std::getline( file, str );
+        if( auto c1{ candle_s::try_create_candle( str ) }; c1.has_value() )
         {
-            std::getline(file, str);
-            if (auto c2{ candle_s::try_create_candle(str) }; c2.has_value())
+            std::getline( file, str );
+            if( auto c2{ candle_s::try_create_candle( str ) }; c2.has_value() )
             {
                 return c2->time - c1->time;
             }
@@ -57,34 +56,34 @@ auto get_candle_size(const std::filesystem::path& i_filepath)
 
 namespace trading::utilities
 {
-
 io_lock::io_lock() : m_lock{ cout_mutex }
-{}
+{
+}
 
 
-std::list<std::filesystem::path> find_files(const char* i_path, const char* i_extension/* = nullptr*/)
+std::list<std::filesystem::path> find_files( const char* i_path, const char* i_extension /* = nullptr*/ )
 {
     auto files{ std::list<std::filesystem::path>{} };
 
-    auto path{ std::filesystem::path{i_path} };
+    auto path{ std::filesystem::path{ i_path } };
 
-    if (std::filesystem::is_directory(path))
+    if( std::filesystem::is_directory( path ) )
     {
-        for (auto&& file : std::filesystem::directory_iterator(i_path))
+        for( auto&& file : std::filesystem::directory_iterator( i_path ) )
         {
             auto& file_path{ file.path() };
 
-            if (i_extension == nullptr || file_path.extension() == i_extension)
+            if( i_extension == nullptr || file_path.extension() == i_extension )
             {
-                files.push_back(file_path);
+                files.push_back( file_path );
             }
         }
     }
-    else if (std::filesystem::is_regular_file(path))
+    else if( std::filesystem::is_regular_file( path ) )
     {
-        if (i_extension == nullptr || path.extension() == i_extension)
+        if( i_extension == nullptr || path.extension() == i_extension )
         {
-            files.push_back(path);
+            files.push_back( path );
         }
     }
 
@@ -92,9 +91,9 @@ std::list<std::filesystem::path> find_files(const char* i_path, const char* i_ex
 }
 
 
-csv_data read_initial_csv(const std::filesystem::path& i_filepath)
+csv_data read_initial_csv( const std::filesystem::path& i_filepath )
 {
-    if (!std::filesystem::exists(i_filepath))
+    if( !std::filesystem::exists( i_filepath ) )
     {
         throw std::filesystem::filesystem_error{ "Path not found", i_filepath, {} };
     }
@@ -107,29 +106,30 @@ csv_data read_initial_csv(const std::filesystem::path& i_filepath)
 
     auto column_names_str{ std::string{} };
 
-    auto candle_size{ get_candle_size(i_filepath) };
+    auto candle_size{ get_candle_size( i_filepath ) };
 
-    if (auto file{ std::ifstream{i_filepath} }; file.good())
+    if( auto file{ std::ifstream{ i_filepath } }; file.good() )
     {
-        std::getline(file, column_names_str);
+        std::getline( file, column_names_str );
 
-        while (file.good() && !file.eof())
+        while( file.good() && !file.eof() )
         {
             auto line{ std::string{} };
 
-            std::getline(file, line);
+            std::getline( file, line );
 
-            if (auto o_candle{ candle_s::try_create_candle(line) }; o_candle.has_value())
+            if( auto o_candle{ candle_s::try_create_candle( line ) }; o_candle.has_value() )
             {
                 auto date{ o_candle->date };
 
-                auto [iter, newly_inserted] = stockInformation.try_emplace(date_s{ date }, stock_data{ candle_size, date });
+                auto [iter, newly_inserted] =
+                    stockInformation.try_emplace( date_s{ date }, stock_data{ candle_size, date } );
 
-                iter->second.add_candle(std::move(o_candle.value()));
+                iter->second.add_candle( std::move( o_candle.value() ) );
 
-                if (newly_inserted)
+                if( newly_inserted )
                 {
-                    dates.push_back(date);
+                    dates.push_back( date );
                 }
             }
         }
@@ -137,25 +137,26 @@ csv_data read_initial_csv(const std::filesystem::path& i_filepath)
 
     {
         auto m{ trading::utilities::io_lock{} };
-        std::cout << "File " << i_filepath.filename().string() << " read in " << tmr.total_time().count() << "ms" << std::endl;
+        std::cout << "File " << i_filepath.filename().string() << " read in " << tmr.total_time().count() << "ms"
+                  << std::endl;
     }
 
-    return { i_filepath, std::move(dates), std::move(stockInformation) };
+    return { i_filepath, std::move( dates ), std::move( stockInformation ) };
 }
 
 
-void write_csv(const csv_data& i_csv_data, const std::filesystem::path& i_path, bool i_write_strategies)
+void write_csv( const csv_data& i_csv_data, const std::filesystem::path& i_path, bool i_write_strategies )
 {
     auto tmr{ timer{} };
 
-    if (auto result_directory{ i_path.parent_path() }; !std::filesystem::exists(result_directory))
+    if( auto result_directory{ i_path.parent_path() }; !std::filesystem::exists( result_directory ) )
     {
-        std::filesystem::create_directories(result_directory);
+        std::filesystem::create_directories( result_directory );
     }
 
-    if (auto file{ std::ofstream{i_path} }; file.good())
+    if( auto file{ std::ofstream{ i_path } }; file.good() )
     {
-        if (i_write_strategies)
+        if( i_write_strategies )
         {
             file << common::utilities::all_columns_str << std::endl;
         }
@@ -164,21 +165,21 @@ void write_csv(const csv_data& i_csv_data, const std::filesystem::path& i_path, 
             file << common::utilities::basic_columns_str << std::endl;
         }
 
-        for (auto&& date : i_csv_data.dates)
+        for( auto&& date : i_csv_data.dates )
         {
             auto idx{ 0_sz };
 
             auto date_str{ date.to_str() };
 
-            auto& day_data{ i_csv_data.stock_map.at(date) };
+            auto& day_data{ i_csv_data.stock_map.at( date ) };
 
-            for (auto&& candle : day_data)
+            for( auto&& candle : day_data )
             {
-                candle.write_csv_text(file);
+                candle.write_csv_text( file );
 
-                if (i_write_strategies)
+                if( i_write_strategies )
                 {
-                    file << delimiter << day_data.columns_str(idx++) << std::endl;
+                    file << csv_delimiter << day_data.columns_str( idx++ ) << std::endl;
                 }
                 else
                 {
@@ -190,46 +191,45 @@ void write_csv(const csv_data& i_csv_data, const std::filesystem::path& i_path, 
 
     {
         auto m{ trading::utilities::io_lock{} };
-        std::cout << "File " << i_path.filename().string() << " written in " << tmr.total_time().count() << "ms" << std::endl;
+        std::cout << "File " << i_path.filename().string() << " written in " << tmr.total_time().count() << "ms"
+                  << std::endl;
     }
 }
 
 
-void write_strategy_occurrences(
-    const std::filesystem::path& i_path,
-    const strategy_occurrence_count_t& i_csv_result)
+void write_strategy_occurrences( const std::filesystem::path& i_path, const strategy_occurrence_count_t& i_csv_result )
 {
-    if (auto file{ std::ofstream{i_path} }; file.good())
+    if( auto file{ std::ofstream{ i_path } }; file.good() )
     {
-        file << "Name" << delimiter << common::utilities::strategy_columns_str << "Total" << std::endl;
+        file << "Name" << csv_delimiter << common::utilities::strategy_columns_str << "Total" << std::endl;
 
-        auto total_occurrences_per_strategy{ std::vector<std::int32_t>(54, 0) };
+        auto total_occurrences_per_strategy{ std::vector<std::int32_t>( 54, 0 ) };
 
-        for (auto&& [stock_name, strategy_occurrences] : i_csv_result)
+        for( auto&& [stock_name, strategy_occurrences] : i_csv_result )
         {
             auto total_occurrences_for_stock{ 0 };
 
-            file << stock_name << delimiter;
+            file << stock_name << csv_delimiter;
 
             auto idx{ 0_sz };
 
-            for (auto&& occurrence : strategy_occurrences)
+            for( auto&& occurrence : strategy_occurrences )
             {
-                total_occurrences_per_strategy.at(idx++) += occurrence;
+                total_occurrences_per_strategy.at( idx++ ) += occurrence;
 
                 total_occurrences_for_stock += occurrence;
 
-                file << occurrence << delimiter;
+                file << occurrence << csv_delimiter;
             }
 
             file << total_occurrences_for_stock << std::endl;
         }
 
-        file << "Total" << delimiter;
+        file << "Total" << csv_delimiter;
 
-        for (auto&& occurrence : total_occurrences_per_strategy)
+        for( auto&& occurrence : total_occurrences_per_strategy )
         {
-            file << occurrence << delimiter;
+            file << occurrence << csv_delimiter;
         }
     }
 }

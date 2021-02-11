@@ -13,7 +13,6 @@
 
 namespace ta_helper
 {
-
 /**
  * @brief A list of strategies available from TA-Lib
  *
@@ -91,7 +90,7 @@ enum ta_strategy
 
 /**
  * @brief Types of columns in csv files
- * 
+ *
  */
 enum column_type : std::int32_t
 {
@@ -118,4 +117,17 @@ enum class month
     oct = 10,
     nov = 11,
     dec = 12,
+};
+
+
+/**
+ * @brief Enumeration for results from processing
+ * 
+ */
+enum class trading_app_result
+{
+    success,
+    passive_failure,
+    too_few_arguments,
+    unknown_error,
 };

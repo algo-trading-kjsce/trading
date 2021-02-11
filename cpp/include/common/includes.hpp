@@ -1,18 +1,18 @@
 /**
  * @file includes.hpp
  * @author ashwinn76
- * @brief 
+ * @brief
  * @version 0.1
  * @date 2020-09-13
- * 
+ *
  * @copyright Copyright (c) 2020
- * 
+ *
  */
 
 #pragma once
 
 
-constexpr auto delimiter{ ',' };
+constexpr auto csv_delimiter{ ',' };
 
 constexpr auto time_delimiter{ ':' };
 
