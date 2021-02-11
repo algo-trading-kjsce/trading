@@ -18,19 +18,18 @@
 
 namespace trading::csv::resolution
 {
-
 /**
  * @brief Find the current resolution of the csv file
  *
  * @param i_csv_data incoming csv data
  * @return duration for which candles are recorded in the csv file
  */
-std::int32_t find_candle_size(const csv_data& i_csv_data) noexcept;
+std::int32_t find_candle_size( const csv_data& i_csv_data ) noexcept;
 
 
 /**
  * @brief combine a series of candles to make a single candle from [i_start, i_end)
- * 
+ *
  * @tparam _const_iterator constant iterator to a container of candles
  * @param i_date date of the candles
  * @param i_start start of candle container
@@ -38,29 +37,30 @@ std::int32_t find_candle_size(const csv_data& i_csv_data) noexcept;
  * @param i_count number of candles
  * @return combined single candle
  */
-template <typename _const_iterator>
-auto combine_candles(date_s i_date, _const_iterator i_start, _const_iterator i_end, std::size_t i_count) noexcept
+template<typename _const_iterator>
+auto combine_candles( date_s i_date, _const_iterator i_start, _const_iterator i_end, std::size_t i_count ) noexcept
 {
-    static_assert(std::is_convertible_v<decltype(std::declval<_const_iterator>().operator*()), candle_s>, "This is not a list of candles!");
+    static_assert( std::is_convertible_v<decltype( std::declval<_const_iterator>().operator*() ), candle_s>,
+                   "This is not a list of candles!" );
 
     auto new_candle{ candle_s{} };
 
-    new_candle.date = std::move(i_date);
+    new_candle.date = std::move( i_date );
     new_candle.time = i_start->time;
     new_candle.open = i_start->open;
     new_candle.low = i_start->low;
-    new_candle.close = std::prev(i_end)->close;
+    new_candle.close = std::prev( i_end )->close;
 
-    for (auto iter{ i_start }; iter != i_end; ++iter)
+    for( auto iter{ i_start }; iter != i_end; ++iter )
     {
         new_candle.volume += iter->volume;
 
-        new_candle.low = std::min(iter->low, new_candle.low);
+        new_candle.low = std::min( iter->low, new_candle.low );
 
-        new_candle.high = std::max(iter->high, new_candle.high);
+        new_candle.high = std::max( iter->high, new_candle.high );
     }
 
-    new_candle.volume = static_cast<std::int32_t>(new_candle.volume / i_count);
+    new_candle.volume = static_cast<std::int32_t>( new_candle.volume / i_count );
 
     return new_candle;
 }
@@ -76,6 +76,6 @@ auto combine_candles(date_s i_date, _const_iterator i_start, _const_iterator i_e
  *
  * @return updated csv data
  */
-csv_data change_resolution(const csv_data& i_csv_data, std::int32_t i_new_candle_size);
+csv_data change_resolution( const csv_data& i_csv_data, std::int32_t i_new_candle_size );
 
 }

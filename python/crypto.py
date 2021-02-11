@@ -1,6 +1,8 @@
 import robin_stocks as rs
 from rh import rh_login
 
+import telebot12
+
 
 def price_history(ticker: str = None,
                   interval: str = '5minute',
@@ -22,6 +24,7 @@ def price(ticker: str = None):
 
 
 if __name__ == "__main__":
+    bot = telebot12.telegram_bot()
     for t in ["BTC", "ETH"]:
         price_history(t)
         price(t)

@@ -1,4 +1,4 @@
-set(BINARY pylib)
+set(BINARY manager)
 
 include_directories("${PROJECT_SOURCE_DIR}/include/${BINARY}/")
 
@@ -8,4 +8,4 @@ set(SOURCES ${SOURCES})
 
 add_library(${BINARY} STATIC ${SOURCES})
 
-target_link_libraries(${BINARY} ${PYTHON_LIBRARIES})
+target_link_libraries(${BINARY} PUBLIC processor pylib)

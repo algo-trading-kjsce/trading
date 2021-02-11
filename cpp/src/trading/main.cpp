@@ -9,11 +9,16 @@
  *
  */
 
-#include "../processor/processor.hpp"
+#include <iostream>
 
-int main(int argc, const char* argv[])
+#include "type_trait_utils.hpp"
+
+#include "../manager/args_handler.hpp"
+
+
+int main( int argc, const char* argv[] )
 {
-    auto result{ trading::handle_arguments(argc, argv) };
+    auto result{ trading::handle_arguments( argc, argv ) };
 
-    return result == trading::trading_app_result::success ? 0 : 1;
+    return result == trading_app_result::success ? 0 : 1;
 }

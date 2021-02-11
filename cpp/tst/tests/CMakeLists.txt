@@ -9,7 +9,7 @@ add_executable(${BINARY} ${TEST_SOURCES})
 
 add_test(NAME ${BINARY} COMMAND ${BINARY})
 
-target_link_libraries(${BINARY} PUBLIC gtest ${CMAKE_THREAD_LIBS_INIT} processor pylib)
+target_link_libraries(${BINARY} PUBLIC gtest ${CMAKE_THREAD_LIBS_INIT} manager)
 
 if(CMAKE_BUILD_TYPE MATCHES Release)
   add_custom_command(TARGET ${BINARY} POST_BUILD COMMAND ${BINARY})

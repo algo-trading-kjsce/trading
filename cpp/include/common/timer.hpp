@@ -26,7 +26,7 @@ public:
      */
     explicit timer() noexcept
     {
-        m_points.push_back(std::chrono::steady_clock::now());
+        m_points.push_back( std::chrono::steady_clock::now() );
     }
 
 
@@ -39,9 +39,9 @@ public:
     {
         auto time{ std::chrono::steady_clock::now() };
 
-        auto duration{ std::chrono::duration_cast<std::chrono::milliseconds>(time - m_points.front()) };
+        auto duration{ std::chrono::duration_cast<std::chrono::milliseconds>( time - m_points.front() ) };
 
-        m_points.push_back(std::move(time));
+        m_points.push_back( std::move( time ) );
 
         return duration;
     }
@@ -56,9 +56,9 @@ public:
     {
         auto time{ std::chrono::steady_clock::now() };
 
-        auto duration{ std::chrono::duration_cast<std::chrono::milliseconds>(time - m_points.back()) };
+        auto duration{ std::chrono::duration_cast<std::chrono::milliseconds>( time - m_points.back() ) };
 
-        m_points.push_back(std::move(time));
+        m_points.push_back( std::move( time ) );
 
         return duration;
     }

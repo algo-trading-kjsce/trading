@@ -15,7 +15,7 @@
 
 #include "../test_macros.hpp"
 
-#include "processor/processor.hpp"
+#include "../../src/manager/args_handler.hpp"
 
 
 TEST(args_handler_tests, invalid_call_test)
@@ -26,7 +26,7 @@ TEST(args_handler_tests, invalid_call_test)
 
     auto res{ trading::handle_arguments(0, nullptr) };
 
-    EXPECT_EQ(res, trading::trading_app_result::too_few_arguments);
+    EXPECT_EQ(res, trading_app_result::too_few_arguments);
 
     EXPECT_EQ(ss.str(), "Too few arguments. Run \"trading --help\" for more information.\n");
 }
@@ -40,5 +40,5 @@ TEST(args_handler_tests, help_call_test)
 
     auto res{ trading::handle_arguments(2, args) };
 
-    EXPECT_EQ(res, trading::trading_app_result::success);
+    EXPECT_EQ(res, trading_app_result::success);
 }

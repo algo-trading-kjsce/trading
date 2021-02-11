@@ -16,14 +16,13 @@
 
 namespace trading::ta_utilities
 {
-
 /**
  * @brief find patterns in the stock price ranges using TA-Lib
- * 
+ *
  * @param io_csv_data csv data
- * 
+ *
  * @return number of times each strategy was triggered
  */
-std::vector<std::int32_t> find_patterns(csv_data& io_csv_data);
+std::vector<std::int32_t> find_patterns( csv_data& io_csv_data );
 
 }

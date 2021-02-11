@@ -1,7 +1,7 @@
 import os
 import json
 
-import telegram
+import telegram.bot
 
 
 class telegram_bot:
@@ -17,7 +17,7 @@ class telegram_bot:
         Bot token and user credentials
     """
 
-    bot: telegram.Bot = None
+    bot = None
 
     creds = None
 
@@ -27,16 +27,25 @@ class telegram_bot:
 
         self.bot = telegram.Bot(self.creds["bot_key"])
 
+        self.sendMessage(text="The bot has started...")
+
+    def __del__(self):
+        self.sendMessage(text="Shutting down.")
+
     def sendMessage(self, user_id=None, text: str = None):
         if user_id is None:
             user_id = self.creds["user_id"]
 
-        self.updater.bot.sendMessage(user_id, text)
+        self.bot.sendMessage(user_id, text)
 
     def checkForUpdates(self):
-        self.bot.getUpdates()
+        return self.bot.getUpdates()
 
 
 if __name__ == "__main__":
     t = telegram_bot()
+    c = t.checkForUpdates()
+
     t.sendMessage(text="Hello!")
+
+    del t
