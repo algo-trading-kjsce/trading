@@ -38,13 +38,11 @@ class telegram_bot:
 
         self.sendMessage(text="Shutting down.")
 
-
     def sendMessage(self, text: str = None, user_id=None):
         if user_id is None:
             user_id = self.creds["user_id"]
 
         self.bot.sendMessage(user_id, text)
-
 
     def checkForUpdates(self) -> str:
         updates = self.bot.getUpdates(offset=self.last_update_id)

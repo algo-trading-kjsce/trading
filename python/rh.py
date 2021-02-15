@@ -43,7 +43,6 @@ class rh_login:
 
     creds_path: str = os.path.expanduser("~/.credentials/robinhood")
 
-
     def __init__(self):
         """
         Parameters
@@ -67,10 +66,8 @@ class rh_login:
         token = rs.login(
             username=self.creds["username"], password=self.creds["password"])
 
-
     def __del__(self):
         rs.logout()
-
 
     def get_historical_data(self,
                             ticker: str = None,
@@ -96,7 +93,6 @@ class rh_login:
                 f.write(s)
 
         return csv_path
-
 
     def get_last_price(self,
                        ticker: str = None,
