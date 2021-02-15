@@ -11,6 +11,8 @@
 
 #pragma once
 
+#include <string>
+
 #include "../common/type_trait_utils.hpp"
 #include "../common/py_include.hpp"
 
@@ -103,6 +105,13 @@ public:
     explicit py_object( PyObject* i_ptr, bool i_add_ref = false );
 
     /**
+     * @brief Construct a new py object object
+     *
+     * @param i_str string to convert
+     */
+    explicit py_object( const std::string& i_str );
+
+    /**
      * @brief Construct a new py_object, ref count incremented
      *
      * @param i_obj incoming object
@@ -159,6 +168,13 @@ public:
     std::size_t ref_count() const;
 
     /**
+     * @brief Get the string representation of the underlying Python object
+     * 
+     * @return string representation
+     */
+    std::string string() const;
+
+    /**
      * @brief calls the method specified on the internal Python object
      *
      * @tparam _Args incoming argument types
@@ -172,7 +188,7 @@ public:
         if( m_ptr != nullptr )
         {
             if( auto methodPtr{ py_object{ PyObject_GetAttrString( m_ptr, i_method_name ) } };
-                methodPtr != nullptr && PyCallable_Check( methodPtr.get_pointer() ) )
+                methodPtr != nullptr && PyCallable_Check( methodPtr ) )
             {
                 if constexpr( sizeof...( i_args ) > 0_sz )
                 {

@@ -1,7 +1,23 @@
 import os
 import json
+import csv
+import tempfile
 
 import robin_stocks as rs
+
+from datetime import datetime
+
+
+def format_candle(entry) -> str:
+    s = str(datetime.strptime(entry["begins_at"][0:10], "%Y-%m-%d").date()) + " " + \
+        str(datetime.strptime(entry["begins_at"][11:19], "%H:%M:%S").time()) + "," + \
+        str(entry["open_price"]) + "," + \
+        str(entry["high_price"]) + "," + \
+        str(entry["low_price"]) + "," + \
+        str(entry["close_price"]) + "," + \
+        str(entry["volume"]) + ",\n"
+
+    return s
 
 
 class rh_login:
@@ -27,6 +43,7 @@ class rh_login:
 
     creds_path: str = os.path.expanduser("~/.credentials/robinhood")
 
+
     def __init__(self):
         """
         Parameters
@@ -47,11 +64,53 @@ class rh_login:
         else:
             self.creds = {"username": None, "password": None}
 
-    def __enter__(self):
         token = rs.login(
             username=self.creds["username"], password=self.creds["password"])
 
-        return self
 
-    def __exit__(self, exc_type, exc_value, exc_traceback):
+    def __del__(self):
         rs.logout()
+
+
+    def get_historical_data(self,
+                            ticker: str = None,
+                            interval: str = "15second",
+                            span: str = "hour",
+                            bounds: str = "24_7"):
+
+        res = rs.get_crypto_historicals(ticker, interval, span, bounds)
+
+        columns = ['', "datetime", "open", "high",
+                   "low", "close", "volume"]
+
+        csv_path = os.path.join(tempfile.gettempdir(), f"{ticker}.csv")
+
+        with open(csv_path, 'w') as f:
+            writer = csv.DictWriter(f, fieldnames=columns)
+            writer.writeheader()
+
+            i = 0
+            for entry in res[-20:]:
+                s = str(i) + ',' + format_candle(entry)
+                i = i + 1
+                f.write(s)
+
+        return csv_path
+
+
+    def get_last_price(self,
+                       ticker: str = None,
+                       interval: str = "15second",
+                       span: str = "hour",
+                       bounds: str = "24_7") -> str:
+        res = rs.get_crypto_historicals(ticker, interval, span, bounds)
+
+        return '0,' + format_candle(res[-1])
+
+
+if __name__ == "__main__":
+    r = rh_login()
+
+    res = r.get_historical_data("ETH")
+
+    del r

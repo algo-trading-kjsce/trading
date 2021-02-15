@@ -169,7 +169,7 @@ public:
     /**
      * @brief the duration of the candles in the stock data
      *
-     * @return duration in minutes
+     * @return duration in seconds
      */
     auto candle_size() const noexcept
     {

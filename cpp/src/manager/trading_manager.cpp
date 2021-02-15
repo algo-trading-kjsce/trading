@@ -17,37 +17,11 @@
 
 #include "trading_manager.hpp"
 
+static std::mutex task_queue_mutex{};
+
 namespace
 {
 using namespace trading::python;
-
-/**
- * @brief Create a telegram bot object
- *
- * @return RAII wrapped telegram bot
- */
-auto create_telegram_bot()
-{
-    if( auto modulePtr{ py_object{ PyImport_ImportModule( "telegrambot" ) } }; modulePtr != nullptr )
-    {
-        if( auto dictPtr{ py_object{ PyModule_GetDict( modulePtr ), true } }; dictPtr != nullptr )
-        {
-            if( auto funcPtr{ py_object{ PyDict_GetItemString( dictPtr, "telegram_bot" ), true } }; funcPtr != nullptr )
-            {
-                if( PyCallable_Check( funcPtr ) )
-                {
-                    if( auto botPtr{ py_object{ _PyObject_CallNoArg( funcPtr ) } }; botPtr != nullptr )
-                    {
-                        return botPtr;
-                    }
-                }
-            }
-        }
-    }
-
-    return py_object{};
-}
-
 
 /**
  * @brief Get the current application location
@@ -117,16 +91,90 @@ void add_python_paths( std::vector<std::string> i_python_script_paths )
 
 namespace trading
 {
-trading_manager::trading_manager()
+trading_manager::task_lock::task_lock() noexcept : m_lock{ task_queue_mutex }
 {
-    m_telegram_bot = create_telegram_bot();
 }
 
 
-void run_trading_manager( [[maybe_unused]] std::vector<std::string> i_python_script_paths )
+trading_manager::trading_manager( std::vector<std::string> i_stocks ) : m_telegram_bot{ *this }
+{
+    for( auto&& stock : i_stocks )
+    {
+        m_price_info[stock] = m_robinhood_bot.get_historical_prices( stock );
+    }
+
+    m_telegram_thread = std::thread{ [&]() {
+        while( m_keep_running )
+        {
+            m_telegram_bot.process_updates();
+        }
+    } };
+}
+
+
+void trading_manager::add_task( task_ptr i_task_ptr )
+{
+    auto lock{ task_lock{} };
+
+    if( i_task_ptr->get_type() == trading_task_type::termination )
+    {
+        m_tasks.push_front( std::move( i_task_ptr ) );
+    }
+    else
+    {
+        m_tasks.push_back( std::move( i_task_ptr ) );
+    }
+}
+
+
+void trading_manager::execute_task()
+{
+    auto ptr{ task_ptr{} };
+
+    {
+        auto lock{ task_lock{} };
+
+        if( !m_tasks.empty() && m_keep_running )
+        {
+            ptr = std::move( m_tasks.front() );
+            m_tasks.pop_front();
+        }
+    }
+
+    if( ptr != nullptr )
+    {
+        ptr->execute();
+    }
+}
+
+
+void trading_manager::clear_tasks()
+{
+    auto lock{ task_lock{} };
+
+    while( !m_tasks.empty() )
+    {
+        m_tasks.pop_front();
+    }
+}
+
+void trading_manager::await()
+{
+    while( m_keep_running )
+    {
+        execute_task();
+    }
+
+    m_telegram_thread.join();
+}
+
+
+void run_trading_manager( std::vector<std::string> i_python_script_paths, std::vector<std::string> i_stocks )
 {
     add_python_paths( std::move( i_python_script_paths ) );
 
-    auto manager{ trading_manager{} };
+    auto manager{ trading_manager{ std::move( i_stocks ) } };
+
+    manager.await();
 }
 }

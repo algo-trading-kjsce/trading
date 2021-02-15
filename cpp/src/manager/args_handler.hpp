@@ -9,6 +9,8 @@
  *
  */
 
+#pragma once
+
 #include <cstdint>
 
 #include "enums.hpp"

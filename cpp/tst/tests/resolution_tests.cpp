@@ -53,7 +53,7 @@ TEST( resolution_tests, candle_size_test )
 
     auto candle_size{ trading::csv::resolution::find_candle_size( csv_data ) };
 
-    EXPECT_EQ( candle_size, 5_i32 );
+    EXPECT_EQ( candle_size, 300_i32 );
 }
 
 
@@ -97,8 +97,8 @@ TEST( resolution_tests, change_resolution_test_success )
 
     auto output_file{ TEST_OUTPUT_DIRECTORY.append( "5min_data.csv" ) };
 
-    EXPECT_NO_THROW( change_resolution_test_code( csv_data, output_file, 15_i32 ) );
-    EXPECT_NO_THROW( change_resolution_test_code( csv_data, output_file, 20_i32 ) );
+    EXPECT_NO_THROW( change_resolution_test_code( csv_data, output_file, 900_i32 ) );
+    EXPECT_NO_THROW( change_resolution_test_code( csv_data, output_file, 1200_i32 ) );
 }
 
 
@@ -114,5 +114,5 @@ TEST( resolution_tests, change_resolution_test_failure )
 
     auto output_file{ TEST_OUTPUT_DIRECTORY.append( "5min_data.csv" ) };
 
-    EXPECT_THROW( change_resolution_test_code( csv_data, output_file, 21_i32 ), std::invalid_argument );
+    EXPECT_THROW( change_resolution_test_code( csv_data, output_file, 1260_i32 ), std::invalid_argument );
 }

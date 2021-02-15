@@ -99,12 +99,27 @@ trading_app_result handle_arguments( std::int32_t argc, const char* argv[] )
         {
             auto python_script_paths{ std::vector<std::string>{} };
 
-            for( auto i{ 2 }; i < argc; ++i )
+            auto arg_index{ 2 };
+            for( ; arg_index < argc; ++arg_index )
             {
-                python_script_paths.emplace_back( argv[i] );
+                auto current_arg{ std::string{ argv[arg_index] } };
+
+                if( current_arg == "-s" )
+                {
+                    arg_index++;
+                    break;
+                }
+
+                python_script_paths.push_back( std::move( current_arg ) );
             }
 
-            trading::run_trading_manager( std::move( python_script_paths ) );
+            auto stocks{ std::vector<std::string>{} };
+            for( ; arg_index < argc; ++arg_index )
+            {
+                stocks.emplace_back( argv[arg_index] );
+            }
+
+            trading::run_trading_manager( std::move( python_script_paths ), std::move( stocks ) );
         }
         else
         {
