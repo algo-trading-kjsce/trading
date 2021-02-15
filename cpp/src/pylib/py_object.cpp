@@ -34,6 +34,14 @@ py_object::py_object( PyObject* i_ptr, bool i_add_ref /* = false*/ )
     }
 }
 
+py_object::py_object( const std::string& i_str )
+{
+    if( !i_str.empty() )
+    {
+        m_ptr = PyUnicode_FromString( i_str.c_str() );
+    }
+}
+
 py_object::~py_object()
 {
     assign( nullptr );
@@ -90,6 +98,22 @@ std::size_t py_object::ref_count() const
     }
 
     return count;
+}
+
+std::string py_object::string() const
+{
+    auto str{ std::string{} };
+
+    if( m_ptr != nullptr && PyUnicode_Check( m_ptr ) )
+    {
+        auto sz{ Py_ssize_t{} };
+        if( auto p{ PyUnicode_AsUTF8AndSize( m_ptr, std::addressof( sz ) ) }; p != nullptr )
+        {
+            str = std::string{ p, static_cast<std::size_t>( sz ) };
+        }
+    }
+
+    return str;
 }
 
 bool operator==( const py_object& i_lhs, const py_object& i_rhs ) noexcept

@@ -225,7 +225,7 @@ struct time_s
      *
      * @param i_lhs first time object
      * @param i_rhs second time object
-     * @return difference in minutes
+     * @return difference in seconds
      */
     friend auto operator-( const time_s& i_lhs, const time_s& i_rhs ) noexcept
     {
@@ -233,7 +233,7 @@ struct time_s
             return ( ( i_time.hours * 3600 ) + ( i_time.minutes * 60 ) + i_time.seconds );
         };
 
-        return ( convert_to_seconds( i_lhs ) - convert_to_seconds( i_rhs ) ) / 60;
+        return convert_to_seconds( i_lhs ) - convert_to_seconds( i_rhs );
     }
 
     /**

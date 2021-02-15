@@ -70,8 +70,8 @@ TEST( structs_tests, time_difference_test )
 
     auto time3{ time_s{ 17, 23, 56 } };
 
-    EXPECT_EQ( time1 - time3, 22 );
-    EXPECT_EQ( time3 - time1, -22 );
+    EXPECT_EQ( time1 - time3, 22 * 60 );
+    EXPECT_EQ( time3 - time1, -22 * 60 );
 }
 
 

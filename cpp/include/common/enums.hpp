@@ -122,7 +122,7 @@ enum class month
 
 /**
  * @brief Enumeration for results from processing
- * 
+ *
  */
 enum class trading_app_result
 {
@@ -130,4 +130,17 @@ enum class trading_app_result
     passive_failure,
     too_few_arguments,
     unknown_error,
+};
+
+
+/**
+ * @brief Enumeration for the types of tasks that the trading manager will handle
+ *
+ */
+enum class trading_task_type
+{
+    unknown,
+    status_request,
+    computation,
+    termination,
 };
