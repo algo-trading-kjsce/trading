@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.10)
 
 project(algo-trading)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release)
@@ -11,6 +11,7 @@ endif()
 find_package(Threads REQUIRED)
 find_package(PythonLibs REQUIRED)
 find_package(PythonInterp REQUIRED)
+find_package(CURL REQUIRED)
 
 include(gtest.cmake)
 
@@ -30,7 +31,7 @@ set(CMAKE_FINAL_OUTPUT "${PROJECT_SOURCE_DIR}/../build/package/")
 set(CMAKE_FILE_TRANSFER_SCRIPT "${PROJECT_SOURCE_DIR}/transfer_output.py")
 
 # source projects
-add_subdirectory(src/pylib)
+add_subdirectory(src/helper)
 add_subdirectory(src/processor)
 add_subdirectory(src/manager)
 add_subdirectory(src/trading)

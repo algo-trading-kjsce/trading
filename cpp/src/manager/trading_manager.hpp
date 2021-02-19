@@ -19,6 +19,7 @@
 #include <unordered_map>
 
 #include "csv_data.hpp"
+#include "curl_handler.hpp"
 
 #include "robinhood_bot.hpp"
 #include "tasks.hpp"
@@ -36,7 +37,9 @@ private:
     std::atomic_bool m_keep_running{ true };
 
     robinhood_bot m_robinhood_bot{};  // Robinhood bot to retrieve prices and execute trades
-    telegram_bot m_telegram_bot;  // Telegram bot to send and receive messages from user
+    telegram_bot& m_telegram_bot;  // Telegram bot to send and receive messages from user
+
+    trading::curl_handler t{};
 
     std::thread m_telegram_thread{};
     std::thread m_robinhood_thread{};
