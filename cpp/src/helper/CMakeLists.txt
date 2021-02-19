@@ -1,4 +1,4 @@
-set(BINARY pylib)
+set(BINARY helper)
 
 include_directories("${PROJECT_SOURCE_DIR}/include/${BINARY}/")
 

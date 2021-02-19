@@ -11,7 +11,6 @@
 
 #pragma once
 
-#include <functional>
 #include <memory>
 
 #include "enums.hpp"

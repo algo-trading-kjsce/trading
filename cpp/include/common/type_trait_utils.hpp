@@ -45,5 +45,15 @@ auto get_char_address( _T&& object )
     return (char*)std::addressof( object );
 }
 
-
 #define io_info( x ) get_char_address( x ), sizeof( x )
+
+
+#define no_copy_class( x ) \
+    x( const x& ) = delete; \
+    x& operator=( const x& ) = delete;
+
+#define no_move_class( x ) \
+    x( x&& ) = delete; \
+    x& operator=( x&& ) = delete;
+
+#define no_copy_no_move_class( x ) no_copy_class( x ) no_move_class( x )

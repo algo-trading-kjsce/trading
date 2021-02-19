@@ -9,11 +9,16 @@
  *
  */
 
+#ifdef __linux__
+#    include <pwd.h>
+#else
+#endif
+
 #include <algorithm>
 
 #include "fs_include.hpp"
 
-#include "pylib/python_utils.hpp"
+#include "helper/python_utils.hpp"
 
 #include "trading_manager.hpp"
 
@@ -50,6 +55,30 @@ auto get_application_location()
     return app_path;
 }
 
+
+/**
+ * @brief Get the home path
+ *
+ * @return home path
+ */
+auto get_home_path()
+{
+    auto path{ fs::path{} };
+#ifdef __linux__
+    if( auto pwd{ getpwuid( getuid() ) }; pwd != nullptr )
+    {
+        path = pwd->pw_dir;
+    }
+    else
+    {
+        path = getenv( "HOME" );
+    }
+#else
+#    error "Fix for Windows and MacOS"
+#endif
+
+    return path;
+}
 
 /**
  * @brief Start the python environment
@@ -96,7 +125,8 @@ trading_manager::task_lock::task_lock() noexcept : m_lock{ task_queue_mutex }
 }
 
 
-trading_manager::trading_manager( std::vector<std::string> i_stocks ) : m_telegram_bot{ *this }
+trading_manager::trading_manager( std::vector<std::string> i_stocks ) :
+    m_telegram_bot{ telegram_bot::get_bot( *this, get_home_path() / ".credentials" / "telegram" ) }
 {
     for( auto&& stock : i_stocks )
     {

@@ -1,5 +1,5 @@
 # install gcc-10 and g++-10
-sudo apt-get update
+sudo apt update && sudo apt upgrade
 
 sudo apt install gcc-10 g++-10
 
@@ -7,11 +7,17 @@ sudo apt install clang-format-11
 
 sudo apt install cppcheck
 
+sudo apt install curl
+
+sudo apt-get install libcurl4-openssl-dev
+
+sudo apt install nlohmann-json3-dev
+
 sudo apt install python3.8
 
-pip install pytest-flake8
+pip3 install pytest-flake8
 
-pip install -r requirements.txt
+pip3 install -r requirements.txt
 
 # # install TA-Lib
 # sudo apt install build-essential wget -y

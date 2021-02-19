@@ -14,45 +14,46 @@
 #include <string>
 #include <vector>
 
-#include "pylib/py_object.hpp"
+#include "fs_include.hpp"
+#include "type_trait_utils.hpp"
+
+#include "helper/json_helper.hpp"
 
 namespace trading
 {
 class trading_manager;
 
-/**
- * @brief C++ wrapper for Python Telegram Bot
- *
- */
 class telegram_bot
 {
 private:
     trading_manager& m_manager;
-    python::py_object m_bot{};  // Telegram Bot
-    python::py_object m_messageFunc{};  // Function pointer to send messages
-    python::py_object m_updatesFunc{};  // Function pointer to get updates from bot
+
+    fs::path m_credentials{};
+
+    std::string m_url{};
+
+    std::string m_key{};
+    std::int64_t m_user_id{};
+    std::int64_t m_last_update_id{};
+
+    json m_document{};
+
+    telegram_bot( trading_manager& i_manager, fs::path i_credentials_path );
 
 public:
-    /**
-     * @brief Construct a new telegram bot object
-     *
-     * @param i_manager trading manager
-     */
-    telegram_bot( trading_manager& i_manager );
+    no_copy_no_move_class( telegram_bot );
 
+    ~telegram_bot();
 
-    /**
-     * @brief sends a message to the user
-     *
-     * @param i_message message
-     */
-    void sendMessage( const std::string& i_message ) const;
+    void send_message( const std::string& i_message );
 
+    void process_updates( bool i_create_tasks = true );
 
     /**
-     * @brief Update the trading manager with new commands or messages from the user
+     * @brief Get the telegram bot object
      *
+     * @return telegram bot
      */
-    void process_updates() const;
+    static telegram_bot& get_bot( trading_manager&, fs::path );
 };
 }
