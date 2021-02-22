@@ -32,10 +32,6 @@ private:
 
     std::string m_url{};
 
-    std::string m_key{};
-    std::int64_t m_user_id{};
-    std::int64_t m_last_update_id{};
-
     json m_document{};
 
     telegram_bot( trading_manager& i_manager, fs::path i_credentials_path );

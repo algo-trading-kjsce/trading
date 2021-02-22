@@ -12,7 +12,7 @@
 #include <fstream>
 #include <mutex>
 
-#include "curl_handler.hpp"
+#include "helper/curl_helper.hpp"
 
 #include "tasks.hpp"
 #include "telegram_bot.hpp"
@@ -66,8 +66,7 @@ auto process_updates( const json& i_json, std::int64_t i_user_id )
     auto latest_update_id{ 0_i64 };
 
     auto cmds{ std::vector<std::string>{} };
-
-    [[maybe_unused]] auto n{ i_json["result"].size() };
+    cmds.reserve( i_json["result"].size() );
 
     for( auto&& update : i_json["result"] )
     {
@@ -89,11 +88,11 @@ auto process_updates( const json& i_json, std::int64_t i_user_id )
     return std::make_pair( latest_update_id, std::move( cmds ) );
 }
 
-size_t writeFunction( void* ptr, size_t size, size_t nmemb, std::string* data )
+[[maybe_unused]] size_t writeFunction( void* ptr, size_t size, size_t nmemb, void* data )
 {
     if( data != nullptr )
     {
-        data->append( (char*)ptr, size * nmemb );
+        reinterpret_cast<std::string*>( data )->append( reinterpret_cast<char*>( ptr ), size * nmemb );
     }
 
     return size * nmemb;
@@ -113,12 +112,12 @@ telegram_bot::telegram_bot( trading_manager& i_manager, fs::path i_path ) :
     }
 
     this->process_updates( false );
-    this->send_message( "Bot has started.as" );
+    this->send_message( "Bot has started" );
 }
 
 telegram_bot::~telegram_bot()
 {
-    this->send_message( "Bot is shutting down.as" );
+    this->send_message( "Bot is shutting down" );
 
     if( auto stream{ std::ofstream{ m_credentials } }; stream.good() )
     {
@@ -151,12 +150,10 @@ void telegram_bot::send_message( const std::string& i_message )
 
     curl_easy_setopt( curl_ptr.get(), CURLOPT_HTTPHEADER, curl_list_ptr.get() );
 
-    curl_easy_setopt( curl_ptr.get(), CURLOPT_WRITEFUNCTION, writeFunction );
-    curl_easy_setopt( curl_ptr.get(), CURLOPT_WRITEDATA, nullptr );
+    auto response{ trading::curl::curl_response{ curl_ptr.get() } };
 
     curl_easy_perform( curl_ptr.get() );
 }
-
 
 void telegram_bot::process_updates( bool i_create_tasks /* = true*/ )
 {
@@ -169,14 +166,11 @@ void telegram_bot::process_updates( bool i_create_tasks /* = true*/ )
 
     curl_easy_setopt( curl_ptr.get(), CURLOPT_URL, full_url.c_str() );
 
-    auto response{ std::string{} };
-
-    curl_easy_setopt( curl_ptr.get(), CURLOPT_WRITEFUNCTION, writeFunction );
-    curl_easy_setopt( curl_ptr.get(), CURLOPT_WRITEDATA, std::addressof( response ) );
+    auto response{ trading::curl::curl_response{ curl_ptr.get(), true } };
 
     curl_easy_perform( curl_ptr.get() );
 
-    auto js = std::stojson( response );
+    auto js = std::stojson( response.m_response );
 
     auto [new_update_id, messages] = ::process_updates( js, m_document["user_id"].get<std::int64_t>() );
 

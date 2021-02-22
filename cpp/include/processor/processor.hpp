@@ -11,7 +11,7 @@
 
 #include <cstdint>
 
-#include "enums.hpp"
+#include "../common/enums.hpp"
 
 namespace trading
 {
