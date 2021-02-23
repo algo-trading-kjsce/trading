@@ -11,16 +11,14 @@
 
 #pragma once
 
-#include <list>
-#include <vector>
-#include <unordered_map>
-
-#include <sstream>
-#include <iostream>
 #include <algorithm>
+#include <iostream>
+#include <list>
+#include <sstream>
+#include <unordered_map>
+#include <vector>
 
-#include "type_trait_utils.hpp"
-
+#include "fs_include.hpp"
 #include "structs.hpp"
 
 /**
@@ -222,4 +220,15 @@ public:
 
         return ss.str();
     }
+};
+
+
+struct csv_data
+{
+public:
+    fs::path m_filepath{};  // Name of file from which csv data has been loaded
+
+    std::list<date_s> dates{};  // List of unique dates
+
+    std::unordered_map<date_s, stock_data> stock_map{};  // Map of date to stock data
 };

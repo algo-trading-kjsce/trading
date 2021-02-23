@@ -9,11 +9,13 @@
  *
  */
 
-#include "gtest/gtest.h"
-
 #include <future>
 
+#include "gtest/gtest.h"
+
 #include "../test_macros.hpp"
+
+#include "type_trait_utils.hpp"
 
 #include "processor/utilities.hpp"
 
