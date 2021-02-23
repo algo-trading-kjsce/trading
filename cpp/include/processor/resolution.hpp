@@ -14,7 +14,7 @@
 #include <list>
 #include <type_traits>
 
-#include "../common/csv_data.hpp"
+#include "../common/stock_data.hpp"
 
 namespace trading::csv::resolution
 {

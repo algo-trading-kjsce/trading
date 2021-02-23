@@ -13,7 +13,6 @@
 #include <iostream>
 
 #include "ta-lib/ta_func.h"
-
 #include "timer.hpp"
 
 #include "ta_utils.hpp"

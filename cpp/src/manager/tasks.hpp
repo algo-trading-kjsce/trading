@@ -82,6 +82,14 @@ public:
 };
 
 
+class new_data_task : public task_base
+{
+public:
+    new_data_task( trading_manager& i_manager, const std::string& i_token ) noexcept;
+
+    void execute() override;
+};
+
 /**
  * @brief This is a placeholder for unknown commands
  *

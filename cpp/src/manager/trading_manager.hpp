@@ -18,7 +18,6 @@
 #include <thread>
 #include <unordered_map>
 
-#include "csv_data.hpp"
 #include "curl_handler.hpp"
 
 #include "robinhood_bot.hpp"
@@ -42,7 +41,7 @@ private:
     trading::curl_handler t{};
 
     std::thread m_telegram_thread{};
-    std::thread m_robinhood_thread{};
+    std::vector<std::thread> m_robinhood_price_threads{};
 
     std::unordered_map<std::string, csv_data> m_price_info{};
 

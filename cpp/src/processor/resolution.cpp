@@ -9,14 +9,13 @@
  *
  */
 
-#include <iostream>
 #include <algorithm>
+#include <iostream>
 
 #include "timer.hpp"
 #include "type_trait_utils.hpp"
 
 #include "resolution.hpp"
-
 #include "utilities.hpp"
 
 namespace trading::csv::resolution

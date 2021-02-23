@@ -12,12 +12,12 @@
 #pragma once
 
 #include <list>
+#include <mutex>
 #include <string>
 #include <vector>
-#include <filesystem>
-#include <mutex>
 
-#include "../common/csv_data.hpp"
+#include "../common/fs_include.hpp"
+#include "../common/stock_data.hpp"
 
 using strategy_occurrence_count_t = std::list<std::pair<std::string, std::vector<std::int32_t>>>;
 
@@ -45,7 +45,7 @@ private:
  * @param i_extension extension of files to be found
  * @return list of files found
  */
-std::list<std::filesystem::path> find_files( const char* i_path, const char* i_extension = nullptr );
+std::list<fs::path> find_files( const char* i_path, const char* i_extension = nullptr );
 
 
 /**
@@ -54,7 +54,7 @@ std::list<std::filesystem::path> find_files( const char* i_path, const char* i_e
  * @param i_filepath path of the csv file
  * @return csv data
  */
-csv_data read_initial_csv( const std::filesystem::path& i_filepath );
+csv_data read_initial_csv( const fs::path& i_filepath );
 
 
 /**
@@ -64,7 +64,7 @@ csv_data read_initial_csv( const std::filesystem::path& i_filepath );
  * @param i_path path to written file
  * @param i_write_strategies flag to specify whether strategy information should be written out
  */
-void write_csv( const csv_data& i_csv_data, const std::filesystem::path& i_path, bool i_write_strategies );
+void write_csv( const csv_data& i_csv_data, const fs::path& i_path, bool i_write_strategies );
 
 
 /**
@@ -73,6 +73,6 @@ void write_csv( const csv_data& i_csv_data, const std::filesystem::path& i_path,
  * @param i_path path of file
  * @param i_csv_result results to be written out
  */
-void write_strategy_occurrences( const std::filesystem::path& i_path, const strategy_occurrence_count_t& i_csv_result );
+void write_strategy_occurrences( const fs::path& i_path, const strategy_occurrence_count_t& i_csv_result );
 
 }

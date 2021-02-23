@@ -11,8 +11,8 @@
 
 #pragma once
 
-#include <list>
 #include <chrono>
+#include <list>
 
 class timer
 {

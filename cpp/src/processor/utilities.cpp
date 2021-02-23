@@ -10,17 +10,14 @@
  */
 
 #include <fstream>
-#include <sstream>
 #include <iostream>
-
 #include <optional>
-#include <filesystem>
+#include <sstream>
 
 #include "type_trait_utils.hpp"
 #include "common_utilities.hpp"
 #include "includes.hpp"
 #include "timer.hpp"
-
 
 #include "utilities.hpp"
 
@@ -29,7 +26,7 @@ static std::mutex cout_mutex{};
 
 namespace
 {
-auto get_candle_size( const std::filesystem::path& i_filepath )
+auto get_candle_size( const fs::path& i_filepath )
 {
     auto str{ std::string{} };
 
@@ -61,15 +58,15 @@ io_lock::io_lock() : m_lock{ cout_mutex }
 }
 
 
-std::list<std::filesystem::path> find_files( const char* i_path, const char* i_extension /* = nullptr*/ )
+std::list<fs::path> find_files( const char* i_path, const char* i_extension /* = nullptr*/ )
 {
-    auto files{ std::list<std::filesystem::path>{} };
+    auto files{ std::list<fs::path>{} };
 
-    auto path{ std::filesystem::path{ i_path } };
+    auto path{ fs::path{ i_path } };
 
-    if( std::filesystem::is_directory( path ) )
+    if( fs::is_directory( path ) )
     {
-        for( auto&& file : std::filesystem::directory_iterator( i_path ) )
+        for( auto&& file : fs::directory_iterator( i_path ) )
         {
             auto& file_path{ file.path() };
 
@@ -79,7 +76,7 @@ std::list<std::filesystem::path> find_files( const char* i_path, const char* i_e
             }
         }
     }
-    else if( std::filesystem::is_regular_file( path ) )
+    else if( fs::is_regular_file( path ) )
     {
         if( i_extension == nullptr || path.extension() == i_extension )
         {
@@ -91,11 +88,11 @@ std::list<std::filesystem::path> find_files( const char* i_path, const char* i_e
 }
 
 
-csv_data read_initial_csv( const std::filesystem::path& i_filepath )
+csv_data read_initial_csv( const fs::path& i_filepath )
 {
-    if( !std::filesystem::exists( i_filepath ) )
+    if( !fs::exists( i_filepath ) )
     {
-        throw std::filesystem::filesystem_error{ "Path not found", i_filepath, {} };
+        throw fs::filesystem_error{ "Path not found", i_filepath, {} };
     }
 
     auto tmr{ timer{} };
@@ -145,13 +142,13 @@ csv_data read_initial_csv( const std::filesystem::path& i_filepath )
 }
 
 
-void write_csv( const csv_data& i_csv_data, const std::filesystem::path& i_path, bool i_write_strategies )
+void write_csv( const csv_data& i_csv_data, const fs::path& i_path, bool i_write_strategies )
 {
     auto tmr{ timer{} };
 
-    if( auto result_directory{ i_path.parent_path() }; !std::filesystem::exists( result_directory ) )
+    if( auto result_directory{ i_path.parent_path() }; !fs::exists( result_directory ) )
     {
-        std::filesystem::create_directories( result_directory );
+        fs::create_directories( result_directory );
     }
 
     if( auto file{ std::ofstream{ i_path } }; file.good() )
@@ -197,7 +194,7 @@ void write_csv( const csv_data& i_csv_data, const std::filesystem::path& i_path,
 }
 
 
-void write_strategy_occurrences( const std::filesystem::path& i_path, const strategy_occurrence_count_t& i_csv_result )
+void write_strategy_occurrences( const fs::path& i_path, const strategy_occurrence_count_t& i_csv_result )
 {
     if( auto file{ std::ofstream{ i_path } }; file.good() )
     {

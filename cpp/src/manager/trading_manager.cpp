@@ -130,7 +130,8 @@ trading_manager::trading_manager( std::vector<std::string> i_stocks ) :
 {
     for( auto&& stock : i_stocks )
     {
-        m_price_info[stock] = m_robinhood_bot.get_historical_prices( stock );
+        [[maybe_unused]] auto [iter, inserted] =
+            m_price_info.try_emplace( stock, m_robinhood_bot.get_historical_prices( stock ) );
     }
 
     m_telegram_thread = std::thread{ [&]() {

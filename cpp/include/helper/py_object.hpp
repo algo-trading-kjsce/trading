@@ -13,8 +13,8 @@
 
 #include <string>
 
-#include "../common/type_trait_utils.hpp"
 #include "../common/py_include.hpp"
+#include "../common/type_trait_utils.hpp"
 
 namespace trading::python
 {
