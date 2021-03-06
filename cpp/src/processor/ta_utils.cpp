@@ -121,11 +121,11 @@ std::vector<std::int32_t> find_patterns( csv_data& io_csv_data )
         // HELPER(TA_CDLMORNINGSTAR);
     }
 
-    {
-        auto m{ trading::utilities::io_lock{} };
-        std::cout << "File " << io_csv_data.m_filepath.filename().string() << " : Patterns found in "
-                  << tmr.total_time().count() << "ms" << std::endl;
-    }
+    trading::utilities::async_cout( "File ",
+                                    io_csv_data.m_filepath.filename().string(),
+                                    " : Patterns found in ",
+                                    tmr.total_time().count(),
+                                    "ms\n" );
 
     return occurrences;
 }

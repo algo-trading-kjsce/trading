@@ -13,14 +13,14 @@
 
 #include <atomic>
 #include <deque>
+#include <future>
 #include <mutex>
-#include <string>
-#include <thread>
 #include <unordered_map>
 
 #include "curl_handler.hpp"
 
 #include "robinhood_bot.hpp"
+#include "strategy_manager.hpp"
 #include "tasks.hpp"
 #include "telegram_bot.hpp"
 
@@ -38,29 +38,37 @@ private:
     robinhood_bot m_robinhood_bot{};  // Robinhood bot to retrieve prices and execute trades
     telegram_bot& m_telegram_bot;  // Telegram bot to send and receive messages from user
 
+    strategy_manager m_strategy_manager;
+
     trading::curl_handler t{};
 
-    std::thread m_telegram_thread{};
-    std::thread m_robinhood_thread{};
+    std::future<void> m_telegram_proc{};
+    std::vector<std::future<void>> m_robinhood_procs{};
 
-    std::unordered_map<std::string, csv_data> m_price_info{};
+    std::unordered_map<std::string, stock_data> m_stocks{};
+    std::unordered_map<std::string, complete_transaction_t> m_trades{};
 
     std::deque<task_ptr> m_tasks{};
-
-    class task_lock
-    {
-    private:
-        std::lock_guard<std::mutex> m_lock;
-
-    public:
-        task_lock() noexcept;
-    };
 
     /**
      * @brief Clear all pending tasks and stop processing
      *
      */
     void clear_tasks();
+
+    /**
+     * @brief Execute the top task in the queue
+     *
+     */
+    void execute_task();
+
+    void add_trade( const std::string& i_ticker,
+                    trading_strategy i_strategy,
+                    candle_s i_candle,
+                    double i_nshares,
+                    double i_price );
+
+    void finish_trade( const std::string& i_ticker, candle_s i_candle, double i_price );
 
 public:
     /**
@@ -77,18 +85,38 @@ public:
     void add_task( task_ptr i_task_ptr );
 
     /**
-     * @brief Execute the top task in the queue
-     *
-     */
-    void execute_task();
-
-    /**
      * @brief Wait for pending threads
      *
      */
     void await();
 
+    /**
+     * @brief fetch stock data for ticker
+     *
+     * @param i_ticker incoming ticker
+     * @return stock data for ticker
+     */
+    const stock_data& find_stock_data( const std::string& i_ticker ) const;
+
+
+    /**
+     * @brief fetch the last transaction data for ticker
+     *
+     * @param i_ticker incoming ticker
+     * @return complete transaction information for ticker
+     */
+    std::optional<complete_transaction_t> find_transaction_data( const std::string& i_ticker ) const;
+
+    /**
+     * @brief Get the robinhood bot
+     *
+     * @return active robinhood_bot
+     */
+    robinhood_bot& get_robinhood_bot();
+
     friend abort_task;
+    friend buy_task;
+    friend sell_task;
 };
 
 /**

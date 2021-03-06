@@ -57,8 +57,10 @@ public:
      * @brief Add new candle stick to stock information
      *
      * @param i_candleStick candle stick to add
+     *
+     * @return true if candle was added
      */
-    void add_candle( candle_s i_candle ) noexcept
+    bool add_candle( candle_s i_candle ) noexcept
     {
         if( !m_candles.empty() )
         {
@@ -88,12 +90,13 @@ public:
             }
             else if( new_candle_size < m_candle_size )
             {
-                std::cout << "File with inconsistent candle sizes..." << std::endl;
-                return;
+                return false;
             }
         }
 
         m_candles.push_back( std::move( i_candle ) );
+
+        return true;
     }
 
 

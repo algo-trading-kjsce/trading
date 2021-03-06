@@ -14,6 +14,7 @@
 #include <vector>
 
 #include "processor/processor.hpp"
+#include "processor/utilities.hpp"
 
 #include "args_handler.hpp"
 #include "trading_manager.hpp"
@@ -26,13 +27,15 @@ namespace
  */
 void show_help()
 {
-    std::cout << R"(
+    trading::utilities::async_cout( R"(
                                                           --- Trading App ---
 
     trading -r <new_res> <input_file> <output_path>              = Change resolution of csv files. Input can be one csv file or a directory
     trading -p <input_file> <output_path> <pattern_report_path>  = For running pattern recognition from TA-Lib. Input can be one csv file or a directory
+
+    You can use the app to run continuously and trade stocks
     trading -t <python_scripts_directory>                        = For starting day trading algorithms and pattern recognition 
-)";
+)" );
 }
 
 
@@ -42,7 +45,7 @@ void show_help()
  */
 void invalid_arg()
 {
-    std::cout << "Too few arguments. Run \"trading --help\" for more information.\n";
+    trading::utilities::async_cout( "Too few arguments. Run \"trading --help\" for more information.\n" );
 }
 
 }

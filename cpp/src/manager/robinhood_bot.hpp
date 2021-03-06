@@ -37,7 +37,7 @@ public:
      * @param i_symbol Symbol to find info
      * @return csv_data Final historical result
      */
-    csv_data get_historical_prices( std::string i_symbol );
+    csv_data get_historical_prices( const std::string& i_symbol );
 
     /**
      * @brief Get the latest price for a stock/currency
@@ -45,6 +45,22 @@ public:
      * @param i_symbol Symbol to find info
      * @return candle_s Candle for latest price
      */
-    candle_s get_latest_price( std::string i_symbol );
+    candle_s get_latest_price( const std::string& i_symbol );
+
+    /**
+     * @brief Buy a ticker
+     *
+     * @param i_ticker incoming ticker
+     * @return number of shares and price per share bought
+     */
+    std::pair<double, double> buy( const std::string& i_ticker );
+
+    /**
+     * @brief sell a ticker
+     *
+     * @param i_ticker incoming ticker
+     * @return sale price of ticker
+     */
+    double sell( const std::string& i_ticker );
 };
 }

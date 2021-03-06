@@ -132,11 +132,8 @@ csv_data read_initial_csv( const fs::path& i_filepath )
         }
     }
 
-    {
-        auto m{ trading::utilities::io_lock{} };
-        std::cout << "File " << i_filepath.filename().string() << " read in " << tmr.total_time().count() << "ms"
-                  << std::endl;
-    }
+    trading::utilities::async_cout(
+        "File ", i_filepath.filename().string(), " read in ", tmr.total_time().count(), "ms\n" );
 
     return { i_filepath, std::move( dates ), std::move( stockInformation ) };
 }
@@ -186,11 +183,8 @@ void write_csv( const csv_data& i_csv_data, const fs::path& i_path, bool i_write
         }
     }
 
-    {
-        auto m{ trading::utilities::io_lock{} };
-        std::cout << "File " << i_path.filename().string() << " written in " << tmr.total_time().count() << "ms"
-                  << std::endl;
-    }
+    trading::utilities::async_cout(
+        "File ", i_path.filename().string(), " written in ", tmr.total_time().count(), "ms\n" );
 }
 
 
