@@ -70,11 +70,11 @@ robinhood_bot::robinhood_bot()
     m_last_price_func = py_object{ PyObject_GetAttrString( m_bot, "get_last_price" ) };
 }
 
-csv_data robinhood_bot::get_historical_prices( std::string i_symbol )
+csv_data robinhood_bot::get_historical_prices( const std::string& i_symbol )
 {
     auto lock{ rh_lock{} };
 
-    auto str{ py_object{ std::move( i_symbol ) } };
+    auto str{ py_object{ i_symbol } };
 
     auto args_tuple{ py_object{ PyTuple_Pack( 1, str.get_pointer() ) } };
 
@@ -85,11 +85,11 @@ csv_data robinhood_bot::get_historical_prices( std::string i_symbol )
     return trading::utilities::read_initial_csv( file_path );
 }
 
-candle_s robinhood_bot::get_latest_price( std::string i_symbol )
+candle_s robinhood_bot::get_latest_price( const std::string& i_symbol )
 {
     auto lock{ rh_lock{} };
 
-    auto str{ py_object{ std::move( i_symbol ) } };
+    auto str{ py_object{ i_symbol } };
 
     auto args_tuple{ py_object{ PyTuple_Pack( 1, str.get_pointer() ) } };
 
@@ -106,5 +106,16 @@ candle_s robinhood_bot::get_latest_price( std::string i_symbol )
     }
 
     return candle;
+}
+
+
+std::pair<double, double> robinhood_bot::buy( [[maybe_unused]] const std::string& i_ticker )
+{
+    return {};
+}
+
+double robinhood_bot::sell( [[maybe_unused]] const std::string& i_ticker )
+{
+    return {};
 }
 }

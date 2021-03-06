@@ -11,6 +11,8 @@
 
 #include <iostream>
 
+#include "processor/utilities.hpp"
+
 #include "tasks.hpp"
 #include "trading_manager.hpp"
 
@@ -47,6 +49,46 @@ void abort_task::execute()
 }
 
 
+trade_task::trade_task( trading_manager& i_manager,
+                        const std::string& i_ticker,
+                        const candle_s& i_candle,
+                        trading_task_type i_task_type ) noexcept :
+    task_base{ i_manager, i_task_type }, m_candle{ i_candle }, m_ticker{ i_ticker }
+{
+}
+
+
+buy_task::buy_task( trading_manager& i_manager,
+                    const std::string& i_ticker,
+                    const candle_s& i_candle,
+                    trading_strategy i_strategy ) noexcept :
+    trade_task{ i_manager, i_ticker, i_candle, trading_task_type::buy }, m_strategy{ i_strategy }
+{
+}
+
+
+void buy_task::execute()
+{
+    auto [n_shares, price] = get_manager().get_robinhood_bot().buy( m_ticker );
+
+    get_manager().add_trade( m_ticker, m_strategy, std::move( m_candle ), n_shares, price );
+}
+
+
+sell_task::sell_task( trading_manager& i_manager, const std::string& i_ticker, const candle_s& i_candle ) noexcept :
+    trade_task{ i_manager, i_ticker, i_candle, trading_task_type::sell }
+{
+}
+
+
+void sell_task::execute()
+{
+    auto price{ get_manager().get_robinhood_bot().sell( m_ticker ) };
+
+    get_manager().finish_trade( m_ticker, std::move( m_candle ), price );
+}
+
+
 unknown_cmd::unknown_cmd( trading_manager& i_manager, std::string i_cmd ) noexcept :
     task_base{ i_manager, trading_task_type::unknown }, m_cmd{ std::move( i_cmd ) }
 {
@@ -55,6 +97,6 @@ unknown_cmd::unknown_cmd( trading_manager& i_manager, std::string i_cmd ) noexce
 
 void unknown_cmd::execute()
 {
-    std::cout << "Unknown command: " << m_cmd << '\n';
+    trading::utilities::async_cout( "Unknown command: ", m_cmd, '\n' );
 }
 }

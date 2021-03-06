@@ -36,10 +36,7 @@ namespace
  * @param i_process_function processor lambda function
  */
 template<typename _Func>
-void process( bool i_multi_threaded,
-              fs::path i_input_path,
-              fs::path i_output_path,
-              _Func&& i_process_function )
+void process( bool i_multi_threaded, fs::path i_input_path, fs::path i_output_path, _Func&& i_process_function )
 {
     if( fs::is_directory( i_input_path ) )
     {
@@ -89,7 +86,6 @@ void process( bool i_multi_threaded,
 
 namespace trading
 {
-
 trading_app_result change_resolution( int i_argc, const char* i_argv[], bool i_multi_threaded )
 {
     if( i_argc != 5 )
@@ -127,10 +123,7 @@ trading_app_result identify_patterns( int i_argc, const char* i_argv[], bool i_m
     auto csv_result{ strategy_occurrence_count_t{} };
 
     auto run_patterns = [&idx, &csv_result]( const auto& i_input_path, const auto& i_output_path ) mutable {
-        {
-            auto m{ trading::utilities::io_lock{} };
-            std::cout << std::endl << "File #" << idx++ << std::endl;
-        }
+        trading::utilities::async_cout( "\nFile #", idx++, '\n' );
 
         auto csv_data{ trading::utilities::read_initial_csv( i_input_path ) };
 
@@ -150,10 +143,7 @@ trading_app_result identify_patterns( int i_argc, const char* i_argv[], bool i_m
 
     trading::utilities::write_strategy_occurrences( i_argv[4], csv_result );
 
-    {
-        auto m{ trading::utilities::io_lock{} };
-        std::cout << std::endl << "Total time: " << tmr.total_time().count() << "ms" << std::endl;
-    }
+    trading::utilities::async_cout( "\nTotal time: ", tmr.total_time().count(), "ms\n" );
 
     return trading_app_result::success;
 }

@@ -37,6 +37,23 @@ private:
     std::lock_guard<std::mutex> m_lock;
 };
 
+/**
+ * @brief Output to terminal asynchronously
+ * 
+ * @tparam _First Type of first argument
+ * @tparam _Rest Types of the rest of the arguments
+ * @param i_arg First argument
+ * @param i_args Rest of the arguments
+ */
+template<typename _First, typename... _Rest>
+void async_cout( _First&& i_arg, _Rest&&... i_args )
+{
+    auto lk{ io_lock{} };
+
+    std::cout << std::forward<_First>( i_arg );
+    ( ( std::cout << std::forward<_Rest>( i_args ) ), ... );
+}
+
 
 /**
  * @brief finds all files in the directory, filters if extension supplied

@@ -14,6 +14,7 @@
 #include <memory>
 
 #include "enums.hpp"
+#include "structs.hpp"
 
 namespace trading
 {
@@ -77,6 +78,67 @@ public:
      * @param i_manager Trading manager
      */
     abort_task( trading_manager& i_manager ) noexcept;
+
+    void execute() override;
+};
+
+
+class trade_task : public task_base
+{
+protected:
+    candle_s m_candle{};
+    std::string m_ticker{};
+
+public:
+    /**
+     * @brief Construct a new trade task object
+     *
+     * @param i_manager trading manager
+     * @param i_ticker ticker to trade
+     * @param i_candle last candle
+     * @param i_task_type trade type
+     */
+    trade_task( trading_manager& i_manager,
+                const std::string& i_ticker,
+                const candle_s& i_candle,
+                trading_task_type i_task_type ) noexcept;
+};
+
+
+class buy_task : public trade_task
+{
+private:
+    trading_strategy m_strategy{};
+
+public:
+    /**
+     * @brief Construct a new buy task object
+     *
+     * @param i_manager trading manager
+     * @param i_ticker ticker to buy
+     * @param i_candle last candle
+     * @param i_strategy trading strategy
+     */
+    buy_task( trading_manager& i_manager,
+              const std::string& i_ticker,
+              const candle_s& i_candle,
+              trading_strategy i_strategy ) noexcept;
+
+    void execute() override;
+};
+
+
+class sell_task : public trade_task
+{
+public:
+    /**
+     * @brief Construct a new sell task object
+     *
+     * @param i_manager trading manager
+     * @param i_ticker ticker to sell
+     * @param i_candle last candle
+     */
+    sell_task( trading_manager& i_manager, const std::string& i_ticker, const candle_s& i_candle ) noexcept;
 
     void execute() override;
 };

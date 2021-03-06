@@ -11,13 +11,12 @@
 
 #pragma once
 
-#include <vector>
-#include <string>
-
-#include <sstream>
 #include <iomanip>
-
+#include <list>
 #include <optional>
+#include <sstream>
+#include <string>
+#include <vector>
 
 #include "includes.hpp"
 #include "enums.hpp"
@@ -296,6 +295,21 @@ struct candle_s
     double low{};  // low price of candle
     double close{};  // close price of candle
 
+    candle_direction direction() const noexcept
+    {
+        if( open == close )
+        {
+            return candle_direction::none;
+        }
+        else if( open > close )
+        {
+            return candle_direction::down;
+        }
+        else
+        {
+            return candle_direction::up;
+        }
+    }
 
     /**
      * @brief Write candle object to stream
@@ -462,4 +476,29 @@ struct raw_stock_input_s
     std::vector<double> highs{};  // high prices in array form
     std::vector<double> lows{};  // low prices in array form
     std::vector<double> closes{};  // close prices in array form
+};
+
+
+/**
+ * @brief A simple transaction of tickers
+ *
+ */
+struct transaction_s
+{
+    trade_type type{};  // Whether it is buying or selling
+
+    candle_s candle{};  // Iterator to find selling/buying candle
+
+    double price{};  // price at which ticker is bought
+};
+
+
+struct complete_transaction_t
+{
+    trading_strategy strategy{};  // strategy applied for transaction
+
+    double n_shares{};  // number of shares
+
+    std::optional<transaction_s> buy{};  // buying transaction
+    std::optional<transaction_s> sell{};  // selling transaction
 };

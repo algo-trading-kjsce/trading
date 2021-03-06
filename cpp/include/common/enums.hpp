@@ -142,5 +142,41 @@ enum class trading_task_type
     unknown,
     status_request,
     computation,
+    buy,
+    sell,
     termination,
+};
+
+
+/**
+ * @brief Enumeration for different native implemented strategies
+ *
+ */
+enum class trading_strategy
+{
+    bullish_engulfing,
+    __LAST,
+};
+
+
+/**
+ * @brief Enumeration for different types of trades
+ *
+ */
+enum class trade_type
+{
+    buy,
+    sell,
+};
+
+
+/**
+ * @brief whether the candle is an increasing or decreasing one
+ * 
+ */
+enum class candle_direction
+{
+    none,
+    up,
+    down,
 };

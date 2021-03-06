@@ -90,7 +90,7 @@ class Executor:
                                                         "volume": int})
         """
         self.m_csv_data = pd.read_csv(
-            "/Users/amarchheda/Desktop/pet_projects/trading/trading/data/ACC.csv")
+            "/home/ashwinn76/workspace/trading/csv/ind/ACC.csv")
         self.m_csv_data.datetime = self.m_csv_data.datetime.apply(
             lambda x: x.split("+")[0])
         self.m_csv_data.datetime = pd.to_datetime(self.m_csv_data.datetime)
@@ -169,7 +169,8 @@ class Executor:
             print(et)
             print(type(et))
             print(self.m_csv_data.dtypes)
-            available_shares = self.m_csv_data[self.m_csv_data.datetime == et].volume.tolist()[0]
+            available_shares = self.m_csv_data[self.m_csv_data.datetime == et].volume.tolist()[
+                0]
 
             entry_price = float(calculatedDataRow.entry_price)
 
@@ -257,11 +258,10 @@ class Executor:
         for file in self.m_fileNames:
             self.m_currentFileName = file
 
-            paishe_utils.custom_print(
-                f"\n\n----------Start File : {file}----------")
+            print(f"\n\n----------Start File : {file}----------")
 
             self.open_file()
             self.run_func()
             self.plot_results(plotResults, uploadResults)
 
-            paishe_utils.custom_print(f"----------End File : {file}----------")
+            print(f"----------End File : {file}----------")

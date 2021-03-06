@@ -40,7 +40,7 @@ def mymethod(dates, csv_data) -> CalculatedData.CalculatedData:
     for i in range(len(csv_data.datetime.dt.date.unique()) - 1):
 
         current_day = \
-            csv_data[csv_data.datetime.dt.date.values == dates.Date[i]].reset_index(True)
+            csv_data[csv_data.datetime.dt.date.values == dates.Date[i]].reset_index(drop=True)
 
         j = 4
 
