@@ -18,7 +18,6 @@
 #include <thread>
 #include <unordered_map>
 
-#include "csv_data.hpp"
 #include "curl_handler.hpp"
 
 #include "robinhood_bot.hpp"

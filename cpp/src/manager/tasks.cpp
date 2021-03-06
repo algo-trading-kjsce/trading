@@ -12,7 +12,6 @@
 #include <iostream>
 
 #include "tasks.hpp"
-
 #include "trading_manager.hpp"
 
 namespace trading

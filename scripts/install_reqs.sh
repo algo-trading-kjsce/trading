@@ -1,5 +1,5 @@
 # install gcc-10 and g++-10
-sudo apt update && sudo apt upgrade
+sudo apt-get update
 
 sudo apt install gcc-10 g++-10
 

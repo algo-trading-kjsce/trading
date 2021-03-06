@@ -24,14 +24,14 @@
 namespace
 {
 auto change_resolution_test_code( const csv_data& i_csv_data,
-                                  const std::filesystem::path& i_output_file_path,
+                                  const fs::path& i_output_file_path,
                                   std::int32_t i_new_resolution )
 {
     auto new_csv{ trading::csv::resolution::change_resolution( i_csv_data, i_new_resolution ) };
 
     trading::utilities::write_csv( new_csv, i_output_file_path, false );
 
-    EXPECT_TRUE( std::filesystem::exists( i_output_file_path ) );
+    EXPECT_TRUE( fs::exists( i_output_file_path ) );
 
     auto test_csv_data{ trading::utilities::read_initial_csv( i_output_file_path ) };
 

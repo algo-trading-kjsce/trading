@@ -10,11 +10,12 @@
  */
 
 #include <iostream>
-#include <filesystem>
 
-#define TEST_DATA_DIRECTORY std::filesystem::path{ __FILE__ }.parent_path().parent_path().append( "data" )
+#include "../include/common/fs_include.hpp"
 
-#define TEST_OUTPUT_DIRECTORY std::filesystem::path{ __FILE__ }.parent_path().parent_path().append( "output" )
+#define TEST_DATA_DIRECTORY fs::path{ __FILE__ }.parent_path().parent_path().append( "data" )
+
+#define TEST_OUTPUT_DIRECTORY fs::path{ __FILE__ }.parent_path().parent_path().append( "output" )
 
 #define TEST_NAME ::testing::UnitTest::GetInstance()->current_test_info()->name()
 

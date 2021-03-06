@@ -9,15 +9,13 @@
  *
  */
 
-#include <iostream>
-#include <string.h>
-
-#include <mutex>
 #include <future>
+#include <iostream>
+#include <mutex>
+#include <string>
 
 #include "ta_handler.hpp"
 #include "timer.hpp"
-
 
 #include "utilities.hpp"
 #include "resolution.hpp"
@@ -39,13 +37,13 @@ namespace
  */
 template<typename _Func>
 void process( bool i_multi_threaded,
-              std::filesystem::path i_input_path,
-              std::filesystem::path i_output_path,
+              fs::path i_input_path,
+              fs::path i_output_path,
               _Func&& i_process_function )
 {
-    if( std::filesystem::is_directory( i_input_path ) )
+    if( fs::is_directory( i_input_path ) )
     {
-        if( !std::filesystem::is_directory( i_output_path ) )
+        if( !fs::is_directory( i_output_path ) )
         {
             i_output_path = i_output_path.parent_path();
         }
@@ -75,9 +73,9 @@ void process( bool i_multi_threaded,
             }
         }
     }
-    else if( std::filesystem::is_regular_file( i_input_path ) )
+    else if( fs::is_regular_file( i_input_path ) )
     {
-        if( std::filesystem::is_directory( i_output_path ) )
+        if( fs::is_directory( i_output_path ) )
         {
             i_output_path.append( i_input_path.filename().string() );
         }
