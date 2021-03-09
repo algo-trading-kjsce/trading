@@ -16,13 +16,8 @@ jobs:
     - name: Clone repository
       uses: actions/checkout@v2
 
-    - name: Setup Python3.8
-      uses: actions/setup-python@v2
-      with:
-        python-version: "3.8"
-
     - name: Checkout submodules
-      uses: textbook/git-checkout-submodule-action@2.1.1
+      run: git submodule update --init --recursive
 
     - name: Compile in Debug
       uses: lukka/run-cmake@v3
