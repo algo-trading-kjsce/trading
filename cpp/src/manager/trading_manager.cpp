@@ -21,7 +21,6 @@
 #include "fs_include.hpp"
 
 #include "helper/python_utils.hpp"
-#include "processor/utilities.hpp"
 
 #include "trading_manager.hpp"
 
@@ -135,8 +134,6 @@ void add_python_paths( std::vector<std::string> i_python_script_paths )
         std::replace( path.begin(), path.end(), '\\', '/' );
 
         auto pythonCmd{ "sys.path.insert(0, \"" + path + "\")" };
-
-        trading::utilities::async_cout( pythonCmd );
 
         PyRun_SimpleString( pythonCmd.c_str() );
     }

@@ -44,10 +44,7 @@ include_directories("${PROJECT_SOURCE_DIR}/include/")
 include_directories("${PROJECT_SOURCE_DIR}/include/common/")
 include_directories(SYSTEM "${PROJECT_SOURCE_DIR}/include/3rdparty/")
 
-set(CMAKE_FINAL_OUTPUT "${PROJECT_SOURCE_DIR}/../build/package/")
-set(CMAKE_FILE_TRANSFER_SCRIPT "${PROJECT_SOURCE_DIR}/transfer_output.py")
-
-add_compile_definitions(PYTHON_FILES="${CMAKE_FINAL_OUTPUT}")
+add_compile_definitions(PYTHON_FILES="${PROJECT_SOURCE_DIR}/../python/")
 
 # source projects
 add_subdirectory(src/helper)
@@ -57,6 +54,3 @@ add_subdirectory(src/trading)
 
 # tests
 add_subdirectory(tst/tests)
-
-# Post Build commands
-execute_process(COMMAND "${PYTHON_EXECUTABLE}" "${CMAKE_FILE_TRANSFER_SCRIPT}" "copy" "${PROJECT_SOURCE_DIR}/../python/" "${CMAKE_FINAL_OUTPUT}" ".py")
