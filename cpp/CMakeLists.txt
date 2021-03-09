@@ -32,7 +32,6 @@ endif()
 
 find_package(Threads REQUIRED)
 find_package(PythonLibs REQUIRED)
-find_package(PythonInterp REQUIRED)
 find_package(CURL REQUIRED)
 
 include(gtest.cmake)

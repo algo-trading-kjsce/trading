@@ -19,20 +19,22 @@ jobs:
     - name: Compile in Debug
       uses: lukka/run-cmake@v3
       with:
+        cmakeListsTxtPath: '$(Build.SourcesDirectory)/CMakeLists.txt'
         buildDirectory: ${{ runner.workspace }}/build/
-        cmakeAppendedArgs: >-
-          --config Debug
-          -G Ninja
-        cmakeListsOrSettingsJson: CMakeListsTxtAdvanced
+        cmakeListsOrSettingsJson: 'CMakeListsTxtBasic'
+        cmakeBuildType: 'Debug'
+        cmakeGenerator: 'Ninja'
+        buildWithCMakeArgs: '-- -v'
 
     - name: Compile in Release
       uses: lukka/run-cmake@v3
       with:
+        cmakeListsTxtPath: '$(Build.SourcesDirectory)/CMakeLists.txt'
         buildDirectory: ${{ runner.workspace }}/build/
-        cmakeAppendedArgs: >-
-          --config RelWithDebInfo
-          -G Ninja
-        cmakeListsOrSettingsJson: CMakeListsTxtAdvanced        
+        cmakeListsOrSettingsJson: 'CMakeListsTxtBasic'
+        cmakeBuildType: 'Release'
+        cmakeGenerator: 'Ninja'
+        buildWithCMakeArgs: '-- -v'
 
     - name: Upload Artifacts
       uses: actions/upload-artifact@v2
