@@ -14,7 +14,11 @@
 #include <sstream>
 #include <string>
 
-#include <nlohmann/json.hpp>
+#ifdef _MSC_VER
+#    define _snprintf snprintf
+#endif
+
+#include "nlohmann/json.hpp"
 
 using namespace nlohmann;
 

@@ -1,0 +1,44 @@
+name: windows
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+    if: "!contains(github.event.head_commit.message, '[skip ci]')"
+
+    steps:
+    - name: Clone repository
+      uses: actions/checkout@v2
+
+    - name: Compile in Debug
+      uses: lukka/run-cmake@v3
+      with:
+        buildDirectory: ${{ runner.workspace }}/build/
+        cmakeAppendedArgs: >-
+          --config Debug
+          -G Ninja
+        cmakeListsOrSettingsJson: CMakeListsTxtAdvanced
+
+    - name: Compile in Release
+      uses: lukka/run-cmake@v3
+      with:
+        buildDirectory: ${{ runner.workspace }}/build/
+        cmakeAppendedArgs: >-
+          --config RelWithDebInfo
+          -G Ninja
+        cmakeListsOrSettingsJson: CMakeListsTxtAdvanced        
+
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: trading_binaries
+        path: |
+          build\src\trading\RelWithDebInfo\trading.exe
+          build\src\trading\RelWithDebInfo\trading.exe
+          build\src\trading\RelWithDebInfo\trading.ilk
