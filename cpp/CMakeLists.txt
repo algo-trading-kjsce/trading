@@ -6,19 +6,17 @@ set(CMAKE_CXX_STANDARD 20)
 
 if(WIN32)
 
-  set(PYTHON_INCLUDE_DIR "C:/Program Files (x86)/Python38-32/include/")
-  set(PYTHON_LIBRARIES "C:/Program Files (x86)/Python38-32/libs/")
+  set(PYTHON_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/include/3rdparty/python/")
+  set(PYTHON_LIBRARIES "${PROJECT_SOURCE_DIR}/lib/win32/")
 
   set(CURL_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/include/3rdparty/curl")
   set(CURL_LIBRARY "${PROJECT_SOURCE_DIR}/lib/win32/libcurl.lib")
   add_definitions(-DCURL_STATICLIB)
 
   set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
-  set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT /O3")
+  set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
 
-  include(FindCURL)
-
-  link_directories("${PROJECT_SOURCE_DIR}/lib/win32/" "${PYTHON_LIBRARIES}")
+  link_directories("${PROJECT_SOURCE_DIR}/lib/win32/")
 
   include_directories(${CURL_INCLUDE_DIR})
 

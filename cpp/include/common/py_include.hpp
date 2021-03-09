@@ -14,5 +14,5 @@
 #ifdef __linux__
 #include <python3.8/Python.h>
 #else
-#include <Python.h>
+#include "../3rdparty/python/Python.h"
 #endif
