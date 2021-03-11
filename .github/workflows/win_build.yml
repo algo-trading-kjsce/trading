@@ -20,11 +20,16 @@ jobs:
 
     - name: Compile in Debug
       shell: cmd
-      run: call .\scripts\win\build.bat
+      run: |
+        call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\VC\Auxiliary\Build\vcvars32.bat"
+        call scripts\win\build.bat Debug
+
 
     - name: Compile in Release
       shell: cmd
-      run: call .\scripts\win\buid.bat RelWithDebInfo
+      run: |
+        call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\VC\Auxiliary\Build\vcvars32.bat"
+        call scripts\win\build.bat RelWithDebugInfo
 
     - name: Upload Artifacts
       uses: actions/upload-artifact@v2
@@ -33,4 +38,3 @@ jobs:
         path: |
           build\src\trading\trading.exe
           build\src\trading\trading.pdb
-          build\src\trading\trading.ilk

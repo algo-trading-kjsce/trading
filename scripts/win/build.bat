@@ -5,11 +5,7 @@ cd build
 
 set buildmode=%1
 
-@echo buildmode=%buildmode%
-
 if "%buildmode%"=="" set buildmode=Debug
-
-@echo buildmode=%buildmode%
 
 @echo * Creating CMake files...%\n%%\n%%\n%
 
