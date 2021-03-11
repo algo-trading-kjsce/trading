@@ -22,10 +22,9 @@ jobs:
       shell: cmd
       run: |
         call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars32.bat"
-        call .\scripts\win\clear.bat
         md build
         cd build
-        cmake -DCMAKE_BUILD_TYPE=RelWithDebugInfo -G "NMake Makefiles" ..\cpp ..\build
+        cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -G "NMake Makefiles" ..\cpp ..\build
         nmake
 
     - name: Upload Artifacts
