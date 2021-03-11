@@ -21,14 +21,14 @@ jobs:
     - name: Setup Python
       uses: actions/setup-python@v2
       with:
-        python-version: "3.8.7"
+        python-version: "3.9.1"
         architecture: "x86"
 
     - name: Compile binaries
       shell: cmd
       run: |
         call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars32.bat"
-        call scripts\win\clear.bat
+        call .\scripts\win\clear.bat
         md build
         cd build
         cmake -DCMAKE_BUILD_TYPE=RelWithDebugInfo -G "NMake Makefiles" ..\cpp ..\build
@@ -41,5 +41,5 @@ jobs:
         path: |
           build\src\trading\trading.exe
           build\src\trading\trading.pdb
-          $pythonLocation\python38.dll
+          ${pythonLocation}\python39.dll
           python\rh.py
