@@ -19,10 +19,10 @@ jobs:
         submodules: recursive
 
     - name: Compile in Debug
-      run: .\scripts\win\build.bat
+      run: call .\scripts\win\build.bat
 
     - name: Compile in Release
-      run: .\scripts\win\buid.bat RelWithDebInfo
+      run: call .\scripts\win\buid.bat RelWithDebInfo
 
     - name: Upload Artifacts
       uses: actions/upload-artifact@v2
