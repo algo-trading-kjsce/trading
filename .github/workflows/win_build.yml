@@ -15,29 +15,26 @@ jobs:
     steps:
     - name: Clone repository
       uses: actions/checkout@v2
-
-    - name: Checkout submodules
-      run: git submodule update --init --recursive
+      with:
+        submodules: recursive
 
     - name: Compile in Debug
-      uses: lukka/run-cmake@v3
-      with:
-        cmakeListsTxtPath: 'cpp/CMakeLists.txt'
-        buildDirectory: ${{ runner.workspace }}/build/
-        cmakeListsOrSettingsJson: 'CMakeListsTxtBasic'
-        cmakeBuildType: 'Debug'
-        cmakeGenerator: 'Ninja'
-        buildWithCMakeArgs: '-- -v'
+      shell: cmd
+      run: |
+          call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars32.bat"
+          md build
+          cd build
+          cmake -DCMAKE_BUILD_TYPE=Debug -G "NMake Makefiles" ..
+          nmake
 
     - name: Compile in Release
-      uses: lukka/run-cmake@v3
-      with:
-        cmakeListsTxtPath: 'cpp/CMakeLists.txt'
-        buildDirectory: ${{ runner.workspace }}/build/
-        cmakeListsOrSettingsJson: 'CMakeListsTxtBasic'
-        cmakeBuildType: 'Release'
-        cmakeGenerator: 'Ninja'
-        buildWithCMakeArgs: '-- -v'
+      shell: cmd
+      run: |
+          call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars32.bat"
+          md build
+          cd build
+          cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -G "NMake Makefiles" ..
+          nmake
 
     - name: Upload Artifacts
       uses: actions/upload-artifact@v2
@@ -45,5 +42,5 @@ jobs:
         name: trading_binaries
         path: |
           build\src\trading\RelWithDebInfo\trading.exe
-          build\src\trading\RelWithDebInfo\trading.exe
+          build\src\trading\RelWithDebInfo\trading.pdb
           build\src\trading\RelWithDebInfo\trading.ilk
