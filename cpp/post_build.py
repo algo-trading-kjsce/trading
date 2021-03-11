@@ -1,16 +1,23 @@
 import sys
 import os
 
-from shutil import copy2
+import shutil
 
-# Copy Python dll
-python_dir = os.path.dirname(sys.argv[1])
+if sys.platform == "win32":
 
-for file in os.listdir(python_dir):
+    # Copy Python dll
+    python_dir = os.path.dirname(sys.argv[1])
 
-    if file.endswith("python39.dll"):
-        output_dir = os.path.dirname(__file__) + "/../build/dll/"
+    for file in os.listdir(python_dir):
 
-        os.makedirs(output_dir)
+        if file.endswith(".dll"):
+            print(f"Copying {file}")
 
-        copy2(os.path.join(python_dir, file), output_dir)
+            output_dir = os.path.dirname(__file__) + "/../build/dll/"
+
+            if os.path.exists(output_dir):
+                shutil.rmtree(output_dir)
+
+            os.makedirs(output_dir)
+
+            shutil.copy2(os.path.join(python_dir, file), output_dir)
