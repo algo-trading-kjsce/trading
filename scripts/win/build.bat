@@ -1,9 +1,5 @@
 @echo off
 
-set mydir=%~dp0%
-
-call %mydir%\clean.bat
-
 md build
 cd build
 
