@@ -21,15 +21,23 @@ jobs:
     - name: Compile in Debug
       shell: cmd
       run: |
-        call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\VC\Auxiliary\Build\vcvars32.bat"
-        call scripts\win\build.bat Debug
+        call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars32.bat"
+        call scripts\win\clear.bat
+        md build
+        cd build
+        cmake -DCMAKE_BUILD_TYPE=Debug -G "NMake Makefiles" ..\cpp ..\build
+        nmake
 
 
     - name: Compile in Release
       shell: cmd
       run: |
-        call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\VC\Auxiliary\Build\vcvars32.bat"
-        call scripts\win\build.bat RelWithDebugInfo
+        call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars32.bat"
+        call scripts\win\clear.bat
+        md build
+        cd build
+        cmake -DCMAKE_BUILD_TYPE=RelWithDebugInfo -G "NMake Makefiles" ..\cpp ..\build
+        nmake
 
     - name: Upload Artifacts
       uses: actions/upload-artifact@v2
