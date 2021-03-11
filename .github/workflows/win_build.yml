@@ -46,3 +46,4 @@ jobs:
         path: |
           build\src\trading\trading.exe
           build\src\trading\trading.pdb
+          python\rh.py
