@@ -19,9 +19,11 @@ jobs:
         submodules: recursive
 
     - name: Compile in Debug
+      shell: cmd
       run: call .\scripts\win\build.bat
 
     - name: Compile in Release
+      shell: cmd
       run: call .\scripts\win\buid.bat RelWithDebInfo
 
     - name: Upload Artifacts
