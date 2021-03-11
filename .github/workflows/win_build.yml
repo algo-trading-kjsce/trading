@@ -20,27 +20,17 @@ jobs:
 
     - name: Compile in Debug
       shell: cmd
-      run: |
-          call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars32.bat"
-          md build
-          cd build
-          cmake -DCMAKE_BUILD_TYPE=Debug -G "NMake Makefiles" -m32 ..\cpp
-          nmake
+      run: .\scripts\win\build.bat
 
     - name: Compile in Release
       shell: cmd
-      run: |
-          call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars32.bat"
-          md build
-          cd build
-          cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -G "NMake Makefiles" -m32 ..\cpp
-          nmake
+      run: .\scripts\win\buid.bat RelWithDebInfo
 
     - name: Upload Artifacts
       uses: actions/upload-artifact@v2
       with:
         name: trading_binaries
         path: |
-          build\src\trading\RelWithDebInfo\trading.exe
-          build\src\trading\RelWithDebInfo\trading.pdb
-          build\src\trading\RelWithDebInfo\trading.ilk
+          build\src\trading\trading.exe
+          build\src\trading\trading.pdb
+          build\src\trading\trading.ilk
