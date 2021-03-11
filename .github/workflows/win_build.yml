@@ -18,6 +18,11 @@ jobs:
       with:
         submodules: recursive
 
+    - name: Setup Python3.8
+      uses: actions/setup-python@v2
+      with:
+        python-version: "3.8.7"
+
     - name: Compile in Debug
       shell: cmd
       run: |

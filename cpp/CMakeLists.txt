@@ -6,9 +6,6 @@ set(CMAKE_CXX_STANDARD 20)
 
 if(WIN32)
 
-  set(PYTHON_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/include/3rdparty/python/")
-  set(PYTHON_LIBRARIES "${PROJECT_SOURCE_DIR}/lib/win32/")
-
   set(CURL_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/include/3rdparty/curl")
   set(CURL_LIBRARY "${PROJECT_SOURCE_DIR}/lib/win32/libcurl.lib")
   add_definitions(-DCURL_STATICLIB)
