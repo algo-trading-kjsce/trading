@@ -34,5 +34,5 @@ jobs:
         path: |
           build\src\trading\trading.exe
           build\src\trading\trading.pdb
-          build\dll\python3[0-9].dll
+          build\dll\python3*.dll
           python\rh.py
