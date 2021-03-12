@@ -50,5 +50,7 @@ add_subdirectory(src/trading)
 # tests
 add_subdirectory(tst/tests)
 
-# Post Build commands
-execute_process(COMMAND "${PYTHON_EXECUTABLE}" "${PROJECT_SOURCE_DIR}/post_build.py" "${PYTHON_INCLUDE_DIRS}")
+# Post build commands
+if(WIN32)
+  execute_process(COMMAND "${PYTHON_EXECUTABLE}" "${PROJECT_SOURCE_DIR}/post_build.py" "copy_python_dll" "${PYTHON_INCLUDE_DIRS}")
+endif()

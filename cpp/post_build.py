@@ -3,21 +3,35 @@ import os
 
 import shutil
 
-if sys.platform == "win32":
+build_dir = os.path.dirname(__file__) + "/../build/"
+output_dir = build_dir + "final/"
 
-    # Copy Python dll
-    python_dir = os.path.dirname(sys.argv[1])
+if not os.path.exists(output_dir):
+    os.makedirs(output_dir)
 
-    for file in os.listdir(python_dir):
 
-        if file.endswith(".dll"):
-            print(f"Copying {file}")
+def files_in_dir(src : str):
+    for file in os.listdir(src):
+        if os.path.isfile(os.path.join(src, file)):
+            yield file
 
-            output_dir = os.path.dirname(__file__) + "/../build/dll/"
 
-            if os.path.exists(output_dir):
-                shutil.rmtree(output_dir)
+def copy_files_of_type(src: str, exts: list):
+    for file in files_in_dir(src):
+        for ext in exts:
+            if file.endswith(ext):
+                print(f"Copying {file}")
+                shutil.copy(os.path.join(src, file), output_dir)
 
-            os.makedirs(output_dir)
 
-            shutil.copy2(os.path.join(python_dir, file), output_dir)
+def copy_python_dll():
+    python_dir = os.path.dirname(sys.argv[2])
+    copy_files_of_type(python_dir, [".dll"])
+
+
+if __name__ == "__main__":
+    if sys.platform == "win32":
+        if sys.argv[1] == "copy_python_dll":
+            copy_python_dll()
+        elif sys.argv[1] == "copy_files_of_type":
+            copy_files_of_type(sys.argv[2], sys.argv[3:])
