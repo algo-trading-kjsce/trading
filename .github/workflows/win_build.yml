@@ -32,7 +32,7 @@ jobs:
       with:
         name: trading_binaries
         path: |
-          build\final\trading\trading.exe
-          build\final\trading\trading.pdb
+          build\final\trading.exe
+          build\final\trading.pdb
           build\final\python3*.dll
           python\rh.py
