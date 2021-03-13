@@ -53,6 +53,8 @@ auto create_robinhood_bot()
         }
     }
 
+    PyErr_Print();
+
     assert( false );
     return py_object{};
 }

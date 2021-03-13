@@ -11,7 +11,6 @@
 
 #include "../manager/args_handler.hpp"
 
-
 int main( int argc, const char* argv[] )
 {
     auto result{ trading::handle_arguments( argc, argv ) };

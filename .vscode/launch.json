@@ -5,7 +5,18 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Trading App",
+            "name": "Native Windows",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/src/trading/Debug/trading.exe",
+            "args": [ "-t", "${workspaceFolder}/python", "-s", "LTC" ],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Native Linux",
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/build/src/trading/trading",
@@ -24,7 +35,7 @@
             ]
         },
         {
-            "name": "Python: Current File",
+            "name": "Python",
             "type": "python",
             "request": "launch",
             "program": "${file}",

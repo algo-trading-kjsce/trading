@@ -71,6 +71,9 @@
         "variant": "cpp",
         "queue": "cpp",
         "cstring": "cpp",
-        "valarray": "cpp"
+        "valarray": "cpp",
+        "xhash": "cpp",
+        "xtr1common": "cpp",
+        "xstring": "cpp"
     },
 }

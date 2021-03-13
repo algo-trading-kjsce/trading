@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include "../ta-lib/ta_func.h"
+#include "../3rdparty/ta-lib/ta_func.h"
 
 /**
  * @brief handler for initializing and safely closing TA-Library

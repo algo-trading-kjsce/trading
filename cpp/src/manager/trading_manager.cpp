@@ -11,7 +11,9 @@
 
 #ifdef __linux__
 #    include <pwd.h>
-#else
+#elif WIN32
+#    include <Windows.h>
+#    include <libloaderapi.h>
 #endif
 
 #include <algorithm>
@@ -49,6 +51,16 @@ auto get_application_location()
 
         app_path = buf;
     }
+#elif WIN32
+    char buf[MAX_PATH];
+    auto len{ GetModuleFileName( GetModuleHandle( nullptr ), buf, sizeof( buf ) ) };
+
+    if( len != 0 )
+    {
+        buf[len] = '\0';
+
+        app_path = buf;
+    }
 #else
 #    error "You have to add new cases here to find app path!!"
 #endif
@@ -73,6 +85,16 @@ auto get_home_path()
     else
     {
         path = getenv( "HOME" );
+    }
+#elif WIN32
+    auto path_ptr{ static_cast<char*>( nullptr ) };
+    auto sz{ 0_sz };
+
+    if( auto err{ _dupenv_s( std::addressof( path_ptr ), std::addressof( sz ), "USERPROFILE" ) }; err == 0 )
+    {
+        path = fs::path{ path_ptr, path_ptr + sz };
+
+        free( path_ptr );
     }
 #else
 #    error "Fix for Windows and MacOS"

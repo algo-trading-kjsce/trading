@@ -8,4 +8,8 @@ set(SOURCES ${SOURCES})
 
 add_library(${BINARY} STATIC ${SOURCES})
 
-target_link_libraries(${BINARY} PUBLIC libta_lib.a PRIVATE Threads::Threads)
+if (UNIX)
+  target_link_libraries(${BINARY} PUBLIC libta_lib.a PRIVATE Threads::Threads)
+elseif(WIN32)
+  target_link_libraries(${BINARY} PUBLIC ta_libc_csr.lib PRIVATE Threads::Threads)
+endif()

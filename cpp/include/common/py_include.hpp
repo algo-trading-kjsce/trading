@@ -13,4 +13,6 @@
 
 #ifdef __linux__
 #include <python3.8/Python.h>
+#else
+#include <Python.h>
 #endif

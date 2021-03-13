@@ -4,8 +4,27 @@ project(algo-trading)
 
 set(CMAKE_CXX_STANDARD 20)
 
-if(NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE Release)
+if(WIN32)
+
+  set(CURL_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/include/3rdparty/curl")
+  set(CURL_LIBRARY "${PROJECT_SOURCE_DIR}/lib/win32/libcurl.lib")
+  add_definitions(-DCURL_STATICLIB)
+
+  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
+  set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
+
+  link_directories("${PROJECT_SOURCE_DIR}/lib/win32/")
+
+  include_directories(${CURL_INCLUDE_DIR})
+
+elseif(UNIX)
+
+  link_directories("${PROJECT_SOURCE_DIR}/lib/unix/")
+
+  set(CMAKE_CXX_FLAGS "-Wall -Wextra -Werror")
+  set(CMAKE_CXX_FLAGS_DEBUG "-g")
+  set(CMAKE_CXX_FLAGS_RELEASE "-O3")
+
 endif()
 
 find_package(Threads REQUIRED)
@@ -18,17 +37,9 @@ include(gtest.cmake)
 include_directories("${PYTHON_INCLUDE_DIRS}")
 include_directories("${PROJECT_SOURCE_DIR}/include/")
 include_directories("${PROJECT_SOURCE_DIR}/include/common/")
+include_directories(SYSTEM "${PROJECT_SOURCE_DIR}/include/3rdparty/")
 
-if(UNIX)
-  link_directories("${PROJECT_SOURCE_DIR}/lib/unix/")
-endif()
-
-set(CMAKE_CXX_FLAGS "-Wall -Wextra -Werror")
-set(CMAKE_CXX_FLAGS_DEBUG "-g")
-set(CMAKE_CXX_FLAGS_RELEASE "-O3")
-
-set(CMAKE_FINAL_OUTPUT "${PROJECT_SOURCE_DIR}/../build/package/")
-set(CMAKE_FILE_TRANSFER_SCRIPT "${PROJECT_SOURCE_DIR}/transfer_output.py")
+add_compile_definitions(PYTHON_FILES="${PROJECT_SOURCE_DIR}/../python/")
 
 # source projects
 add_subdirectory(src/helper)
@@ -39,5 +50,7 @@ add_subdirectory(src/trading)
 # tests
 add_subdirectory(tst/tests)
 
-# Post Build commands
-execute_process(COMMAND "${PYTHON_EXECUTABLE}" "${CMAKE_FILE_TRANSFER_SCRIPT}" "copy" "${PROJECT_SOURCE_DIR}/../python/" "${CMAKE_FINAL_OUTPUT}" ".py")
+# Post build commands
+if(WIN32)
+  execute_process(COMMAND "${PYTHON_EXECUTABLE}" "${PROJECT_SOURCE_DIR}/post_build.py" "copy_python_dll" "${PYTHON_INCLUDE_DIRS}")
+endif()
