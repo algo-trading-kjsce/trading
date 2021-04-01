@@ -4,7 +4,7 @@ import os
 import shutil
 
 build_dir = os.path.dirname(__file__) + "/../build/"
-output_dir = os.path.dirname(__file__) + "/../out/"
+output_dir = build_dir + "package/"
 
 if not os.path.exists(output_dir):
     os.makedirs(output_dir)
