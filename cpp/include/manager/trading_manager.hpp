@@ -43,7 +43,7 @@ private:
     trading::curl_handler t{};
 
     std::future<void> m_telegram_proc{};
-    std::vector<std::future<void>> m_robinhood_procs{};
+    std::vector<std::future<void>> m_trading_procs{};
 
     std::unordered_map<std::string, stock_data> m_stocks{};
     std::unordered_map<std::string, complete_transaction_t> m_trades{};

@@ -3,7 +3,7 @@
         {
             "type": "shell",
             "label": "Build",
-            "command": "./scripts/build.sh",
+            "command": "./scripts/linux/build.sh",
             "options": {
                 "cwd": "${workspaceFolder}"
             },

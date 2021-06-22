@@ -12,8 +12,8 @@ C++ application to run pattern recognition on historical and live stock market p
 
 ### Linux ###
 
-* Run ``scripts/install_reqs.sh``
-* Run ``scripts/build.sh``
+* Run ``scripts/linux/install_reqs.sh``
+* Run ``scripts/linux/build.sh``
 
 
 ## How to run ##

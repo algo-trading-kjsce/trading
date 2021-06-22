@@ -18,6 +18,7 @@
 
 #include "../common/fs_include.hpp"
 #include "../common/stock_data.hpp"
+#include "../common/type_trait_utils.hpp"
 
 using strategy_occurrence_count_t = std::list<std::pair<std::string, std::vector<std::int32_t>>>;
 
@@ -39,19 +40,18 @@ private:
 
 /**
  * @brief Output to terminal asynchronously
- * 
- * @tparam _First Type of first argument
- * @tparam _Rest Types of the rest of the arguments
- * @param i_arg First argument
- * @param i_args Rest of the arguments
+ *
+ * @tparam _Args Types of the rest of the arguments
+ * @param i_args Arguments
  */
-template<typename _First, typename... _Rest>
-void async_cout( _First&& i_arg, _Rest&&... i_args )
+template<typename... _Args>
+void async_cout( _Args&&... i_args )
 {
+    static_assert( sizeof...( i_args ) > 0_sz, "Empty argument list not allowed!" );
+
     auto lk{ io_lock{} };
 
-    std::cout << std::forward<_First>( i_arg );
-    ( ( std::cout << std::forward<_Rest>( i_args ) ), ... );
+    ( std::cout << ... << std::forward<_Args>( i_args ) );
 }
 
 

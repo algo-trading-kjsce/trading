@@ -11,6 +11,6 @@ add_test(NAME ${BINARY} COMMAND ${BINARY})
 
 target_link_libraries(${BINARY} PUBLIC gtest ${CMAKE_THREAD_LIBS_INIT} manager)
 
-if(CMAKE_BUILD_TYPE MATCHES Release)
+if(NOT ${CMAKE_BUILD_TYPE} MATCHES "Debug")
   add_custom_command(TARGET ${BINARY} POST_BUILD COMMAND ${BINARY})
 endif()

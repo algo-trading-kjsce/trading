@@ -24,15 +24,15 @@ jobs:
         python-version: "3.8"
 
     - name: Install dependencies
-      run: ./scripts/install_reqs.sh
+      run: ./scripts/linux/install_reqs.sh
 
     - name: Compile and run C++ tests (Release)
-      run: ./scripts/rebuild.sh Release
+      run: ./scripts/linux/rebuild.sh Release
 
     - name: Compile and run C++ tests (Debug)
       run: |
-           ./scripts/rebuild.sh
-           ./scripts/run_tests.sh
+           ./scripts/linux/rebuild.sh
+           ./scripts/linux/run_tests.sh
 
     - name: Check Python lint
       run: pytest --flake8 python/

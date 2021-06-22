@@ -179,7 +179,7 @@ trading_manager::trading_manager( std::vector<std::string> i_stocks ) :
 
     for( auto&& [ticker, stock_data] : m_stocks )
     {
-        m_robinhood_procs.emplace_back( std::async( std::launch::async, [&]() {
+        m_trading_procs.emplace_back( std::async( std::launch::async, [&]() {
             while( this->m_keep_running )
             {
                 auto new_candle{ this->m_robinhood_bot.get_latest_price( ticker ) };
@@ -257,9 +257,9 @@ void trading_manager::await()
 
     m_telegram_proc.wait();
 
-    for( auto&& robinhood_proc : m_robinhood_procs )
+    for( auto&& trading_proc : m_trading_procs )
     {
-        robinhood_proc.wait();
+        trading_proc.wait();
     }
 }
 

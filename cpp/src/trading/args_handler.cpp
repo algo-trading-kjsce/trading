@@ -17,7 +17,7 @@
 #include "processor/utilities.hpp"
 
 #include "args_handler.hpp"
-#include "trading_manager.hpp"
+#include "../manager/trading_manager.hpp"
 
 namespace
 {
@@ -55,7 +55,7 @@ namespace trading
 {
 trading_app_result handle_arguments( std::int32_t argc, const char* argv[] )
 {
-    auto result{ trading_app_result{} };
+    auto result{ trading_app_result::unknown_error };
 
     switch( argc )
     {
