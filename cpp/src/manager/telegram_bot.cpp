@@ -33,8 +33,6 @@ public:
     }
 };
 
-using namespace trading::python;
-
 /**
  * @brief add task to the trading manager
  *

@@ -12,3 +12,7 @@ build/
 packages*
 
 *.user
+
+.devcontainer/
+
+.clang-format

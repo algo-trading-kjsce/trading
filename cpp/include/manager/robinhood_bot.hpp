@@ -13,17 +13,10 @@
 
 #include "stock_data.hpp"
 
-#include "helper/py_object.hpp"
-
 namespace trading
 {
 class robinhood_bot
 {
-private:
-    python::py_object m_bot{};  // Robinhood Bot
-    python::py_object m_historyFunc{};  // Function to get history of prices
-    python::py_object m_last_price_func{};  // Function to get latest price
-
 public:
     /**
      * @brief Construct a new robinhood bot object
