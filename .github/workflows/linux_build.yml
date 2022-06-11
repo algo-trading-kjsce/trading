@@ -29,12 +29,12 @@ jobs:
            ./scripts/post_container_creation.sh
 
     - name: Compile and run C++ tests (Release)
-      run: ./scripts/linux/rebuild.sh Release
+      run: ./scripts/rebuild.sh Release
 
     - name: Compile and run C++ tests (Debug)
       run: |
-           ./scripts/linux/rebuild.sh
-           ./scripts/linux/run_tests.sh
+           ./scripts/rebuild.sh
+           ./scripts/run_tests.sh
 
     - name: Check Python lint
       run: pytest --flake8 python/
