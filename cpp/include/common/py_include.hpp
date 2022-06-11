@@ -12,7 +12,7 @@
 #pragma once
 
 #ifdef __linux__
-#include <python3.8/Python.h>
+#include <python3.10/Python.h>
 #else
 #include <Python.h>
 #endif

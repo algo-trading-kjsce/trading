@@ -4,28 +4,13 @@ project(algo-trading)
 
 set(CMAKE_CXX_STANDARD 20)
 
-if(WIN32)
 
-  set(CURL_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/include/3rdparty/curl")
-  set(CURL_LIBRARY "${PROJECT_SOURCE_DIR}/lib/win32/libcurl.lib")
-  add_definitions(-DCURL_STATICLIB)
+link_directories("${PROJECT_SOURCE_DIR}/lib/")
 
-  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
-  set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
+set(CMAKE_CXX_FLAGS "-Wall -Wextra -Werror")
+set(CMAKE_CXX_FLAGS_DEBUG "-g")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
-  link_directories("${PROJECT_SOURCE_DIR}/lib/win32/")
-
-  include_directories(${CURL_INCLUDE_DIR})
-
-elseif(UNIX)
-
-  link_directories("${PROJECT_SOURCE_DIR}/lib/unix/")
-
-  set(CMAKE_CXX_FLAGS "-Wall -Wextra -Werror")
-  set(CMAKE_CXX_FLAGS_DEBUG "-g")
-  set(CMAKE_CXX_FLAGS_RELEASE "-O3")
-
-endif()
 
 find_package(Threads REQUIRED)
 find_package(PythonLibs REQUIRED)
@@ -49,8 +34,3 @@ add_subdirectory(src/trading)
 
 # tests
 add_subdirectory(tst/tests)
-
-# Post build commands
-if(WIN32)
-  execute_process(COMMAND "${PYTHON_EXECUTABLE}" "${PROJECT_SOURCE_DIR}/post_build.py" "copy_python_stuff" "${PYTHON_INCLUDE_DIRS}")
-endif()
