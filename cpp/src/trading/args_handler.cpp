@@ -100,8 +100,6 @@ trading_app_result handle_arguments( std::int32_t argc, const char* argv[] )
         }
         else if( arg1 == "-t" )
         {
-            auto python_script_paths{ std::vector<std::string>{} };
-
             auto arg_index{ 2 };
             for( ; arg_index < argc; ++arg_index )
             {
@@ -112,8 +110,6 @@ trading_app_result handle_arguments( std::int32_t argc, const char* argv[] )
                     arg_index++;
                     break;
                 }
-
-                python_script_paths.push_back( std::move( current_arg ) );
             }
 
             auto stocks{ std::vector<std::string>{} };
@@ -122,7 +118,7 @@ trading_app_result handle_arguments( std::int32_t argc, const char* argv[] )
                 stocks.emplace_back( argv[arg_index] );
             }
 
-            trading::run_trading_manager( std::move( python_script_paths ), std::move( stocks ) );
+            trading::run_trading_manager( std::move( stocks ) );
         }
         else
         {

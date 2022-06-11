@@ -10,7 +10,8 @@
  */
 
 #ifdef __linux__
-#    include <pwd.h>
+#include <pwd.h>
+#    include <unistd.h>
 #elif WIN32
 #    include <Windows.h>
 #    include <libloaderapi.h>
@@ -20,8 +21,6 @@
 
 #include "fs_include.hpp"
 
-#include "helper/python_utils.hpp"
-
 #include "trading_manager.hpp"
 
 static std::mutex task_queue_mutex{};
@@ -29,45 +28,6 @@ static std::mutex trade_queue_mutex{};
 
 namespace
 {
-using namespace trading::python;
-
-/**
- * @brief Get the current application location
- *
- * @return current application path
- */
-auto get_application_location()
-{
-    auto app_path{ fs::path{} };
-
-#ifdef __linux__
-    char buf[PATH_MAX]{};
-
-    auto len{ readlink( "/proc/self/exe", buf, sizeof( buf ) - 1_sz ) };
-
-    if( len != -1 )
-    {
-        buf[len] = '\0';
-
-        app_path = buf;
-    }
-#elif WIN32
-    char buf[MAX_PATH];
-    auto len{ GetModuleFileName( GetModuleHandle( nullptr ), buf, sizeof( buf ) ) };
-
-    if( len != 0 )
-    {
-        buf[len] = '\0';
-
-        app_path = buf;
-    }
-#else
-#    error "You have to add new cases here to find app path!!"
-#endif
-
-    return app_path;
-}
-
 
 /**
  * @brief Get the home path
@@ -101,42 +61,6 @@ auto get_home_path()
 #endif
 
     return path;
-}
-
-/**
- * @brief Start the python environment
- *
- */
-void add_python_paths( std::vector<std::string> i_python_script_paths )
-{
-    init_python_env();
-
-    PyRun_SimpleString( "import sys" );
-
-    if( auto app_location{ get_application_location() }; !app_location.empty() )
-    {
-        if( !fs::is_directory( app_location ) )
-        {
-            app_location = app_location.parent_path();
-        }
-
-        auto str{ app_location.string() };
-
-        std::replace( str.begin(), str.end(), '\\', '/' );
-
-        auto pythonCmd{ "sys.path.insert(0, \"" + str + "\")" };
-
-        PyRun_SimpleString( pythonCmd.c_str() );
-    }
-
-    for( auto&& path : i_python_script_paths )
-    {
-        std::replace( path.begin(), path.end(), '\\', '/' );
-
-        auto pythonCmd{ "sys.path.insert(0, \"" + path + "\")" };
-
-        PyRun_SimpleString( pythonCmd.c_str() );
-    }
 }
 
 class task_lock
@@ -320,10 +244,8 @@ robinhood_bot& trading_manager::get_robinhood_bot()
 }
 
 
-void run_trading_manager( std::vector<std::string> i_python_script_paths, std::vector<std::string> i_stocks )
+void run_trading_manager( std::vector<std::string> i_stocks )
 {
-    add_python_paths( std::move( i_python_script_paths ) );
-
     auto manager{ trading_manager{ std::move( i_stocks ) } };
 
     manager.await();

@@ -122,8 +122,7 @@ public:
 /**
  * @brief The main loop for the app in case of running trades till stopped.
  *
- * @param i_python_script_paths List of paths to be considered for finding python script
  * @param i_stocks List of symbols to trade
  */
-void run_trading_manager( std::vector<std::string> i_python_script_paths, std::vector<std::string> i_stocks );
+void run_trading_manager( std::vector<std::string> i_stocks );
 }
