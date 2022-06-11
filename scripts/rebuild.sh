@@ -7,4 +7,4 @@ fi
 
 printf "* Finished cleaning build files.\n\n\n"
 
-./scripts/linux/build.sh ${1-Debug}
+./scripts/build.sh ${1-Debug}
