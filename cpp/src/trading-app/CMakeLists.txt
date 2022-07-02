@@ -1,4 +1,4 @@
-set(BINARY trading)
+set(BINARY trading-app)
 
 file(GLOB_RECURSE SOURCES LIST_DIRECTORIES false *.hpp *.cpp)
 

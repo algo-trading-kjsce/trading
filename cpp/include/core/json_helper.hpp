@@ -11,21 +11,15 @@
 
 #pragma once
 
-#include <sstream>
+#include "common/json_include.hpp"
+
 #include <string>
-
-#ifdef _MSC_VER
-#    define _snprintf snprintf
-#endif
-
-#include "nlohmann/json.hpp"
-
-using namespace nlohmann;
-
 
 namespace std
 {
+
 json stojson( const std::string& i_str );
 
 std::string to_string( const json& i_json );
+
 }

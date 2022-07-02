@@ -11,10 +11,11 @@
 
 #pragma once
 
-#include <string>
+#include "common/type_trait_utils.hpp"
 
-#include "../common/curl_handler.hpp"
-#include "../common/type_trait_utils.hpp"
+#include "curl_handler.hpp"
+
+#include <string>
 
 namespace trading::curl
 {

@@ -11,10 +11,10 @@
 
 #pragma once
 
-#include <memory>
+#include "common/enums.hpp"
+#include "common/structs.hpp"
 
-#include "enums.hpp"
-#include "structs.hpp"
+#include <memory>
 
 namespace trading
 {

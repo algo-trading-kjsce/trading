@@ -13,7 +13,7 @@ cd build
 
 printf "* Creating CMake files...\n\n\n"
 
-CC=gcc-10 CXX=g++-10 cmake -DCMAKE_BUILD_TYPE=${1-Debug} ../cpp ../build
+CC=gcc CXX=g++ cmake -DCMAKE_BUILD_TYPE=${1-Debug} ../cpp ../build
 
 printf "\n\n* Finished creating CMake files.\n\n\n"
 

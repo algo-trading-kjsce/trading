@@ -11,7 +11,6 @@
 
 #pragma once
 
-
 constexpr auto csv_delimiter{ ',' };
 
 constexpr auto time_delimiter{ ':' };

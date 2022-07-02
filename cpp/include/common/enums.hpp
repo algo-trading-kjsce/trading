@@ -11,6 +11,8 @@
 
 #pragma once
 
+#include <cstdint>
+
 namespace ta_helper
 {
 /**
@@ -100,27 +102,6 @@ enum column_type : std::int32_t
 
 
 /**
- * @brief Enumeration for months in a year
- *
- */
-enum class month
-{
-    jan = 1,
-    feb = 2,
-    mar = 3,
-    apr = 4,
-    may = 5,
-    jun = 6,
-    jul = 7,
-    aug = 8,
-    sep = 9,
-    oct = 10,
-    nov = 11,
-    dec = 12,
-};
-
-
-/**
  * @brief Enumeration for results from processing
  *
  */
@@ -167,16 +148,4 @@ enum class trade_type
 {
     buy,
     sell,
-};
-
-
-/**
- * @brief whether the candle is an increasing or decreasing one
- * 
- */
-enum class candle_direction
-{
-    none,
-    up,
-    down,
 };

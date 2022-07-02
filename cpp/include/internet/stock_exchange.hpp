@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include "stock_data.hpp"
+#include "core/stock_data.hpp"
 
 namespace trading
 {

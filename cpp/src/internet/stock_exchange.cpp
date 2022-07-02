@@ -9,13 +9,11 @@
  *
  */
 
+#include "common/fs_include.hpp"
+
+#include "stock_exchange.hpp"
+
 #include <mutex>
-
-#include "fs_include.hpp"
-
-#include "processor/utilities.hpp"
-
-#include "robinhood_bot.hpp"
 
 static std::mutex robinhood_request_mtx{};
 

@@ -11,14 +11,14 @@
 
 #pragma once
 
+#include "common/fs_include.hpp"
+#include "common/stock_data.hpp"
+#include "common/type_trait_utils.hpp"
+
 #include <list>
 #include <mutex>
 #include <string>
 #include <vector>
-
-#include "../common/fs_include.hpp"
-#include "../common/stock_data.hpp"
-#include "../common/type_trait_utils.hpp"
 
 using strategy_occurrence_count_t = std::list<std::pair<std::string, std::vector<std::int32_t>>>;
 

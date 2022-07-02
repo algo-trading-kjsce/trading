@@ -19,18 +19,17 @@ find_package(CURL REQUIRED)
 
 include(gtest.cmake)
 
-include_directories("${PYTHON_INCLUDE_DIRS}")
 include_directories("${PROJECT_SOURCE_DIR}/include/")
-include_directories("${PROJECT_SOURCE_DIR}/include/common/")
 include_directories(SYSTEM "${PROJECT_SOURCE_DIR}/include/3rdparty/")
 
 add_compile_definitions(PYTHON_FILES="${PROJECT_SOURCE_DIR}/../python/")
 
 # source projects
-add_subdirectory(src/helper)
+add_subdirectory(src/core)
+add_subdirectory(src/internet)
 add_subdirectory(src/processor)
 add_subdirectory(src/manager)
-add_subdirectory(src/trading)
+add_subdirectory(src/trading-app)
 
 # tests
 add_subdirectory(tst/tests)

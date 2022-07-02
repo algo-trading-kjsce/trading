@@ -15,7 +15,7 @@
 
 #include <curl/curl.h>
 
-namespace trading
+namespace trading::internet
 {
 /**
  * @brief Handler to ensure proper initialization and cleanup of cURL
@@ -24,15 +24,9 @@ namespace trading
 class curl_handler
 {
 public:
-    curl_handler()
-    {
-        curl_global_init( CURL_GLOBAL_DEFAULT );
-    }
+    curl_handler();
 
-    ~curl_handler()
-    {
-        curl_global_cleanup();
-    }
+    ~curl_handler();
 };
 
 using curl_handle_ptr = std::unique_ptr<CURL, decltype( &curl_easy_cleanup )>;

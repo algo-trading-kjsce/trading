@@ -13,6 +13,7 @@
 
 namespace std
 {
+
 json stojson( const std::string& i_str )
 {
     auto js{ json{} };
@@ -32,4 +33,5 @@ std::string to_string( const json& i_json )
 
     return stream.str();
 }
+
 }

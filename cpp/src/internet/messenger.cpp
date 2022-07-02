@@ -12,10 +12,11 @@
 #include <fstream>
 #include <mutex>
 
-#include "helper/curl_helper.hpp"
+#include "curl_helper.hpp"
+#include "messenger.hpp"
 
-#include "tasks.hpp"
-#include "telegram_bot.hpp"
+#include "tasks/tasks.hpp"
+
 #include "trading_manager.hpp"
 
 static std::mutex telegram_mtx{};

@@ -12,6 +12,7 @@
 #pragma once
 
 #include <cstdint>
+#include <memory>
 #include <type_traits>
 
 #ifdef __cpp_consteval
@@ -46,7 +47,7 @@ __CONSTEVAL auto operator""_sz( unsigned long long int __n ) noexcept
 }
 
 template<typename _T, REQUIRES( !std::is_pointer_v<_T> )>
-auto get_char_address( _T&& object )
+inline auto get_char_address( _T&& object )
 {
     return (char*)std::addressof( object );
 }
