@@ -74,6 +74,9 @@
         "valarray": "cpp",
         "xhash": "cpp",
         "xtr1common": "cpp",
-        "xstring": "cpp"
+        "xstring": "cpp",
+        "strstream": "cpp",
+        "bitset": "cpp",
+        "complex": "cpp"
     },
 }
