@@ -1,5 +1,5 @@
 {
-    "cmake.sourceDirectory": "${workspaceFolder}/cpp",
+    "cmake.sourceDirectory": "${workspaceFolder}/algo_trading",
     "testMate.cpp.test.executables": "{build,Build,BUILD,out,Out,OUT}/**/**/*{test,Test,TEST}*",
     "testMate.cpp.test.parallelExecutionLimit": 32,
     "testMate.cpp.test.parallelExecutionOfExecutableLimit": 32,
@@ -74,6 +74,15 @@
         "valarray": "cpp",
         "xhash": "cpp",
         "xtr1common": "cpp",
-        "xstring": "cpp"
+        "xstring": "cpp",
+        "strstream": "cpp",
+        "bitset": "cpp",
+        "complex": "cpp",
+        "csignal": "cpp",
+        "shared_mutex": "cpp",
+        "cfenv": "cpp",
+        "typeindex": "cpp",
+        "*.ipp": "cpp"
     },
+    "C_Cpp.formatting": "clangFormat",
 }
