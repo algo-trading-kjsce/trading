@@ -15,7 +15,7 @@
 #include "libs/core/task_type.hpp"
 
 #include "clock.hpp"
-// #include "logger_macros.hpp"
+#include "logger_macros.hpp"
 #include "type_trait_utils.hpp"
 
 #include <exception>
@@ -54,7 +54,7 @@ auto find_type( std::string_view i_msg )
     {
     }
 
-    // LOG_WARN_SEND_MESSAGE( fmt::format( "Did not find '{}' in the list of known tasks.", i_msg ) );
+    LOG_WARN_SEND_MESSAGE( "Did not find '{}' in the list of known tasks.", i_msg );
 
     return task_type::unknown;
 }
@@ -95,7 +95,7 @@ void task_translator::translate( const std::string& i_msg )
         json = m_tasks_.emplace_back( task_type, node_type::messenger, clock::now(), std::move( tickers ) );
     }
 
-    // LOG_INFO( "New task created: {}", to_string( json.value() ) );
+    LOG_INFO( "New task created: {}", to_string( json.value() ) );
 }
 
 std::vector<core::task> task_translator::retrieve_tasks()

@@ -25,8 +25,6 @@
 #include <rclcpp/rclcpp.hpp>
 #include "std_msgs/msg/string.hpp"
 
-#include <fmt/format.h>
-
 #include <csignal>
 #include <functional>
 

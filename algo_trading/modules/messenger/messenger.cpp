@@ -14,9 +14,7 @@
 #include "libs/curl/curl_handler.hpp"
 #include "libs/curl/curl_helper.hpp"
 
-// #include "logger_macros.hpp"
-
-#include <fmt/format.h>
+#include "logger_macros.hpp"
 
 #include <cstdlib>
 #include <fstream>
@@ -56,7 +54,7 @@ auto process_updates( const json& i_json, const std::int64_t i_user_id )
                 {
                     auto msg{ message["text"].get<std::string>() };
 
-                    // LOG_INFO( fmt::format( "Got message: '{}'", msg ) );
+                    LOG_INFO( "Got message: '{}'", msg );
 
                     cmds.push_back( std::move( msg ) );
                 }
@@ -74,21 +72,31 @@ namespace trading::messenger
 telegram_bot::telegram_bot( fs::path i_path ) :
     m_credentials_{ std::move( i_path ) }, m_url_{ "https://api.telegram.org/bot" }
 {
-    // LOG_ERROR_IF( !fs::exists( m_credentials_ ), "Messenger credentials '{}' not found!", m_credentials_.c_str() );
+    std::cout << __FILE__ << " " << __LINE__ << std::endl;
+    LOG_ERROR_IF( !fs::exists( m_credentials_ ), "Messenger credentials '{}' not found!", m_credentials_.c_str() );
+    std::cout << __FILE__ << " " << __LINE__ << std::endl;
     if( !fs::exists( m_credentials_ ) )
     {
+        std::cout << __FILE__ << " " << __LINE__ << std::endl;
         m_credentials_ = fs::path{ std::getenv( "CREDENTIALSDIR" ) } / "telegram_bot.json";
+        std::cout << __FILE__ << " " << __LINE__ << std::endl;
     }
+    std::cout << __FILE__ << " " << __LINE__ << std::endl;
     if( std::ifstream stream{ m_credentials_ }; stream.good() )
     {
-        // LOG_INFO( "Messenger credentials file found." );
+        std::cout << __FILE__ << " " << __LINE__ << std::endl;
+        LOG_INFO( "Messenger credentials file found." );
+        std::cout << __FILE__ << " " << __LINE__ << std::endl;
 
         stream >> m_document_;
+        std::cout << __FILE__ << " " << __LINE__ << std::endl;
 
+        std::cout << __FILE__ << " " << __LINE__ << std::endl;
         m_url_.append( m_document_["bot_key"].get<std::string>() ).append( "/" );
+        std::cout << __FILE__ << " " << __LINE__ << std::endl;
     }
 
-    // LOG_ERROR_IF( m_document_.is_null(), "Messenger credentials '{}' file empty!", m_credentials_.c_str() );
+    LOG_ERROR_IF( m_document_.is_null(), "Messenger credentials '{}' file empty!", m_credentials_.c_str() );
 
     this->push( "Bot has started!" );
 }
@@ -105,7 +113,7 @@ telegram_bot::~telegram_bot()
 
 void telegram_bot::push( const std::string& i_message ) const
 {
-    // LOG_INFO( "Sending message: '{}' ...", i_message );
+    LOG_INFO( "Sending message: '{}' ...", i_message );
 
     const auto complete_url{ m_url_ + "sendMessage" };
 
@@ -132,7 +140,7 @@ void telegram_bot::push( const std::string& i_message ) const
 
     curl_easy_perform( curl_ptr.get() );
 
-    // LOG_INFO( "Message sent." );
+    LOG_INFO( "Message sent." );
 }
 
 std::vector<std::string> telegram_bot::pull()
@@ -157,7 +165,7 @@ std::vector<std::string> telegram_bot::pull()
         m_document_["last_update_id"] = new_update_id;
     }
 
-    // LOG_INFO_IF( !messages.empty(), "Found {} new message(s).", messages.size() );
+    LOG_INFO_IF( !messages.empty(), "Found {} new message(s).", messages.size() );
 
     return messages;
 }

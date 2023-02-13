@@ -20,10 +20,10 @@
 #include "type_trait_utils.hpp"
 #include "wise_enum_include.hpp"
 
-#include <fmt/format.h>
 #include <zmq.hpp>
 #include <zmq_addon.hpp>
 
+#include <atomic>
 #include <chrono>
 #include <csignal>
 #include <functional>
@@ -37,21 +37,22 @@ using namespace trading::translator;
 
 using namespace std::literals::chrono_literals;
 
+std::atomic_bool kill_flag{ false };
+
 void process_incoming_messages( zmq::context_t& i_ctx, task_translator& io_translator )
 {
     zmq::socket_t incoming_messages_socket{ i_ctx, zmq::socket_type::sub };
     incoming_messages_socket.connect( "tcp://127.0.0.1:45000" );
     incoming_messages_socket.set( zmq::sockopt::subscribe, "" );
 
-    while( true )
+    while( !kill_flag )
     {
         zmq::message_t incoming_message;
         const auto res{ incoming_messages_socket.recv( incoming_message ) };
 
-        std::cout << "Translator received: " << incoming_message << std::endl;
-
         if( res.has_value() )
         {
+            std::cout << "Translator received: " << incoming_message.to_string() << std::endl;
             io_translator.translate( incoming_message.str() );
         }
     }
@@ -64,7 +65,7 @@ void send_outgoing_tasks( zmq::context_t& i_ctx, task_translator& io_translator 
 
     while( true )
     {
-        auto tasks{ io_translator.retrieve_tasks() };
+        const auto tasks{ io_translator.retrieve_tasks() };
         for( auto&& task : tasks )
         {
             const auto task_str{ std::make_json( task ).dump() };
@@ -77,6 +78,9 @@ void send_outgoing_tasks( zmq::context_t& i_ctx, task_translator& io_translator 
 
 int main()
 {
+    create_node_set_info( node_type::messenger, std::ref( kill_flag ), false );
+    std::signal( SIGINT, sigint_handler );
+
     zmq::context_t ctx;
 
     translator::task_translator translator;

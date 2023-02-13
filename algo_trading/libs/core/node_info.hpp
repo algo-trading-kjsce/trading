@@ -13,11 +13,11 @@
 
 #include "libs/core/node_type.hpp"
 
-#include "json_include.hpp"
+#include <spdlog/spdlog.h>
 
 #include <atomic>
 #include <functional>
-#include <sstream>
+#include <memory>
 
 namespace trading::core
 {
@@ -27,8 +27,10 @@ namespace trading::core
  */
 struct node_info
 {
-    node_type type{ node_type::unknown };
+    node_type type;
 
-    std::optional<std::reference_wrapper<std::atomic_bool>> kill_flag;
+    std::shared_ptr<spdlog::logger> logger;
+
+    std::reference_wrapper<std::atomic_bool> kill_flag;
 };
 }  // namespace trading::core

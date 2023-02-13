@@ -15,9 +15,13 @@
 #include "libs/core/node_info.hpp"
 #include "libs/core/node_type.hpp"
 
+#include "fs_include.hpp"
 #include "type_trait_utils.hpp"
 #include "wise_enum_include.hpp"
 
+#include <spdlog/logger.h>
+#include <spdlog/sinks/basic_file_sink.h>
+#include <spdlog/sinks/stdout_color_sinks.h>
 #include <zmq_addon.hpp>
 
 #include <optional>
@@ -28,14 +32,14 @@ using namespace std::literals::string_literals;
 
 namespace
 {
-node_info info_{};
+std::optional<node_info> info_{};
 }
 
 namespace trading::core
 {
 node_type get_node_type() noexcept
 {
-    return info_.type;
+    return info_.value().type;
 }
 
 std::string get_node_name()
@@ -43,31 +47,28 @@ std::string get_node_name()
     return std::to_string( get_node_type() );
 }
 
-// rclcpp::Logger get_logger()
-// {
-//     return info_.logger.value_or( rclcpp::get_logger( "" ) );
-// }
+std::shared_ptr<spdlog::logger> get_logger()
+{
+    return info_.value().logger;
+}
 
-// std::shared_ptr<rclcpp::Node> create_node_set_info( const node_type i_type,
-//                                                     std::reference_wrapper<std::atomic_bool> i_kill_flag,
-//                                                     bool i_create_messenger )
-// {
-//     info_.type = i_type;
+void create_node_set_info( const node_type i_type,
+                           std::reference_wrapper<std::atomic_bool> i_kill_flag,
+                           [[maybe_unused]] bool i_create_messenger )
+{
+    const auto node_name{ std::to_string( i_type ) };
+    auto log_file{ fs::path{ std::getenv( "LOGDIR" ) } / ( node_name + "_log.txt" ) };
 
-//     const auto node{ std::make_shared<rclcpp::Node>( get_node_name() ) };
+    std::vector<spdlog::sink_ptr> sinks;
+    sinks.push_back( std::make_shared<spdlog::sinks::stdout_color_sink_mt>() );
+    sinks.push_back( std::make_shared<spdlog::sinks::basic_file_sink_mt>( log_file ) );
 
-//     //info_.logger.emplace( node->get_logger() );
+    auto combined_logger = std::make_shared<spdlog::logger>( node_name, begin( sinks ), end( sinks ) );
+    // register it if you need to access it globally
 
-//     if( i_create_messenger )
-//     {
-//         // info_.message_publisher = node->create_publisher<std_msgs::msg::String>(
-//         //     std::to_string( ros::channel_type::outgoing_messages ).data(), 10_sz );
-//     }
-
-//     info_.kill_flag.emplace( i_kill_flag );
-
-//     return node;
-// }
+    spdlog::register_logger( combined_logger );
+    info_ = node_info{ i_type, combined_logger, i_kill_flag };
+}
 
 void send_message( const std::string& )
 {
@@ -82,7 +83,7 @@ void send_message( const std::string& )
 
 void sigint_handler( [[maybe_unused]] int i_sig )
 {
-    info_.kill_flag.value().get() = true;
+    info_.value().kill_flag.get() = true;
 
     // info_.message_publisher.reset();
 }

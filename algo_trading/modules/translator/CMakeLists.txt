@@ -10,4 +10,4 @@ set(HEADERS ${HEADERS}
 
 add_library(${BINARY} STATIC ${SOURCES} ${HEADERS})
 
-target_link_libraries(${BINARY} PUBLIC core)
+target_link_libraries(${BINARY} PUBLIC fmt::fmt core)

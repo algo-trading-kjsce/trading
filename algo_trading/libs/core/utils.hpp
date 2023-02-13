@@ -21,6 +21,11 @@ namespace zmq
 class message_t;
 }
 
+namespace spdlog
+{
+class logger;
+}
+
 namespace trading::core
 {
 enum class node_type;
@@ -43,20 +48,20 @@ std::string get_node_name();
 /**
  * @brief Get the logger for the current node
  *
- * @return rclcpp::Logger
+ * @return spdlog::logger
  */
-// rclcpp::Logger get_logger();
+std::shared_ptr<spdlog::logger> get_logger();
 
 /**
  * @brief Create a node and set node info for the executable
  *
  * @param i_node_type incoming node type
+ * @param i_kill_flag kill flag for nodes to exit threads gracefully
  * @param i_create_messenger create message publisher for messenger to publish to user
- * @return std::shared_ptr<rclcpp::Node>
  */
-// [[nodiscard]] std::shared_ptr<rclcpp::Node> create_node_set_info( node_type i_node_type,
-//                                                                   std::reference_wrapper<std::atomic_bool>
-//                                                                   i_kill_flag, bool i_create_messenger );
+void create_node_set_info( node_type i_node_type,
+                           std::reference_wrapper<std::atomic_bool> i_kill_flag,
+                           bool i_create_messenger );
 
 /**
  * @brief Publish messages to /trading/outgoing_messages channel

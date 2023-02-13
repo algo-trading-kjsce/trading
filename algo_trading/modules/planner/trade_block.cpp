@@ -11,7 +11,7 @@
 
 #include "trade_block.hpp"
 
-//#include "logger_macros.hpp"
+#include "logger_macros.hpp"
 
 namespace trading::planner
 {
@@ -34,7 +34,7 @@ void trade_block::add_candle( core::candle i_candle )
 
     m_candles_processed_ = false;
 
-    // LOG_INFO( "Found new candles for {}", m_ticker_ );
+    LOG_INFO( "Found new candles for {}", m_ticker_ );
 }
 
 void trade_block::remove_candle()
@@ -53,7 +53,7 @@ void trade_block::set_candles_processed() noexcept
 {
     m_candles_processed_ = true;
 
-    // LOG_INFO( "Finished processing candles for {}", m_ticker_ );
+    LOG_INFO( "Finished processing candles for {}", m_ticker_ );
 }
 
 price_points trade_block::get_price_points() const
