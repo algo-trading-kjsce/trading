@@ -6,7 +6,6 @@ fi
 
 mkdir .devcontainer
 
-cp -aru essentials/docker/ubuntu/. .devcontainer/
-python3 .devcontainer/create_docker_file.py "$1" "$2"
+python3 essentials/docker/ubuntu/create_docker_file.py "$1" "$2"
 
-cp -u essentials/.clang-format algo_trading/.clang-format
+cp essentials/.clang-format algo_trading/.clang-format

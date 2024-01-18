@@ -9,7 +9,7 @@
  *
  */
 
-#include "modules/messenger/messenger.hpp"
+#include "modules/telegram_bot/telegram_bot.hpp"
 
 #include "libs/curl/curl_handler.hpp"
 #include "libs/curl/curl_helper.hpp"
@@ -111,8 +111,10 @@ telegram_bot::~telegram_bot()
     }
 }
 
-void telegram_bot::push( const std::string& i_message ) const
+void telegram_bot::push( const std::string& i_message )
 {
+    std::lock_guard lk{ m_mtx_ };
+
     LOG_INFO( "Sending message: '{}' ...", i_message );
 
     const auto complete_url{ m_url_ + "sendMessage" };
@@ -145,6 +147,8 @@ void telegram_bot::push( const std::string& i_message ) const
 
 std::vector<std::string> telegram_bot::pull()
 {
+    std::lock_guard lk{ m_mtx_ };
+
     const auto full_url{ m_url_ + "getUpdates?offset=" +
                          std::to_string( m_document_["last_update_id"].get<std::int64_t>() + 1_i64 ) };
 
@@ -158,7 +162,7 @@ std::vector<std::string> telegram_bot::pull()
 
     const auto js = json::parse( response.body );
 
-    const auto [new_update_id, messages] = process_updates( js, m_document_["user_id"].get<std::int64_t>() );
+    auto [new_update_id, messages] = process_updates( js, m_document_["user_id"].get<std::int64_t>() );
 
     if( new_update_id != 0_i64 )
     {

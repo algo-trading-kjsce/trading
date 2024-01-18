@@ -11,6 +11,7 @@
 
 #pragma once
 
+#include <concepts>
 #include <cstdint>
 #include <memory>
 #include <sstream>

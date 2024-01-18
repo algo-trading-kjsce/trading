@@ -1,0 +1,14 @@
+{
+    "nodes": {
+        "messenger": {
+            "run": true,
+            "path": "/workspaces/trading/build/nodes/messenger/messenger",
+            "args": {
+                "": "",
+            }
+        },
+        "translator",
+        "trader",
+        "planner"
+    },
+}

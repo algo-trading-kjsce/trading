@@ -9,13 +9,15 @@
  *
  */
 
-#include "modules/planner/planner.hpp"
+#include "modules/trade_planner/trade_planner.hpp"
 
 #include "libs/core/task.hpp"
+#include "libs/core/task_type.hpp"
 
 namespace trading::planner
 {
-trade_planner::trade_planner( std::atomic_bool& i_kill_flag, std::vector<std::string> i_tickers ) :
+trade_planner::trade_planner( std::reference_wrapper<std::atomic_bool> i_kill_flag,
+                              std::vector<std::string> i_tickers ) :
     m_kill_flag_{ i_kill_flag }
 {
     for( auto&& ticker : i_tickers )
@@ -25,7 +27,7 @@ trade_planner::trade_planner( std::atomic_bool& i_kill_flag, std::vector<std::st
         m_trade_threads_.emplace(
             ticker,
             std::async( std::launch::async, [&kill_flag = m_kill_flag_, context = m_trade_blocks_.at( ticker )]() {
-                while( context->should_keep_processing() && !kill_flag )
+                while( context->should_keep_processing() && !kill_flag.get() )
                 {
                     if( context->has_new_candles() )
                     {
@@ -36,7 +38,7 @@ trade_planner::trade_planner( std::atomic_bool& i_kill_flag, std::vector<std::st
     }
 }
 
-std::vector<core::trade_request> trade_planner::retrieve_tasks()
+std::vector<core::task> trade_planner::retrieve_tasks()
 {
     std::lock_guard _{ m_task_mtx_ };
 

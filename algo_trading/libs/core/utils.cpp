@@ -11,19 +11,19 @@
 
 #include "libs/core/utils.hpp"
 
-#include "libs/core/channel_type.hpp"
 #include "libs/core/node_info.hpp"
 #include "libs/core/node_type.hpp"
 
 #include "fs_include.hpp"
+#include "string_include.hpp"
 #include "type_trait_utils.hpp"
 #include "wise_enum_include.hpp"
 
 #include <spdlog/logger.h>
 #include <spdlog/sinks/basic_file_sink.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
-#include <zmq_addon.hpp>
 
+#include <iostream>
 #include <optional>
 #include <string>
 
@@ -83,17 +83,11 @@ void send_message( const std::string& )
 
 void sigint_handler( [[maybe_unused]] int i_sig )
 {
+    std::cout << __LINE__ << std::endl;
     info_.value().kill_flag.get() = true;
+    std::cout << __LINE__ << std::endl;
 
     // info_.message_publisher.reset();
-}
-
-zmq::message_t create_zmq_message( const std::string& i_str )
-{
-    zmq::message_t msg{ i_str.size() };
-    std::memcpy( msg.data(), i_str.data(), i_str.size() );
-
-    return msg;
 }
 
 }  // namespace trading::core

@@ -13,9 +13,9 @@
 
 #include "wise_enum_include.hpp"
 
-namespace trading::core
+namespace trading::zeromq
 {
 
-WISE_ENUM_CLASS( channel_type, incoming_messages, outgoing_messages, tasks, candles, requests, results )
+WISE_ENUM_CLASS( channel_type, incoming_messages, outgoing_messages, logs, tasks, candles, requests, results )
 
-}  // namespace trading::core
+}  // namespace trading::zmq

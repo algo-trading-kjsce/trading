@@ -13,9 +13,8 @@
 
 #include "trade_block.hpp"
 
-#include "libs/core/trade_request.hpp"
-
 #include <atomic>
+#include <functional>
 #include <future>
 #include <memory>
 #include <mutex>
@@ -40,9 +39,9 @@ private:
     std::unordered_map<std::string, std::future<void>> m_trade_threads_{};
 
     mutable std::mutex m_task_mtx_{};
-    std::vector<core::trade_request> m_trade_requests_{};
+    std::vector<core::task> m_trade_requests_{};
 
-    std::atomic_bool& m_kill_flag_;
+    std::reference_wrapper<std::atomic_bool> m_kill_flag_;
 
 public:
     /**
@@ -51,14 +50,14 @@ public:
      * @param i_kill_flag kill switch
      * @param i_tickers incoming tickers to trade
      */
-    trade_planner( std::atomic_bool& i_kill_flag, std::vector<std::string> i_tickers );
+    trade_planner( std::reference_wrapper<std::atomic_bool> i_kill_flag, std::vector<std::string> i_tickers );
 
     /**
      * @brief Get the newly created trade requests
      *
      * @return std::vector<core::trade_request>
      */
-    std::vector<core::trade_request> retrieve_tasks();
+    std::vector<core::task> retrieve_tasks();
 
     /**
      * @brief process tasks for planner

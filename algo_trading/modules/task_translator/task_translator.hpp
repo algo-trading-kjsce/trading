@@ -16,6 +16,7 @@
 #include "type_trait_utils.hpp"
 
 #include <mutex>
+#include <optional>
 #include <string>
 #include <vector>
 

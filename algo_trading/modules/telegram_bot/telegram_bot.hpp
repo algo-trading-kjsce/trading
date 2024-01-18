@@ -37,7 +37,7 @@ public:
 
     ~telegram_bot();
 
-    void push( const std::string& i_message ) const;
+    void push( const std::string& i_message );
 
     std::vector<std::string> pull();
 

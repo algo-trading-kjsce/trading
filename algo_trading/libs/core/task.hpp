@@ -13,11 +13,13 @@
 
 #include "libs/core/node_type.hpp"
 #include "libs/core/task_type.hpp"
+#include "libs/core/ticker_info.hpp"
 
 #include "clock.hpp"
 #include "json_include.hpp"
 
 #include <chrono>
+#include <optional>
 #include <string>
 #include <vector>
 
@@ -35,18 +37,27 @@ private:
 
     time_point m_timestamp_{};
 
-    std::vector<std::string> m_tickers_{};
+    std::optional<ticker_info> m_ticker_{};
 
 public:
+    /**
+     * @brief Construct a new task object
+     *
+     */
+    task() noexcept = default;
+
     /**
      * @brief Construct a new task object
      *
      * @param i_type type of task
      * @param i_node node creating the task
      * @param i_timestamp timestamp of task creation
-     * @param i_tickers list of tickers for this task
+     * @param i_tickers list of ticker for this task
      */
-    task( task_type i_type, node_type i_node, time_point i_timestamp, std::vector<std::string> i_tickers ) noexcept;
+    task( task_type i_type,
+          node_type i_node,
+          time_point i_timestamp,
+          std::optional<ticker_info> i_ticker = std::nullopt ) noexcept;
 
     /**
      * @brief Get task type
@@ -74,7 +85,7 @@ public:
      *
      * @return std::vector<std::string>
      */
-    const std::vector<std::string>& tickers() const noexcept;
+    const std::optional<ticker_info>& ticker() const noexcept;
 };
 
 void to_json( json& o_js, const task& i_task );

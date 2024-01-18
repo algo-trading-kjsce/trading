@@ -15,6 +15,35 @@
 
 using json = nlohmann::json;
 
+namespace nlohmann
+{
+template<typename T>
+void to_json( json& j, const std::optional<T>& opt )
+{
+    if( opt.has_value() )
+    {
+        j = opt.value();
+    }
+    else
+    {
+        j = nullptr;
+    }
+}
+
+template<typename T>
+void from_json( const json& j, std::optional<T>& opt )
+{
+    if( j.is_null() )
+    {
+        opt = std::nullopt;
+    }
+    else
+    {
+        opt = j.get<T>();
+    }
+}
+}
+
 namespace std
 {
 

@@ -16,11 +16,6 @@
 #include <memory>
 #include <string>
 
-namespace zmq
-{
-class message_t;
-}
-
 namespace spdlog
 {
 class logger;
@@ -77,6 +72,4 @@ void send_message( const std::string& i_str );
  */
 void sigint_handler( int i_sig );
 
-zmq::message_t create_zmq_message( const std::string& i_str );
-
-}  // namespace trading::core::
+}  // namespace trading::core

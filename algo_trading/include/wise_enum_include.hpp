@@ -31,12 +31,6 @@ concept wise_enum_type = requires( T a ) {
 }
 
 template<detail::wise_enum_type T>
-auto to_string( const T i_enum )
-{
-    return std::string{ wise_enum::to_string<T>( i_enum ) };
-}
-
-template<detail::wise_enum_type T>
 auto to_enum( const std::string& i_str )
 {
     const auto enum_value{ wise_enum::from_string<T>( i_str ) };
@@ -48,4 +42,5 @@ auto to_enum( const std::string& i_str )
 
     return enum_value.value();
 }
+
 }

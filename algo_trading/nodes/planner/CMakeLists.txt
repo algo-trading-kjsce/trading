@@ -5,4 +5,4 @@ set(SOURCES ${SOURCES}
 
 add_executable(${BINARY} ${SOURCES})
 
-target_link_libraries(${BINARY} PUBLIC planner_impl converter core cppzmq)
+target_link_libraries(${BINARY} PUBLIC zmqlib trade_planner core cppzmq)

@@ -1,12 +1,12 @@
-set(BINARY planner_impl)
+set(BINARY trade_planner)
 
 set(SOURCES ${SOURCES}
-            planner.cpp
+            trade_planner.cpp
             trade_block.cpp
 )
 
 set(HEADERS ${HEADERS}
-            planner.hpp
+            trade_planner.hpp
             trade_block.hpp
 )
 

@@ -9,31 +9,24 @@
  *
  */
 
-#include "modules/planner/planner.hpp"
-#include "modules/converter/task.hpp"
-#include "modules/converter/trade_request.hpp"
+#include "modules/trade_planner/trade_planner.hpp"
 
-#include "libs/core/channel_type.hpp"
 #include "libs/core/node_type.hpp"
-#include "libs/core/utils.hpp"
 #include "libs/core/task.hpp"
+#include "libs/core/utils.hpp"
+#include "libs/zmqlib/create_socket.hpp"
 
 #include "type_trait_utils.hpp"
 #include "wise_enum_include.hpp"
 
-#include "algo_trading_idl/msg/task_msg.hpp"
-#include "algo_trading_idl/msg/trade_request_msg.hpp"
-#include "algo_trading_idl/msg/trade_result_msg.hpp"
-
-#include <rclcpp/rclcpp.hpp>
+#include <zmq.hpp>
 
 #include <csignal>
 #include <functional>
 
 using namespace trading;
 using namespace trading::core;
-
-using namespace algo_trading_idl::msg;
+using namespace trading::planner;
 
 std::vector<std::string> parse_tickers( int i_argc, char** i_argv )
 {
@@ -50,46 +43,23 @@ std::vector<std::string> parse_tickers( int i_argc, char** i_argv )
 
 int main( int argc, char** argv )
 {
-    rclcpp::init( argc, argv );
+    std::atomic_bool kill_flag{ false };
+    create_node_set_info( node_type::planner, std::ref( kill_flag ), false );
+    std::signal( SIGINT, sigint_handler );
 
-    std::atomic_bool kill_process{ false };
+    zmq::context_t ctx;
 
-    std::signal( SIGINT, ros::sigint_handler );
+    trade_planner planner{ std::ref( kill_flag ), parse_tickers( argc, argv ) };
 
-    const auto planner_node = ros::create_node_set_info( ros::node_type::planner, std::ref( kill_process ), true );
-
-    planner::trade_planner planner{ kill_process, parse_tickers( argc, argv ) };
-
-    const auto task_subscriber{ planner_node->create_subscription<TaskMsg>(
-        std::to_string( ros::channel_type::tasks ), 10, [&]( const TaskMsg& i_msg ) {
-            planner.process_task( converter::from_message( i_msg ) );
+    auto incoming_messages_socket{ trading::zeromq::create_simple_pub_socket(
+        ctx, std::ref( kill_flag ), "tcp://127.0.0.1:45000", true, [&planner]() {
+            return planner.retrieve_tasks();
         } ) };
 
-    const auto trade_publisher{ planner_node->create_publisher<TradeRequestMsg>(
-        std::to_string( ros::channel_type::requests ), 10 ) };
-
-    const auto trade_result_subscriber{ planner_node->create_subscription<TradeResultMsg>(
-        std::to_string( ros::channel_type::results ), 10, [&]( [[maybe_unused]] const TradeResultMsg& i_msg ) {
+    auto outgoing_messages_socket{ trading::zeromq::create_simple_sub_socket(
+        ctx, std::ref( kill_flag ), "tcp://127.0.0.1:47000", true, {}, [&planner]( const zmq::message_t& i_msg ) {
+            planner.process_task( std::make_json( i_msg.to_string() ).get<task>() );
         } ) };
 
-    rclcpp::executors::MultiThreadedExecutor node_executor{ rclcpp::ExecutorOptions{}, 2_sz };
-
-    node_executor.add_node( planner_node );
-
-    rclcpp::Rate loop_rate{ 10 };
-
-    while( rclcpp::ok() && !kill_process )
-    {
-        node_executor.spin_some();
-
-        const auto trade_requests{ planner.retrieve_tasks() };
-
-        for( auto&& trade_request : trade_requests )
-        {
-            trade_publisher->publish( converter::to_message( trade_request ) );
-        }
-    }
-
-    rclcpp::shutdown();
     return 0;
 }

@@ -1,11 +1,11 @@
-set(BINARY translator_impl)
+set(BINARY task_translator)
 
 set(SOURCES ${SOURCES}
-            translator.cpp
+            task_translator.cpp
 )
 
 set(HEADERS ${HEADERS}
-            translator.hpp
+            task_translator.hpp
 )
 
 add_library(${BINARY} STATIC ${SOURCES} ${HEADERS})

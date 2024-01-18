@@ -5,4 +5,4 @@ set(SOURCES ${SOURCES}
 
 add_executable(${BINARY} ${SOURCES})
 
-target_link_libraries(${BINARY} PUBLIC messenger_impl core cppzmq)
+target_link_libraries(${BINARY} PUBLIC zmqlib telegram_bot core cppzmq)

@@ -1,11 +1,11 @@
-set(BINARY messenger_impl)
+set(BINARY telegram_bot)
 
 set(SOURCES ${SOURCES}
-            messenger.cpp
+            telegram_bot.cpp
 )
 
 set(HEADERS ${HEADERS}
-            messenger.hpp
+            telegram_bot.hpp
 )
 
 add_library(${BINARY} STATIC ${SOURCES} ${HEADERS})

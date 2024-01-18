@@ -5,4 +5,4 @@ set(SOURCES ${SOURCES}
 
 add_executable(${BINARY} ${SOURCES})
 
-target_link_libraries(${BINARY} PUBLIC translator_impl core cppzmq)
+target_link_libraries(${BINARY} PUBLIC zmqlib task_translator core cppzmq)

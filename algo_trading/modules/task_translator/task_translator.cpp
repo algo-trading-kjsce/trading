@@ -9,7 +9,7 @@
  *
  */
 
-#include "modules/translator/translator.hpp"
+#include "modules/task_translator/task_translator.hpp"
 
 #include "libs/core/node_type.hpp"
 #include "libs/core/task_type.hpp"
@@ -30,7 +30,7 @@ namespace
 {
 auto find_type( std::string_view i_msg )
 {
-    static const std::unordered_set<task_type> map{ task_type::pause, task_type::status };
+    static const std::unordered_set<task_type> map{ task_type::status };
 
     auto idx{ i_msg.find( '@' ) };
 
@@ -85,28 +85,29 @@ namespace trading::translator
 {
 void task_translator::translate( const std::string& i_msg )
 {
+    std::lock_guard lk{ m_mtx_ };
+
     const auto task_type{ find_type( i_msg ) };
-    auto tickers{ find_tickers( i_msg ) };
-
-    std::optional<json> json;
-
+    if( task_type == task_type::unknown )
     {
-        std::lock_guard _{ m_mtx_ };
-        json = m_tasks_.emplace_back( task_type, node_type::messenger, clock::now(), std::move( tickers ) );
+        LOG_WARN( "Unknown task type." );
+        return;
     }
 
-    LOG_INFO( "New task created: {}", to_string( json.value() ) );
+    auto tickers{ find_tickers( i_msg ) };
+
+    for( auto&& ticker : tickers )
+    {
+        m_tasks_.emplace_back( task_type, node_type::messenger, clock::now(), ticker_info{ ticker, 0.0 } );
+
+        LOG_INFO( "New task created: {}", std::to_string( m_tasks_.back() ) );
+    }
 }
 
 std::vector<core::task> task_translator::retrieve_tasks()
 {
-    std::vector<core::task> result;
+    std::lock_guard lk{ m_mtx_ };
 
-    {
-        std::lock_guard _{ m_mtx_ };
-        result.swap( m_tasks_ );
-    }
-
-    return result;
+    return std::move( m_tasks_ );
 }
 }  // namespace trading::translator

@@ -12,6 +12,7 @@
 #pragma once
 
 #include "json_include.hpp"
+#include "string_include.hpp"
 #include "wise_enum_include.hpp"
 
 namespace trading::core

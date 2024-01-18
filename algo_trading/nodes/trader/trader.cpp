@@ -11,26 +11,17 @@
 
 #include "libs/core/channel_type.hpp"
 #include "libs/core/node_type.hpp"
-#include "libs/core/utils.hpp"
 #include "libs/core/task.hpp"
-#include "libs/core/trade_request.hpp"
+#include "libs/core/utils.hpp"
 
 #include "type_trait_utils.hpp"
 #include "wise_enum_include.hpp"
-
-#include "algo_trading_idl/msg/task_msg.hpp"
-#include "algo_trading_idl/msg/trade_request_msg.hpp"
-#include "algo_trading_idl/msg/trade_result_msg.hpp"
-
-#include <rclcpp/rclcpp.hpp>
-#include "std_msgs/msg/string.hpp"
 
 #include <csignal>
 #include <functional>
 
 using namespace trading;
 using namespace trading::core;
-using namespace algo_trading_idl::msg;
 
 int main( int argc, char** argv )
 {
@@ -49,8 +40,7 @@ int main( int argc, char** argv )
         std::to_string( ros::channel_type::results ), 10_sz ) };
 
     const auto subscriber{ translator_node->create_subscription<TradeRequestMsg>(
-        std::to_string( ros::channel_type::requests ), 10, [&]( [[maybe_unused]] const TradeRequestMsg& i_msg ) {
-        } ) };
+        std::to_string( ros::channel_type::requests ), 10, [&]( [[maybe_unused]] const TradeRequestMsg& i_msg ) {} ) };
 
 
     rclcpp::executors::MultiThreadedExecutor node_executor{ rclcpp::ExecutorOptions{}, 2_sz };
